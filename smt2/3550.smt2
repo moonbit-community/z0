@@ -1,0 +1,6 @@
+(set-option :rewriter.flat false)
+(set-option :proof true)
+(declare-fun a () Real)
+(declare-fun b () Real)
+(assert (< b (* (* a a) 2) b))
+(check-sat)

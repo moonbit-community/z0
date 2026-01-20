@@ -1,0 +1,6 @@
+sat
+(
+  (define-fun v () Bool
+    true)
+)
+true
