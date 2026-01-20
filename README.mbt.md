@@ -1,1 +1,3 @@
-# moonbit-community/z0
+# z0
+
+An SMT solver (planned to be) compatible with Z3.
