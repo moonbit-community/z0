@@ -1,0 +1,124 @@
+true
+true
+true
+true
+true
+true
+true
+true
+true
+algebra
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+(let ((a!1 (re.++ (re.++ r (re.* r)) (re.* (re.++ r (re.* r))))))
+  (= (re.++ r (re.* r)) a!1))
+true
+(= (re.* r) (re.* (re.++ r (re.* r))))
+true
+true
+true
+true
+true
+true
+true
+true
+true
+complement
+true
+true
+true
+true
+true
+true
+true
+true
+(= a "abc")
+(str.in_re a (re.union (str.to_re "ab") (str.to_re "abc")))
+sat
+sat
+(
+  (define-fun a () String
+    "ab")
+  (define-fun r2 () (RegEx String)
+    (str.to_re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to_re ""))
+  (define-fun r () (RegEx String)
+    (str.to_re ""))
+)
+sat
+(
+  (define-fun a () String
+    "abab")
+  (define-fun r2 () (RegEx String)
+    (str.to_re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to_re ""))
+  (define-fun r () (RegEx String)
+    (str.to_re ""))
+)
+sat
+(
+  (define-fun a () String
+    "ababab")
+  (define-fun r2 () (RegEx String)
+    (str.to_re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to_re ""))
+  (define-fun r () (RegEx String)
+    (str.to_re ""))
+)
+unsat
+unsat
+sat
+sat
+(
+  (define-fun a () String
+    "abab")
+  (define-fun r2 () (RegEx String)
+    (str.to_re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to_re ""))
+  (define-fun r () (RegEx String)
+    (str.to_re ""))
+)
+sat
+(
+  (define-fun a () String
+    "ababab")
+  (define-fun r2 () (RegEx String)
+    (str.to_re ""))
+  (define-fun b () String
+    "")
+  (define-fun r1 () (RegEx String)
+    (str.to_re ""))
+  (define-fun r () (RegEx String)
+    (str.to_re ""))
+)
+unsat

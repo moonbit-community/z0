@@ -1,0 +1,11 @@
+unsat
+sat
+unsat
+unsat
+unsat
+unsat
+sat
+(
+  (define-fun x () Real
+    (- 1.4142135623?))
+)
