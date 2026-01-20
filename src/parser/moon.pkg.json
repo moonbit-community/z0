@@ -1,4 +1,7 @@
 {
+    "import": [
+        "moonbit-community/z0/expr"
+    ],
     "test-import": [
         "moonbitlang/x/fs"
     ]

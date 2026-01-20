@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/expr"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Atom {
+  Symbol(String)
+  Keyword(String)
+  Numeral(String)
+  Decimal(String)
+  String(String)
+  BitvectorBinary(String)
+  BitvectorHex(String)
+}
+pub impl Eq for Atom
+pub impl Show for Atom
+pub impl ToJson for Atom
+
+pub(all) enum SExpr {
+  Atom(Atom)
+  List(Array[SExpr])
+}
+pub impl Eq for SExpr
+pub impl Show for SExpr
+pub impl ToJson for SExpr
+
+// Type aliases
+
+// Traits
+

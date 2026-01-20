@@ -1,8 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbit-community/z0/parser"
 
+import(
+  "moonbit-community/z0/expr"
+)
+
 // Values
-pub fn parse_smtlib(String) -> Array[SExpr] raise ParseError
+pub fn parse_smtlib(String) -> Array[@expr.SExpr] raise ParseError
 
 // Errors
 pub suberror ParseError {
@@ -18,19 +22,6 @@ pub impl Show for ParseError
 pub impl ToJson for ParseError
 
 // Types and methods
-pub enum Atom {
-  Symbol(String)
-  Keyword(String)
-  Numeral(String)
-  Decimal(String)
-  String(String)
-  BitvectorBinary(String)
-  BitvectorHex(String)
-}
-pub impl Eq for Atom
-pub impl Show for Atom
-pub impl ToJson for Atom
-
 pub struct Position {
   line : Int
   column : Int
@@ -39,14 +30,6 @@ pub struct Position {
 pub impl Eq for Position
 pub impl Show for Position
 pub impl ToJson for Position
-
-pub enum SExpr {
-  Atom(Atom)
-  List(Array[SExpr])
-}
-pub impl Eq for SExpr
-pub impl Show for SExpr
-pub impl ToJson for SExpr
 
 // Type aliases
 
