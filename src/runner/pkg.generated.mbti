@@ -1,0 +1,104 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/runner"
+
+import {
+  "moonbit-community/z0/ast",
+  "moonbit-community/z0/expr",
+  "moonbit-community/z0/solver",
+}
+
+// Values
+pub fn parse_command(@expr.SExpr, Env) -> Command raise Smt2Error
+
+pub fn parse_script(Array[@expr.SExpr]) -> Script raise Smt2Error
+
+pub fn run_smt2(String) -> Array[StringView] raise Smt2Error
+
+// Errors
+pub suberror Smt2Error {
+  Malformed(String)
+  UnknownSort(String)
+  UnknownSymbol(String)
+  ArityMismatch(name~ : String, expected~ : Int, found~ : Int)
+  ScopeUnderflow(expected~ : Int, available~ : Int)
+  Unsupported(String)
+}
+pub impl Eq for Smt2Error
+pub impl Show for Smt2Error
+pub impl ToJson for Smt2Error
+
+// Types and methods
+pub enum Command {
+  SetLogic(String)
+  SetOption(String, @expr.SExpr)
+  SetInfo(String, @expr.SExpr)
+  DeclareSort(String, Int)
+  DefineSort(String, Array[String], @ast.Sort)
+  DeclareConst(String, @ast.Sort)
+  DeclareFun(String, Array[@ast.Sort], @ast.Sort)
+  DefineFun(String, Array[@ast.BoundVar], @ast.Sort, @ast.Term)
+  Assert(@ast.Term)
+  Simplify(@expr.SExpr, Array[@expr.SExpr])
+  Push(Int)
+  Pop(Int)
+  CheckSat
+  CheckSatUsing(String)
+  GetValue(Array[@ast.Term])
+  GetModel
+  Exit
+  Unsupported(@expr.SExpr)
+}
+pub impl Eq for Command
+pub impl Show for Command
+pub impl ToJson for Command
+
+pub struct Env {
+  frames : Array[EnvFrame]
+}
+pub fn Env::declare_const(Self, String, @ast.Sort) -> Unit raise Smt2Error
+pub fn Env::declare_fun(Self, String, Array[@ast.Sort], @ast.Sort) -> Unit raise Smt2Error
+pub fn Env::declare_sort(Self, String, Int) -> Unit raise Smt2Error
+pub fn Env::define_fun(Self, String, Array[@ast.BoundVar], @ast.Sort, @ast.Term) -> Unit raise Smt2Error
+pub fn Env::define_sort(Self, String, Array[String], @ast.Sort) -> Unit raise Smt2Error
+pub fn Env::find_const(Self, String) -> @ast.Sort?
+pub fn Env::find_def(Self, String) -> FunDef?
+pub fn Env::find_fun(Self, String) -> @ast.FuncDecl?
+pub fn Env::find_sort(Self, String) -> @ast.Sort?
+pub fn Env::new() -> Self
+pub fn Env::pop(Self, Int) -> Unit raise Smt2Error
+pub fn Env::push(Self) -> Unit
+
+pub struct EnvFrame {
+  sorts : Map[String, @ast.Sort]
+  consts : Map[String, @ast.Sort]
+  funcs : Map[String, @ast.FuncDecl]
+  fun_defs : Map[String, FunDef]
+}
+
+pub struct FunDef {
+  params : Array[@ast.BoundVar]
+  range : @ast.Sort
+  body : @ast.Term
+}
+pub impl Eq for FunDef
+pub impl Show for FunDef
+pub impl ToJson for FunDef
+
+pub struct Runner {
+  solver : @solver.Solver
+  mut last_result : @solver.CheckSatResult?
+}
+pub fn Runner::execute(Self, Script) -> Array[StringView] raise Smt2Error
+pub fn Runner::new() -> Self
+
+pub struct Script {
+  commands : Array[Command]
+}
+pub impl Eq for Script
+pub impl Show for Script
+pub impl ToJson for Script
+
+// Type aliases
+
+// Traits
+

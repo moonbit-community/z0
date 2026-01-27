@@ -1,0 +1,11 @@
+{
+  "import": [
+    "moonbit-community/z0/ast",
+    "moonbit-community/z0/sat",
+    "moonbit-community/z0/euf",
+    "moonbitlang/core/strconv"
+  ],
+  "test-import": [
+    "moonbit-community/z0/ast"
+  ]
+}

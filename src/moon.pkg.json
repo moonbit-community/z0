@@ -1,0 +1,7 @@
+{
+  "import": [
+    "moonbitlang/x/fs",
+    "moonbit-community/z0/runner",
+    "moonbit-community/z0/parser"
+  ]
+}

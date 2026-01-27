@@ -1,0 +1,31 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/euf"
+
+import {
+  "moonbit-community/z0/ast",
+}
+
+// Values
+pub fn build_classes(Array[(@ast.Term, @ast.Term)], Array[(@ast.Term, @ast.Term)]) -> (Map[@ast.Term, Int], Array[Int])
+
+pub fn check_euf(Array[(@ast.Term, @ast.Term)], Array[(@ast.Term, @ast.Term)]) -> EufResult
+
+// Errors
+
+// Types and methods
+pub enum EufResult {
+  Sat
+  Unsat
+}
+pub impl Eq for EufResult
+pub impl Show for EufResult
+
+type Sig
+pub impl Eq for Sig
+pub impl Hash for Sig
+pub impl Show for Sig
+
+// Type aliases
+
+// Traits
+
