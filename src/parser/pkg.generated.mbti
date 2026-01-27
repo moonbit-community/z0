@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbit-community/z0/parser"
 
-import(
-  "moonbit-community/z0/expr"
-)
+import {
+  "moonbit-community/z0/expr",
+}
 
 // Values
 pub fn parse_smtlib(String) -> Array[@expr.SExpr] raise ParseError

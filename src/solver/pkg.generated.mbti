@@ -1,0 +1,56 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/solver"
+
+import {
+  "moonbit-community/z0/ast",
+}
+
+// Values
+pub fn term_to_smt2(@ast.Term) -> String
+
+// Errors
+pub suberror SolverError {
+  Unsupported(String)
+  InvalidAssertion(String)
+  ScopeUnderflow(expected~ : Int, available~ : Int)
+}
+pub impl Eq for SolverError
+pub impl Show for SolverError
+
+// Types and methods
+pub enum CheckSatResult {
+  Sat(Model)
+  Unsat
+  Unknown(String)
+}
+pub impl Eq for CheckSatResult
+pub impl Show for CheckSatResult
+
+pub struct Model {
+  consts : Map[String, (@ast.Sort, @ast.Term)]
+}
+pub fn Model::get(Self, String) -> (@ast.Sort, @ast.Term)?
+pub fn Model::new() -> Self
+pub fn Model::set(Self, String, @ast.Sort, @ast.Term) -> Unit
+pub fn Model::to_smt2(Self) -> String
+pub impl Eq for Model
+pub impl Show for Model
+
+pub struct Solver {
+  assertions : Array[@ast.Term]
+  scopes : Array[Int]
+  consts : Map[String, @ast.Sort]
+  mut last_model : Model?
+}
+pub fn Solver::assert_term(Self, @ast.Term) -> Unit
+pub fn Solver::check_sat(Self) -> CheckSatResult
+pub fn Solver::declare_const(Self, String, @ast.Sort) -> Unit
+pub fn Solver::get_model(Self) -> Model?
+pub fn Solver::new() -> Self
+pub fn Solver::pop(Self, Int) -> Result[Unit, SolverError]
+pub fn Solver::push(Self) -> Unit
+
+// Type aliases
+
+// Traits
+

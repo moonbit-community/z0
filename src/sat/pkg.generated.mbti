@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/sat"
+
+// Values
+pub fn lit_neg(Int) -> Lit
+
+pub fn lit_pos(Int) -> Lit
+
+pub fn solve(Array[Array[Lit]], Int) -> SatResult
+
+// Errors
+
+// Types and methods
+pub enum LBool {
+  True
+  False
+  Undef
+}
+pub impl Eq for LBool
+pub impl Show for LBool
+
+pub struct Lit {
+  idx : Int
+  neg : Bool
+}
+pub fn Lit::eval(Self, LBool) -> LBool
+pub fn Lit::not(Self) -> Self
+pub impl Eq for Lit
+pub impl Hash for Lit
+pub impl Show for Lit
+
+pub enum SatResult {
+  Sat(Array[Bool])
+  Unsat
+}
+pub impl Eq for SatResult
+pub impl Show for SatResult
+
+// Type aliases
+
+// Traits
+

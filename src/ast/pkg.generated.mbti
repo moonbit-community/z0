@@ -1,0 +1,135 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/ast"
+
+// Values
+pub fn term_app(FuncDecl, Array[Term]) -> Term
+
+pub fn term_bool(Bool) -> Term
+
+pub fn term_builtin(BuiltinOp, Array[Term], Sort) -> Term
+
+pub fn term_int(Int) -> Term
+
+pub fn term_let(Array[(String, Term)], Term) -> Term
+
+pub fn term_quantifier(QuantifierKind, Array[BoundVar], Term) -> Term
+
+pub fn term_real(String) -> Term
+
+pub fn term_var(String, Sort) -> Term
+
+// Errors
+
+// Types and methods
+pub(all) struct BitVecValue {
+  width : Int
+  repr : String
+}
+pub impl Eq for BitVecValue
+pub impl Hash for BitVecValue
+pub impl Show for BitVecValue
+pub impl ToJson for BitVecValue
+
+pub(all) struct BoundVar {
+  name : String
+  sort : Sort
+}
+pub impl Eq for BoundVar
+pub impl Hash for BoundVar
+pub impl Show for BoundVar
+pub impl ToJson for BoundVar
+
+pub(all) enum BuiltinOp {
+  Not
+  And
+  Or
+  Implies
+  Iff
+  Xor
+  Eq
+  Distinct
+  Ite
+  Add
+  Sub
+  Mul
+  Div
+  Mod
+  Neg
+  Lt
+  Le
+  Gt
+  Ge
+}
+pub impl Eq for BuiltinOp
+pub impl Hash for BuiltinOp
+pub impl Show for BuiltinOp
+pub impl ToJson for BuiltinOp
+
+pub(all) struct FpValue {
+  sign : BitVecValue
+  exponent : BitVecValue
+  significand : BitVecValue
+}
+pub impl Eq for FpValue
+pub impl Hash for FpValue
+pub impl Show for FpValue
+pub impl ToJson for FpValue
+
+pub(all) struct FuncDecl {
+  name : String
+  domain : Array[Sort]
+  range : Sort
+}
+pub fn FuncDecl::arity(Self) -> Int
+pub impl Eq for FuncDecl
+pub impl Hash for FuncDecl
+pub impl Show for FuncDecl
+pub impl ToJson for FuncDecl
+
+pub(all) enum QuantifierKind {
+  Forall
+  Exists
+}
+pub impl Eq for QuantifierKind
+pub impl Hash for QuantifierKind
+pub impl Show for QuantifierKind
+pub impl ToJson for QuantifierKind
+
+pub(all) enum Sort {
+  Bool
+  Int
+  Real
+  BitVec(Int)
+  FloatingPoint(Int, Int)
+  Array(Sort, Sort)
+  Uninterpreted(String)
+}
+pub fn Sort::to_string(Self) -> String
+pub impl Eq for Sort
+pub impl Hash for Sort
+pub impl Show for Sort
+pub impl ToJson for Sort
+
+pub(all) enum Term {
+  BoolVal(Bool)
+  IntVal(Int)
+  RealVal(String)
+  BitVecVal(BitVecValue)
+  FpVal(FpValue)
+  Var(String, Sort)
+  App(FuncDecl, Array[Term])
+  Builtin(BuiltinOp, Array[Term], Sort)
+  Let(Array[(String, Term)], Term)
+  Quantifier(QuantifierKind, Array[BoundVar], Term)
+}
+pub fn Term::sort(Self) -> Sort
+pub impl Eq for Term
+pub impl Hash for Term
+pub impl Show for Term
+pub impl ToJson for Term
+
+// Type aliases
+pub type Symbol = String
+
+// Traits
+

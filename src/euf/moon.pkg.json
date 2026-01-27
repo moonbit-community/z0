@@ -1,0 +1,5 @@
+{
+  "import": [
+    "moonbit-community/z0/ast"
+  ]
+}

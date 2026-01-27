@@ -1,0 +1,9 @@
+{
+  "import": [
+    "moonbit-community/z0/expr",
+    "moonbit-community/z0/parser",
+    "moonbit-community/z0/ast",
+    "moonbit-community/z0/solver",
+    "moonbitlang/core/strconv"
+  ]
+}
