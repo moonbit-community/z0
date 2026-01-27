@@ -49,3 +49,9 @@ This is a [MoonBit](https://docs.moonbitlang.com) project.
 
 - agent-todo.md has some small tasks that are easy for AI to pick up, agent is
   welcome to finish the tasks and check the box when you are done
+
+
+## Moonbead
+
+This project uses moonbead for issue tracking.
+Run `moonbead prime` for workflow context.
