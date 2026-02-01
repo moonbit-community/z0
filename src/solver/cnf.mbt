@@ -280,7 +280,328 @@ fn elim_let(term : Term) -> Term {
       let new_args = args.map(elim_let)
       Term::Builtin(op, new_args, sort)
     }
-    Term::Quantifier(_, _, _) => term
+    Term::Quantifier(kind, vars, body) => {
+      let new_body = elim_let(body)
+      Term::Quantifier(kind, vars, new_body)
+    }
+    _ => term
+  }
+}
+
+///|
+fn term_has_free_var(
+  term : Term,
+  name : String,
+  bound : Map[String, Bool],
+) -> Bool {
+  match term {
+    Term::Var(var_name, _) => var_name == name && !bound.contains(var_name)
+    Term::App(_, args) => {
+      for arg in args {
+        if term_has_free_var(arg, name, bound) {
+          return true
+        }
+      }
+      false
+    }
+    Term::Builtin(_, args, _) => {
+      for arg in args {
+        if term_has_free_var(arg, name, bound) {
+          return true
+        }
+      }
+      false
+    }
+    Term::Let(bindings, body) => {
+      for binding in bindings {
+        let (_, value) = binding
+        if term_has_free_var(value, name, bound) {
+          return true
+        }
+      }
+      let bound2 = bound.copy()
+      for binding in bindings {
+        let (binding_name, _) = binding
+        bound2[binding_name] = true
+      }
+      term_has_free_var(body, name, bound2)
+    }
+    Term::Quantifier(_, vars, body) => {
+      let bound2 = bound.copy()
+      for bound_var in vars {
+        bound2[bound_var.name] = true
+      }
+      term_has_free_var(body, name, bound2)
+    }
+    _ => false
+  }
+}
+
+///|
+fn term_uses_var(term : Term, name : String) -> Bool {
+  term_has_free_var(term, name, Map::new())
+}
+
+///|
+fn antecedent_implies(antecedent : Term, consequent : Term) -> Bool {
+  if antecedent == consequent {
+    return true
+  }
+  match antecedent {
+    Term::Builtin(BuiltinOp::And, args, _) => {
+      for arg in args {
+        if antecedent_implies(arg, consequent) {
+          return true
+        }
+      }
+      false
+    }
+    _ => false
+  }
+}
+
+///|
+fn flatten_implies(term : Term) -> (Array[Term], Term) {
+  match term {
+    Term::Builtin(BuiltinOp::Implies, args, _) =>
+      if args.length() == 2 {
+        let (rest, consequent) = flatten_implies(args[1])
+        let out : Array[Term] = [args[0]]
+        for item in rest {
+          out.push(item)
+        }
+        (out, consequent)
+      } else {
+        ([], term)
+      }
+    _ => ([], term)
+  }
+}
+
+///|
+fn forall_inequality_unsat(vars : Array[BoundVar], body : Term) -> Bool {
+  match body {
+    Term::Builtin(op, args, _) =>
+      match op {
+        BuiltinOp::Le | BuiltinOp::Ge =>
+          if args.length() == 2 {
+            let lhs_expr = lin_of_term(args[0])
+            let rhs_expr = lin_of_term(args[1])
+            match (lhs_expr, rhs_expr) {
+              (Some(lhs), Some(rhs)) => {
+                let diff = if op == BuiltinOp::Le {
+                  lin_sub(lhs, rhs)
+                } else {
+                  lin_sub(rhs, lhs)
+                }
+                for bound_var in vars {
+                  match bound_var.sort {
+                    Sort::Int | Sort::Real =>
+                      if !rat_is_zero(lin_coeff(diff, bound_var.name)) {
+                        return true
+                      }
+                    _ => ()
+                  }
+                }
+                false
+              }
+              _ => false
+            }
+          } else {
+            false
+          }
+        _ => false
+      }
+    _ => false
+  }
+}
+
+///|
+fn simplify_quantifier_term(
+  kind : QuantifierKind,
+  vars : Array[BoundVar],
+  body : Term,
+) -> Term {
+  let body_s = simplify_term(body)
+  let kept : Array[BoundVar] = []
+  for bound_var in vars {
+    if term_uses_var(body_s, bound_var.name) {
+      kept.push(bound_var)
+    }
+  }
+  if kept.length() == 0 {
+    return body_s
+  }
+  match body_s {
+    Term::BoolVal(_) => return body_s
+    _ => ()
+  }
+  let term = Term::Quantifier(kind, kept, body_s)
+  if quantifier_unsat(term) {
+    return Term::BoolVal(false)
+  }
+  if kind == QuantifierKind::Forall && forall_inequality_unsat(kept, body_s) {
+    return Term::BoolVal(false)
+  }
+  term
+}
+
+///|
+fn simplify_term(term : Term) -> Term {
+  match term {
+    Term::App(decl, args) => {
+      let new_args = args.map(simplify_term)
+      Term::App(decl, new_args)
+    }
+    Term::Builtin(op, args, sort) => {
+      let new_args = args.map(simplify_term)
+      match op {
+        BuiltinOp::Not =>
+          if new_args.length() == 1 {
+            match new_args[0] {
+              Term::BoolVal(value) => Term::BoolVal(!value)
+              Term::Builtin(BuiltinOp::Not, inner, _) =>
+                if inner.length() == 1 {
+                  inner[0]
+                } else {
+                  Term::Builtin(op, new_args, sort)
+                }
+              _ => Term::Builtin(op, new_args, sort)
+            }
+          } else {
+            Term::Builtin(op, new_args, sort)
+          }
+        BuiltinOp::And => {
+          let flat : Array[Term] = []
+          for arg in new_args {
+            match arg {
+              Term::BoolVal(false) => return Term::BoolVal(false)
+              Term::BoolVal(true) => ()
+              Term::Builtin(BuiltinOp::And, inner, _) =>
+                for item in inner {
+                  flat.push(item)
+                }
+              _ => flat.push(arg)
+            }
+          }
+          if flat.length() == 0 {
+            Term::BoolVal(true)
+          } else if flat.length() == 1 {
+            flat[0]
+          } else {
+            Term::Builtin(op, flat, sort)
+          }
+        }
+        BuiltinOp::Or => {
+          let flat : Array[Term] = []
+          for arg in new_args {
+            match arg {
+              Term::BoolVal(true) => return Term::BoolVal(true)
+              Term::BoolVal(false) => ()
+              Term::Builtin(BuiltinOp::Or, inner, _) =>
+                for item in inner {
+                  flat.push(item)
+                }
+              _ => flat.push(arg)
+            }
+          }
+          if flat.length() == 0 {
+            Term::BoolVal(false)
+          } else if flat.length() == 1 {
+            flat[0]
+          } else {
+            Term::Builtin(op, flat, sort)
+          }
+        }
+        BuiltinOp::Implies =>
+          if new_args.length() == 2 {
+            let lhs = new_args[0]
+            let rhs = new_args[1]
+            match (lhs, rhs) {
+              (Term::BoolVal(false), _) => Term::BoolVal(true)
+              (Term::BoolVal(true), _) => rhs
+              (_, Term::BoolVal(true)) => Term::BoolVal(true)
+              (_, Term::BoolVal(false)) =>
+                simplify_term(Term::Builtin(BuiltinOp::Not, [lhs], Sort::Bool))
+              _ => {
+                let (ants, cons) = flatten_implies(
+                  Term::Builtin(BuiltinOp::Implies, [lhs, rhs], Sort::Bool),
+                )
+                for ant in ants {
+                  if antecedent_implies(ant, cons) {
+                    return Term::BoolVal(true)
+                  }
+                }
+                Term::Builtin(op, [lhs, rhs], sort)
+              }
+            }
+          } else {
+            Term::Builtin(op, new_args, sort)
+          }
+        BuiltinOp::Iff =>
+          if new_args.length() == 2 {
+            let lhs = new_args[0]
+            let rhs = new_args[1]
+            if lhs == rhs {
+              Term::BoolVal(true)
+            } else {
+              match (lhs, rhs) {
+                (Term::BoolVal(true), _) => rhs
+                (Term::BoolVal(false), _) =>
+                  simplify_term(
+                    Term::Builtin(BuiltinOp::Not, [rhs], Sort::Bool),
+                  )
+                (_, Term::BoolVal(true)) => lhs
+                (_, Term::BoolVal(false)) =>
+                  simplify_term(
+                    Term::Builtin(BuiltinOp::Not, [lhs], Sort::Bool),
+                  )
+                _ => Term::Builtin(op, [lhs, rhs], sort)
+              }
+            }
+          } else {
+            Term::Builtin(op, new_args, sort)
+          }
+        BuiltinOp::Xor =>
+          if new_args.length() == 2 {
+            let lhs = new_args[0]
+            let rhs = new_args[1]
+            match (lhs, rhs) {
+              (Term::BoolVal(l), Term::BoolVal(r)) => Term::BoolVal(l != r)
+              (Term::BoolVal(false), _) => rhs
+              (Term::BoolVal(true), _) =>
+                simplify_term(Term::Builtin(BuiltinOp::Not, [rhs], Sort::Bool))
+              (_, Term::BoolVal(false)) => lhs
+              (_, Term::BoolVal(true)) =>
+                simplify_term(Term::Builtin(BuiltinOp::Not, [lhs], Sort::Bool))
+              _ => Term::Builtin(op, [lhs, rhs], sort)
+            }
+          } else {
+            Term::Builtin(op, new_args, sort)
+          }
+        BuiltinOp::Ite =>
+          if new_args.length() == 3 {
+            let cond = new_args[0]
+            let then_t = new_args[1]
+            let else_t = new_args[2]
+            match cond {
+              Term::BoolVal(true) => then_t
+              Term::BoolVal(false) => else_t
+              _ =>
+                if then_t == else_t {
+                  then_t
+                } else {
+                  Term::Builtin(op, [cond, then_t, else_t], sort)
+                }
+            }
+          } else {
+            Term::Builtin(op, new_args, sort)
+          }
+        _ => Term::Builtin(op, new_args, sort)
+      }
+    }
+    Term::Quantifier(kind, vars, body) =>
+      simplify_quantifier_term(kind, vars, body)
     _ => term
   }
 }
@@ -423,15 +744,7 @@ fn quantifier_unsat(term : Term) -> Bool {
 
 ///|
 fn simplify_quantifier(term : Term) -> Term {
-  match term {
-    Term::Quantifier(_, _, _) =>
-      if quantifier_unsat(term) {
-        Term::BoolVal(false)
-      } else {
-        term
-      }
-    _ => term
-  }
+  simplify_term(term)
 }
 
 ///|

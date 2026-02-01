@@ -27,3 +27,8 @@ test "fp-rem-5" {
 test "mul" {
   run_smt("mul")
 }
+
+///|
+test "2546" {
+  run_smt("2546")
+}

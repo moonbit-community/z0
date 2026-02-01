@@ -4,6 +4,7 @@ using @ast {
   type Term,
   type BuiltinOp,
   type QuantifierKind,
+  type BoundVar,
   type BitVecValue,
   type FpValue,
 }
