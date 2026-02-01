@@ -32,3 +32,8 @@ test "mul" {
 test "2546" {
   run_smt("2546")
 }
+
+///|
+test "z3.27" {
+  run_smt("z3.27")
+}

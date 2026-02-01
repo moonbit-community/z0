@@ -473,7 +473,11 @@ fn simplify_sexpr(expr : SExpr) -> SExpr {
             for i in 1..<items.length() {
               new_items.push(simplify_sexpr(items[i]))
             }
-            SExpr::List(new_items)
+            let simplified = SExpr::List(new_items)
+            match simplify_bitvec_expr(simplified) {
+              Some(value) => value
+              None => simplified
+            }
           }
           None => {
             let new_items : Array[SExpr] = []
@@ -547,6 +551,237 @@ fn parse_int_literal(expr : SExpr) -> Int? {
         }
       } else {
         None
+      }
+    _ => None
+  }
+}
+
+///|
+priv enum BitvecFormat {
+  Binary
+  Hex
+}
+
+///|
+priv struct BitvecLiteral {
+  width : Int
+  value : Int
+  format : BitvecFormat
+}
+
+///|
+fn bv_digit_value(ch : Char) -> Int? {
+  match ch {
+    '0' => Some(0)
+    '1' => Some(1)
+    '2' => Some(2)
+    '3' => Some(3)
+    '4' => Some(4)
+    '5' => Some(5)
+    '6' => Some(6)
+    '7' => Some(7)
+    '8' => Some(8)
+    '9' => Some(9)
+    'a' => Some(10)
+    'b' => Some(11)
+    'c' => Some(12)
+    'd' => Some(13)
+    'e' => Some(14)
+    'f' => Some(15)
+    'A' => Some(10)
+    'B' => Some(11)
+    'C' => Some(12)
+    'D' => Some(13)
+    'E' => Some(14)
+    'F' => Some(15)
+    _ => None
+  }
+}
+
+///|
+fn bv_parse_digits_from(text : String, offset : Int, base : Int) -> Int? {
+  let mut value = 0
+  for idx, ch in text.iter2() {
+    if idx < offset {
+      continue
+    }
+    let digit = match bv_digit_value(ch) {
+      Some(val) => val
+      None => return None
+    }
+    if digit >= base {
+      return None
+    }
+    value = value * base + digit
+  }
+  Some(value)
+}
+
+///|
+fn bitvec_mask(width : Int) -> Int? {
+  if width < 0 || width > 60 {
+    return None
+  }
+  let mut value = 1
+  for _ in 0..<width {
+    value = value * 2
+  }
+  Some(value - 1)
+}
+
+///|
+fn parse_bitvec_literal(expr : SExpr) -> BitvecLiteral? {
+  match expr {
+    SExpr::Atom(Atom::BitvectorBinary(text)) => {
+      let width = text.length() - 2
+      if width <= 0 || width > 60 {
+        return None
+      }
+      match bv_parse_digits_from(text, 2, 2) {
+        Some(value) => Some({ width, value, format: BitvecFormat::Binary })
+        None => None
+      }
+    }
+    SExpr::Atom(Atom::BitvectorHex(text)) => {
+      let hex_digits = text.length() - 2
+      let width = hex_digits * 4
+      if hex_digits <= 0 || width > 60 {
+        return None
+      }
+      match bv_parse_digits_from(text, 2, 16) {
+        Some(value) => Some({ width, value, format: BitvecFormat::Hex })
+        None => None
+      }
+    }
+    _ => None
+  }
+}
+
+///|
+fn pad_left(text : String, width : Int, pad : Char) -> String {
+  if text.length() >= width {
+    return text
+  }
+  let sb = StringBuilder::new()
+  for _ in 0..<(width - text.length()) {
+    sb..write_char(pad)
+  }
+  sb..write_string(text)
+  sb.to_string()
+}
+
+///|
+fn bitvec_literal_expr(
+  width : Int,
+  value : Int,
+  format : BitvecFormat,
+) -> SExpr? {
+  let mask = match bitvec_mask(width) {
+    Some(m) => m
+    None => return None
+  }
+  if value < 0 || value > mask {
+    return None
+  }
+  match format {
+    BitvecFormat::Binary => {
+      let raw = value.to_string(radix=2)
+      let padded = pad_left(raw, width, '0')
+      Some(SExpr::Atom(Atom::BitvectorBinary("#b\{padded}")))
+    }
+    BitvecFormat::Hex => {
+      let digits = width / 4
+      let raw = value.to_string(radix=16)
+      let padded = pad_left(raw, digits, '0')
+      Some(SExpr::Atom(Atom::BitvectorHex("#x\{padded}")))
+    }
+  }
+}
+
+///|
+fn simplify_bitvec_expr(expr : SExpr) -> SExpr? {
+  match expr {
+    SExpr::List(items) =>
+      if items.length() < 2 {
+        None
+      } else {
+        let head = match sexpr_symbol(items[0]) {
+          Some(name) => name
+          None => return None
+        }
+        let lits : Array[BitvecLiteral] = []
+        for i in 1..<items.length() {
+          match parse_bitvec_literal(items[i]) {
+            Some(lit) => lits.push(lit)
+            None => return None
+          }
+        }
+        if lits.length() == 0 {
+          return None
+        }
+        let width = lits[0].width
+        for lit in lits {
+          if lit.width != width {
+            return None
+          }
+        }
+        let format = lits[0].format
+        let mask = match bitvec_mask(width) {
+          Some(m) => m
+          None => return None
+        }
+        let result = match head {
+          "bvnot" =>
+            if lits.length() == 1 {
+              Int::lxor(lits[0].value, mask)
+            } else {
+              return None
+            }
+          "bvor" => {
+            let mut acc = lits[0].value
+            for i in 1..<lits.length() {
+              acc = Int::lor(acc, lits[i].value)
+            }
+            Int::land(acc, mask)
+          }
+          "bvand" => {
+            let mut acc = lits[0].value
+            for i in 1..<lits.length() {
+              acc = Int::land(acc, lits[i].value)
+            }
+            Int::land(acc, mask)
+          }
+          "bvxor" => {
+            let mut acc = lits[0].value
+            for i in 1..<lits.length() {
+              acc = Int::lxor(acc, lits[i].value)
+            }
+            Int::land(acc, mask)
+          }
+          "bvnand" => {
+            let mut acc = lits[0].value
+            for i in 1..<lits.length() {
+              acc = Int::land(acc, lits[i].value)
+            }
+            Int::lxor(Int::land(acc, mask), mask)
+          }
+          "bvnor" => {
+            let mut acc = lits[0].value
+            for i in 1..<lits.length() {
+              acc = Int::lor(acc, lits[i].value)
+            }
+            Int::lxor(Int::land(acc, mask), mask)
+          }
+          "bvxnor" => {
+            let mut acc = lits[0].value
+            for i in 1..<lits.length() {
+              acc = Int::lxor(acc, lits[i].value)
+            }
+            Int::lxor(Int::land(acc, mask), mask)
+          }
+          _ => return None
+        }
+        bitvec_literal_expr(width, result, format)
       }
     _ => None
   }
