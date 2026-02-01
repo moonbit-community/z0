@@ -224,6 +224,32 @@ fn ensure_same_sort(args : Array[Term]) -> Sort raise Smt2Error {
 }
 
 ///|
+fn bitvec_repeat(width : Int, ch : Char) -> BitVecValue {
+  let sb = StringBuilder::new()
+  sb..write_string("#b")
+  for _ in 0..<width {
+    sb..write_char(ch)
+  }
+  { width, repr: sb.to_string() }
+}
+
+///|
+fn bitvec_lsb_one(width : Int) -> BitVecValue {
+  let sb = StringBuilder::new()
+  sb..write_string("#b")
+  if width > 0 {
+    for i in 0..<width {
+      if i == width - 1 {
+        sb..write_char('1')
+      } else {
+        sb..write_char('0')
+      }
+    }
+  }
+  { width, repr: sb.to_string() }
+}
+
+///|
 fn ensure_pattern_binder_free(expr : SExpr) -> Unit raise Smt2Error {
   match expr {
     SExpr::Atom(_) => ()
@@ -345,6 +371,32 @@ fn parse_term(
       }
       let head = expect_symbol(items[0])
       match head {
+        "_" => {
+          if items.length() != 4 {
+            raise Smt2Error::Malformed("malformed indexed term")
+          }
+          let tag = expect_symbol(items[1])
+          let eb = parse_numeral(items[2])
+          let sb = parse_numeral(items[3])
+          if sb <= 1 {
+            raise Smt2Error::Malformed("invalid floatingpoint size")
+          }
+          let sign = match tag {
+            "-oo" | "-zero" => bitvec_repeat(1, '1')
+            _ => bitvec_repeat(1, '0')
+          }
+          let exponent = match tag {
+            "+oo" | "-oo" | "NaN" => bitvec_repeat(eb, '1')
+            "+zero" | "-zero" => bitvec_repeat(eb, '0')
+            _ => raise Smt2Error::Unsupported("unknown indexed term: \{tag}")
+          }
+          let significand = match tag {
+            "NaN" => bitvec_lsb_one(sb - 1)
+            "+oo" | "-oo" | "+zero" | "-zero" => bitvec_repeat(sb - 1, '0')
+            _ => raise Smt2Error::Unsupported("unknown indexed term: \{tag}")
+          }
+          Term::FpVal({ sign, exponent, significand })
+        }
         "let" => {
           if items.length() != 3 {
             raise Smt2Error::Malformed("malformed let")

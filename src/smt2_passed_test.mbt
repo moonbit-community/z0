@@ -57,3 +57,8 @@ test "4000" {
 test "intervalUpDivide" {
   run_smt("intervalUpDivide")
 }
+
+///|
+test "fp-conversions-4" {
+  run_smt("fp-conversions-4")
+}
