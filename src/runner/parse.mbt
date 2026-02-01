@@ -563,7 +563,7 @@ fn parse_term(
             t_branch.sort(),
           )
         }
-        "+" | "-" | "*" | "div" | "mod" | "<" | "<=" | ">" | ">=" => {
+        "+" | "-" | "*" | "/" | "div" | "mod" | "<" | "<=" | ">" | ">=" => {
           let args = parse_terms(items, 1, env, locals)
           if args.length() == 0 {
             raise Smt2Error::Malformed("empty arithmetic")
@@ -581,6 +581,7 @@ fn parse_term(
                 Term::Builtin(BuiltinOp::Sub, args, sort)
               }
             "*" => Term::Builtin(BuiltinOp::Mul, args, sort)
+            "/" => Term::Builtin(BuiltinOp::Div, args, sort)
             "div" => Term::Builtin(BuiltinOp::Div, args, sort)
             "mod" => Term::Builtin(BuiltinOp::Mod, args, sort)
             "<" => Term::Builtin(BuiltinOp::Lt, args, Sort::Bool)

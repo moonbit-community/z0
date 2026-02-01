@@ -361,6 +361,191 @@ fn antecedent_implies(antecedent : Term, consequent : Term) -> Bool {
 }
 
 ///|
+fn is_zero_term(term : Term) -> Bool {
+  match term {
+    Term::IntVal(0) => true
+    Term::RealVal("0") => true
+    Term::RealVal("0.0") => true
+    _ => false
+  }
+}
+
+///|
+fn collect_bounds(
+  conjuncts : Array[Term],
+  target : Term,
+) -> (Array[Term], Array[Term]) {
+  let lowers : Array[Term] = []
+  let uppers : Array[Term] = []
+  for term in conjuncts {
+    match term {
+      Term::Builtin(BuiltinOp::Le, args, _) =>
+        if args.length() == 2 {
+          if args[1] == target {
+            lowers.push(args[0])
+          }
+          if args[0] == target {
+            uppers.push(args[1])
+          }
+        }
+      _ => ()
+    }
+  }
+  (lowers, uppers)
+}
+
+///|
+fn has_sign_constraint(
+  conjuncts : Array[Term],
+  y_low : Term,
+  y_high : Term,
+) -> Bool {
+  for term in conjuncts {
+    match term {
+      Term::Builtin(BuiltinOp::Or, args, _) => {
+        let mut has_high_neg = false
+        let mut has_low_pos = false
+        for arg in args {
+          match arg {
+            Term::Builtin(BuiltinOp::Lt, lt_args, _) =>
+              if lt_args.length() == 2 {
+                if lt_args[0] == y_high && is_zero_term(lt_args[1]) {
+                  has_high_neg = true
+                }
+                if is_zero_term(lt_args[0]) && lt_args[1] == y_low {
+                  has_low_pos = true
+                }
+              }
+            _ => ()
+          }
+        }
+        if has_high_neg && has_low_pos {
+          return true
+        }
+      }
+      _ => ()
+    }
+  }
+  false
+}
+
+///|
+fn matches_div_bound(
+  term : Term,
+  numerator : Term,
+  denominator : Term,
+  bound : Term,
+  bound_on_right : Bool,
+) -> Bool {
+  match term {
+    Term::Builtin(BuiltinOp::Le, args, _) =>
+      if args.length() == 2 {
+        if bound_on_right {
+          match args[0] {
+            Term::Builtin(BuiltinOp::Div, div_args, _) =>
+              div_args.length() == 2 &&
+              div_args[0] == numerator &&
+              div_args[1] == denominator &&
+              args[1] == bound
+            _ => false
+          }
+        } else {
+          match args[1] {
+            Term::Builtin(BuiltinOp::Div, div_args, _) =>
+              div_args.length() == 2 &&
+              div_args[0] == numerator &&
+              div_args[1] == denominator &&
+              args[0] == bound
+            _ => false
+          }
+        }
+      } else {
+        false
+      }
+    _ => false
+  }
+}
+
+///|
+fn has_div_bound(
+  conjuncts : Array[Term],
+  numerator : Term,
+  denominator : Term,
+  bound : Term,
+  bound_on_right : Bool,
+) -> Bool {
+  for term in conjuncts {
+    if matches_div_bound(term, numerator, denominator, bound, bound_on_right) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+fn interval_division_implies(antecedent : Term, consequent : Term) -> Bool {
+  let conjuncts = flatten_and(antecedent)
+  match consequent {
+    Term::Builtin(BuiltinOp::Le, args, _) =>
+      if args.length() == 2 {
+        let mut bound_on_right = true
+        let mut numerator : Term? = None
+        let mut denominator : Term? = None
+        let mut bound : Term? = None
+        match args[0] {
+          Term::Builtin(BuiltinOp::Div, div_args, _) =>
+            if div_args.length() == 2 {
+              numerator = Some(div_args[0])
+              denominator = Some(div_args[1])
+              bound = Some(args[1])
+            }
+          _ => ()
+        }
+        if numerator is None {
+          match args[1] {
+            Term::Builtin(BuiltinOp::Div, div_args, _) =>
+              if div_args.length() == 2 {
+                numerator = Some(div_args[0])
+                denominator = Some(div_args[1])
+                bound = Some(args[0])
+                bound_on_right = false
+              }
+            _ => ()
+          }
+        }
+        match (numerator, denominator, bound) {
+          (Some(x), Some(y), Some(z)) => {
+            let (x_lows, x_highs) = collect_bounds(conjuncts, x)
+            let (y_lows, y_highs) = collect_bounds(conjuncts, y)
+            for x_low in x_lows {
+              for x_high in x_highs {
+                for y_low in y_lows {
+                  for y_high in y_highs {
+                    if has_sign_constraint(conjuncts, y_low, y_high) &&
+                      has_div_bound(conjuncts, x_low, y_low, z, bound_on_right) &&
+                      has_div_bound(conjuncts, x_low, y_high, z, bound_on_right) &&
+                      has_div_bound(conjuncts, x_high, y_low, z, bound_on_right) &&
+                      has_div_bound(
+                        conjuncts, x_high, y_high, z, bound_on_right,
+                      ) {
+                      return true
+                    }
+                  }
+                }
+              }
+            }
+            false
+          }
+          _ => false
+        }
+      } else {
+        false
+      }
+    _ => false
+  }
+}
+
+///|
 fn flatten_implies(term : Term) -> (Array[Term], Term) {
   match term {
     Term::Builtin(BuiltinOp::Implies, args, _) =>
@@ -524,6 +709,9 @@ fn simplify_term(term : Term) -> Term {
               (_, Term::BoolVal(false)) =>
                 simplify_term(Term::Builtin(BuiltinOp::Not, [lhs], Sort::Bool))
               _ => {
+                if interval_division_implies(lhs, rhs) {
+                  return Term::BoolVal(true)
+                }
                 let (ants, cons) = flatten_implies(
                   Term::Builtin(BuiltinOp::Implies, [lhs, rhs], Sort::Bool),
                 )

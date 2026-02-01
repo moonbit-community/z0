@@ -52,3 +52,8 @@ test "3670" {
 test "4000" {
   run_smt("4000")
 }
+
+///|
+test "intervalUpDivide" {
+  run_smt("intervalUpDivide")
+}
