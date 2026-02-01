@@ -31,6 +31,7 @@ pub fn Runner::execute(
       Command::SetInfo(_, _) => ()
       Command::DeclareSort(_, _) => ()
       Command::DefineSort(_, _, _) => ()
+      Command::DeclareDatatypes => ()
       Command::DeclareConst(name, sort) => self.solver.declare_const(name, sort)
       Command::DeclareFun(_, _, _) => ()
       Command::DefineFun(_, _, _, _) => ()

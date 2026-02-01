@@ -777,6 +777,63 @@ pub fn parse_command(expr : SExpr, env : Env) -> Command raise Smt2Error {
       env.define_sort(name, params, body)
       Command::DefineSort(name, params, body)
     }
+    "declare-datatypes" => {
+      if items.length() != 3 {
+        raise Smt2Error::Malformed("declare-datatypes expects 2 arguments")
+      }
+      let params_exprs = expect_list(items[1])
+      if params_exprs.length() != 0 {
+        raise Smt2Error::Unsupported("parametric datatypes are not supported")
+      }
+      let datatype_exprs = expect_list(items[2])
+      for datatype_expr in datatype_exprs {
+        let datatype_items = expect_list(datatype_expr)
+        if datatype_items.length() == 0 {
+          raise Smt2Error::Malformed("empty datatype declaration")
+        }
+        let name = expect_symbol(datatype_items[0])
+        env.declare_sort(name, 0)
+      }
+      for datatype_expr in datatype_exprs {
+        let datatype_items = expect_list(datatype_expr)
+        if datatype_items.length() == 0 {
+          raise Smt2Error::Malformed("empty datatype declaration")
+        }
+        let name = expect_symbol(datatype_items[0])
+        let range = match env.find_sort(name) {
+          Some(sort) => sort
+          None => raise Smt2Error::UnknownSort(name)
+        }
+        for i in 1..<datatype_items.length() {
+          let ctor_expr = datatype_items[i]
+          match ctor_expr {
+            SExpr::Atom(_) => {
+              let ctor_name = expect_symbol(ctor_expr)
+              env.declare_fun(ctor_name, [], range)
+            }
+            SExpr::List(ctor_items) => {
+              if ctor_items.length() == 0 {
+                raise Smt2Error::Malformed("empty constructor declaration")
+              }
+              let ctor_name = expect_symbol(ctor_items[0])
+              let domain : Array[Sort] = []
+              for j in 1..<ctor_items.length() {
+                let sel_items = expect_list(ctor_items[j])
+                if sel_items.length() != 2 {
+                  raise Smt2Error::Malformed("selector expects name and sort")
+                }
+                let sel_name = expect_symbol(sel_items[0])
+                let sel_sort = parse_sort(sel_items[1], env)
+                domain.push(sel_sort)
+                env.declare_fun(sel_name, [range], sel_sort)
+              }
+              env.declare_fun(ctor_name, domain, range)
+            }
+          }
+        }
+      }
+      Command::DeclareDatatypes
+    }
     "declare-const" => {
       if items.length() != 3 {
         raise Smt2Error::Malformed("declare-const expects 2 arguments")

@@ -5,6 +5,7 @@ pub enum Command {
   SetInfo(String, SExpr)
   DeclareSort(String, Int)
   DefineSort(String, Array[String], Sort)
+  DeclareDatatypes
   DeclareConst(String, Sort)
   DeclareFun(String, Array[Sort], Sort)
   DefineFun(String, Array[BoundVar], Sort, Term)
