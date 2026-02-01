@@ -47,3 +47,8 @@ test "mut_rec4sdk_output1" {
 test "3670" {
   run_smt("3670")
 }
+
+///|
+test "4000" {
+  run_smt("4000")
+}

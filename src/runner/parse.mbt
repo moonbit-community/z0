@@ -79,6 +79,23 @@ fn parse_bitvec_atom(atom : Atom) -> BitVecValue raise Smt2Error {
 }
 
 ///|
+fn string_sort() -> Sort {
+  Sort::Uninterpreted("String")
+}
+
+///|
+fn string_literal_symbol(value : String) -> String {
+  "#str:\{value}"
+}
+
+///|
+fn ensure_string_sort(sort : Sort) -> Unit raise Smt2Error {
+  if sort != string_sort() {
+    raise Smt2Error::Malformed("expected String sort")
+  }
+}
+
+///|
 fn bitvec_width_of_term(term : Term) -> Int? {
   match term.sort() {
     Sort::BitVec(width) => Some(width)
@@ -318,8 +335,8 @@ fn parse_term(
           }
         Atom::BitvectorBinary(_) => Term::BitVecVal(parse_bitvec_atom(atom))
         Atom::BitvectorHex(_) => Term::BitVecVal(parse_bitvec_atom(atom))
-        Atom::String(_) =>
-          raise Smt2Error::Unsupported("string literals are not supported")
+        Atom::String(value) =>
+          Term::Var(string_literal_symbol(value), string_sort())
         Atom::Keyword(_) => raise Smt2Error::Malformed("unexpected keyword")
       }
     SExpr::List(items) => {
@@ -498,6 +515,34 @@ fn parse_term(
             }
             mk_and(disj)
           }
+        }
+        "str.len" => {
+          if items.length() != 2 {
+            raise Smt2Error::Malformed("str.len expects 1 argument")
+          }
+          let arg = parse_term(items[1], env, locals)
+          ensure_string_sort(arg.sort())
+          let decl = FuncDecl::{
+            name: "str.len",
+            domain: [string_sort()],
+            range: Sort::Int,
+          }
+          Term::App(decl, [arg])
+        }
+        "str.++" => {
+          let args = parse_terms(items, 1, env, locals)
+          if args.length() == 0 {
+            raise Smt2Error::Malformed("str.++ expects at least 1 argument")
+          }
+          for arg in args {
+            ensure_string_sort(arg.sort())
+          }
+          let domain : Array[Sort] = []
+          for _ in 0..<args.length() {
+            domain.push(string_sort())
+          }
+          let decl = FuncDecl::{ name: "str.++", domain, range: string_sort() }
+          Term::App(decl, args)
         }
         "ite" => {
           if items.length() != 4 {

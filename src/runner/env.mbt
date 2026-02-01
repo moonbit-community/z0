@@ -146,6 +146,7 @@ pub fn Env::find_sort(self : Env, name : String) -> Sort? {
     "Bool" => Some(Sort::Bool)
     "Int" => Some(Sort::Int)
     "Real" => Some(Sort::Real)
+    "String" => Some(Sort::Uninterpreted("String"))
     _ => self.current().sorts.get(name)
   }
 }

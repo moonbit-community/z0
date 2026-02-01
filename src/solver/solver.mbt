@@ -196,8 +196,7 @@ fn check_theory(
       Term::Builtin(BuiltinOp::Lt, _, _)
       | Term::Builtin(BuiltinOp::Le, _, _)
       | Term::Builtin(BuiltinOp::Gt, _, _)
-      | Term::Builtin(BuiltinOp::Ge, _, _) =>
-        return Err("arithmetic comparisons are not supported")
+      | Term::Builtin(BuiltinOp::Ge, _, _) => ()
       _ => return Err("unsupported theory atom")
     }
   }
