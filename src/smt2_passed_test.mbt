@@ -42,3 +42,8 @@ test "z3.27" {
 test "mut_rec4sdk_output1" {
   run_smt("mut_rec4sdk_output1")
 }
+
+///|
+test "3670" {
+  run_smt("3670")
+}
