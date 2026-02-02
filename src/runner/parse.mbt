@@ -250,6 +250,18 @@ fn bitvec_lsb_one(width : Int) -> BitVecValue {
 }
 
 ///|
+fn rounding_mode_name(name : String) -> String? {
+  match name {
+    "RNE" | "roundNearestTiesToEven" => Some("roundNearestTiesToEven")
+    "RNA" | "roundNearestTiesToAway" => Some("roundNearestTiesToAway")
+    "RTP" | "roundTowardPositive" => Some("roundTowardPositive")
+    "RTN" | "roundTowardNegative" => Some("roundTowardNegative")
+    "RTZ" | "roundTowardZero" => Some("roundTowardZero")
+    _ => None
+  }
+}
+
+///|
 fn ensure_pattern_binder_free(expr : SExpr) -> Unit raise Smt2Error {
   match expr {
     SExpr::Atom(_) => ()
@@ -341,20 +353,25 @@ fn parse_term(
             "true" => Term::BoolVal(true)
             "false" => Term::BoolVal(false)
             _ =>
-              match locals.get(name) {
-                Some(sort) => Term::Var(name, sort)
+              match rounding_mode_name(name) {
+                Some(canon) =>
+                  Term::Var(canon, Sort::Uninterpreted("RoundingMode"))
                 None =>
-                  match env.find_const(name) {
+                  match locals.get(name) {
                     Some(sort) => Term::Var(name, sort)
                     None =>
-                      match env.find_fun(name) {
-                        Some(decl) =>
-                          if decl.arity() == 0 {
-                            Term::App(decl, [])
-                          } else {
-                            raise Smt2Error::UnknownSymbol(name)
+                      match env.find_const(name) {
+                        Some(sort) => Term::Var(name, sort)
+                        None =>
+                          match env.find_fun(name) {
+                            Some(decl) =>
+                              if decl.arity() == 0 {
+                                Term::App(decl, [])
+                              } else {
+                                raise Smt2Error::UnknownSymbol(name)
+                              }
+                            None => raise Smt2Error::UnknownSymbol(name)
                           }
-                        None => raise Smt2Error::UnknownSymbol(name)
                       }
                   }
               }
@@ -701,6 +718,33 @@ fn parse_term(
           }
           Term::App(decl, args)
         }
+        "fp.roundToIntegral" => {
+          let args = parse_terms(items, 1, env, locals)
+          if args.length() != 2 {
+            raise Smt2Error::Malformed("fp.roundToIntegral expects 2 arguments")
+          }
+          let rm = args[0]
+          let value = args[1]
+          guard rm.sort() == Sort::Uninterpreted("RoundingMode") else {
+            raise Smt2Error::Malformed(
+              "fp.roundToIntegral expects RoundingMode",
+            )
+          }
+          let sort = value.sort()
+          match sort {
+            Sort::FloatingPoint(_, _) => ()
+            _ =>
+              raise Smt2Error::Malformed(
+                "fp.roundToIntegral expects FloatingPoint",
+              )
+          }
+          let decl : FuncDecl = {
+            name: "fp.roundToIntegral",
+            domain: [rm.sort(), sort],
+            range: sort,
+          }
+          Term::App(decl, args)
+        }
         _ => {
           let name = head
           let args = parse_terms(items, 1, env, locals)
@@ -952,8 +996,13 @@ pub fn parse_command(expr : SExpr, env : Env) -> Command raise Smt2Error {
         domain.push(parse_sort(e, env))
       }
       let range = parse_sort(items[3], env)
-      env.declare_fun(name, domain, range)
-      Command::DeclareFun(name, domain, range)
+      if domain.length() == 0 {
+        env.declare_const(name, range)
+        Command::DeclareConst(name, range)
+      } else {
+        env.declare_fun(name, domain, range)
+        Command::DeclareFun(name, domain, range)
+      }
     }
     "define-fun" => {
       if items.length() != 5 {

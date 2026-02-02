@@ -147,6 +147,7 @@ pub fn Env::find_sort(self : Env, name : String) -> Sort? {
     "Int" => Some(Sort::Int)
     "Real" => Some(Sort::Real)
     "String" => Some(Sort::Uninterpreted("String"))
+    "RoundingMode" => Some(Sort::Uninterpreted("RoundingMode"))
     _ => self.current().sorts.get(name)
   }
 }

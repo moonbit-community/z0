@@ -1,9 +1,4 @@
 ///|
-test "fp-roundToIntegral-7" {
-  run_smt("fp-roundToIntegral-7")
-}
-
-///|
 test "fp-fma-17" {
   run_smt("fp-fma-17")
 }

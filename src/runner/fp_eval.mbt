@@ -40,6 +40,11 @@ fn eval_term_with(
           Some(value) => Term::FpVal(value)
           None => Term::App(decl, eval_args)
         }
+      } else if decl.name == "fp.roundToIntegral" {
+        match eval_fp_round_to_integral(eval_args) {
+          Some(value) => Term::FpVal(value)
+          None => Term::App(decl, eval_args)
+        }
       } else {
         Term::App(decl, eval_args)
       }
@@ -55,6 +60,18 @@ fn eval_fp_rem(args : Array[Term]) -> FpValue? {
   }
   match (args[0], args[1]) {
     (Term::FpVal(lhs), Term::FpVal(rhs)) => fp_rem(lhs, rhs)
+    _ => None
+  }
+}
+
+///|
+fn eval_fp_round_to_integral(args : Array[Term]) -> FpValue? {
+  if args.length() != 2 {
+    return None
+  }
+  match (args[0], args[1]) {
+    (Term::Var(mode, Sort::Uninterpreted("RoundingMode")), Term::FpVal(value)) =>
+      fp_round_to_integral(mode, value)
     _ => None
   }
 }
@@ -163,6 +180,66 @@ fn binrat_rem(x : BinRat, y : BinRat) -> BinRat? {
 }
 
 ///|
+fn fp_round_to_integral(mode : String, value : FpValue) -> FpValue? {
+  if fp_is_special(value) || fp_is_zero(value) {
+    return Some(value)
+  }
+  let rat = match fp_to_binrat(value) {
+    Some(v) => v
+    None => return None
+  }
+  let rounded = match round_binrat(mode, rat) {
+    Some(v) => v
+    None => return None
+  }
+  let eb = value.exponent.width
+  let sb = value.significand.width + 1
+  binrat_to_fp({ num: rounded, exp2: 0 }, eb, sb)
+}
+
+///|
+fn round_binrat(mode : String, value : BinRat) -> Int? {
+  let denom = pow2(value.exp2)
+  if denom == 0 {
+    return None
+  }
+  let mut num = value.num
+  let sign = if num < 0 { -1 } else { 1 }
+  if num < 0 {
+    num = -num
+  }
+  let q = num / denom
+  let r = num % denom
+  let rounded = match mode {
+    "roundTowardZero" => q
+    "roundTowardPositive" => if sign > 0 && r > 0 { q + 1 } else { q }
+    "roundTowardNegative" => if sign < 0 && r > 0 { q + 1 } else { q }
+    "roundNearestTiesToEven" => {
+      let twice = r * 2
+      if twice < denom {
+        q
+      } else if twice > denom {
+        q + 1
+      } else if q % 2 == 0 {
+        q
+      } else {
+        q + 1
+      }
+    }
+    "roundNearestTiesToAway" => {
+      let twice = r * 2
+      if twice < denom {
+        q
+      } else {
+        q + 1
+      }
+    }
+    _ => return None
+  }
+  Some(if sign < 0 { -rounded } else { rounded })
+}
+
+///|
 fn binrat_to_fp(value : BinRat, eb : Int, sb : Int) -> FpValue? {
   if eb <= 0 || sb <= 1 {
     return None
@@ -255,6 +332,41 @@ fn bitvec_value(value : BitVecValue) -> Int? {
   } else {
     None
   }
+}
+
+///|
+fn bitvec_is_zero(value : BitVecValue) -> Bool {
+  let text = value.repr
+  if text.length() < 3 {
+    return false
+  }
+  let mut started = false
+  for idx, ch in text.iter2() {
+    if idx < 2 {
+      continue
+    }
+    started = true
+    if ch != '0' {
+      return false
+    }
+  }
+  started
+}
+
+///|
+fn fp_is_zero(value : FpValue) -> Bool {
+  bitvec_is_zero(value.exponent) && bitvec_is_zero(value.significand)
+}
+
+///|
+fn fp_is_special(value : FpValue) -> Bool {
+  let exp = match bitvec_value(value.exponent) {
+    Some(v) => v
+    None => return false
+  }
+  let eb = value.exponent.width
+  let max = pow2(eb) - 1
+  exp == max
 }
 
 ///|

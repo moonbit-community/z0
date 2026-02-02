@@ -62,3 +62,8 @@ test "intervalUpDivide" {
 test "fp-conversions-4" {
   run_smt("fp-conversions-4")
 }
+
+///|
+test "fp-roundToIntegral-7" {
+  run_smt("fp-roundToIntegral-7")
+}
