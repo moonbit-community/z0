@@ -1,0 +1,6 @@
+(get-info :reason-unknown)
+(check-sat)
+(get-info :reason-unknown)
+(declare-const p Bool)
+(assert p)
+(get-info :reason-unknown)

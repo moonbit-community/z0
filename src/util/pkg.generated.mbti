@@ -1,0 +1,122 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/util"
+
+import {
+  "moonbit-community/z0/src/error/solver_error",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Availability[T] {
+  Available(T)
+  Unavailable(AvailabilityReason)
+} derive(Eq)
+
+pub(all) enum AvailabilityReason {
+  Disabled(String)
+  Unsupported(ReasonUnknown)
+  NoCurrentResult
+  WrongResult(ResultKind, ResultKind)
+  Stale
+  UnknownReason(ReasonUnknown)
+} derive(Eq)
+pub fn AvailabilityReason::to_text(Self) -> String
+pub fn AvailabilityReason::unknown(ReasonUnknown) -> Self
+pub fn AvailabilityReason::unsupported(ReasonUnknown) -> Self
+pub fn AvailabilityReason::wrong_result(ResultKind, ResultKind) -> Self
+
+pub struct CancelFlag {
+  // private fields
+}
+pub fn CancelFlag::cancel_api(Self) -> Unit
+pub fn CancelFlag::cancel_user(Self) -> Unit
+pub fn CancelFlag::checkpoint(Self) -> Availability[Unit]
+pub fn CancelFlag::is_canceled(Self) -> Bool
+pub fn CancelFlag::new() -> Self
+pub fn CancelFlag::reset(Self) -> Unit
+
+pub(all) struct ExprId(Int) derive(Compare, Eq, Hash)
+pub fn ExprId::new(Int) -> Self
+pub fn ExprId::to_int(Self) -> Int
+pub impl Show for ExprId
+
+pub(all) struct FuncDeclId(Int) derive(Compare, Eq, Hash)
+pub fn FuncDeclId::new(Int) -> Self
+pub fn FuncDeclId::to_int(Self) -> Int
+pub impl Show for FuncDeclId
+
+pub(all) enum ReasonUnknown {
+  Timeout
+  Memout
+  MaxConflictsReached
+  ResourceLimitExceeded
+  Canceled(String)
+  IncompleteTheory(String)
+  IncompleteQuantifiers
+  IncompleteLambdas
+  UnsupportedFragment(String)
+  InvalidCore
+  InvalidProof
+  InvalidModel
+  ModelEvalFailed
+  ModelValidationFailed
+  Other(String)
+} derive(Eq)
+pub fn ReasonUnknown::canceled(String) -> Self
+pub fn ReasonUnknown::to_text(Self) -> String
+pub fn ReasonUnknown::unsupported_fragment(String) -> Self
+
+pub struct ResourceLimit {
+  // private fields
+}
+pub fn ResourceLimit::checkpoint(Self) -> Availability[Unit]
+pub fn ResourceLimit::reset(Self) -> Unit
+pub fn ResourceLimit::unlimited() -> Self
+pub fn ResourceLimit::used_steps(Self) -> Int
+pub fn ResourceLimit::with_step_limit(Int) -> Self
+
+pub(all) enum ResultKind {
+  NoResult
+  Sat
+  Unsat
+  Unknown(Bool)
+} derive(Eq)
+pub fn ResultKind::to_text(Self) -> String
+pub fn ResultKind::unknown_no_model() -> Self
+pub fn ResultKind::unknown_with_model() -> Self
+
+pub(all) struct SatVar(Int) derive(Compare, Eq, Hash)
+pub fn SatVar::new(Int) -> Self
+pub fn SatVar::to_int(Self) -> Int
+pub impl Show for SatVar
+
+pub(all) struct ScopeLevel(Int) derive(Compare, Eq, Hash)
+pub fn ScopeLevel::new(Int) -> Self
+pub fn ScopeLevel::to_int(Self) -> Int
+pub impl Show for ScopeLevel
+
+pub struct ScopedVector[T] {
+  items : Array[T]
+  scopes : Array[Int]
+}
+pub fn[T] ScopedVector::commit_scope(Self[T], Int) -> Unit raise @solver_error.SolverError
+pub fn[T] ScopedVector::items(Self[T]) -> Array[T]
+pub fn[T] ScopedVector::length(Self[T]) -> Int
+pub fn[T] ScopedVector::new() -> Self[T]
+pub fn[T] ScopedVector::pop_scope(Self[T], Int) -> Unit raise @solver_error.SolverError
+pub fn[T] ScopedVector::push_item(Self[T], T) -> Unit
+pub fn[T] ScopedVector::push_scope(Self[T]) -> Unit
+pub fn[T] ScopedVector::scope_depth(Self[T]) -> Int
+
+pub(all) struct SortId(Int) derive(Compare, Eq, Hash)
+pub fn SortId::new(Int) -> Self
+pub fn SortId::to_int(Self) -> Int
+pub impl Show for SortId
+
+// Type aliases
+
+// Traits
+

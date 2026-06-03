@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/solver/preprocess"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/solver",
+}
+
+// Values
+pub fn preprocessing_disabled_factory(@solver.SolverFactory) -> @solver.SolverFactory
+
+// Errors
+
+// Types and methods
+pub struct SolverPreprocess {
+  // private fields
+}
+pub fn SolverPreprocess::as_factory(Self) -> @solver.SolverFactory
+pub fn SolverPreprocess::create(Self, @ast.AstManager, @solver.SolverFactoryConfig) -> @solver.Solver
+pub fn SolverPreprocess::disabled(@solver.SolverFactory) -> Self
+pub fn SolverPreprocess::new(@solver.SolverFactory) -> Self
+pub fn SolverPreprocess::status_text(Self) -> String
+
+// Type aliases
+
+// Traits
+

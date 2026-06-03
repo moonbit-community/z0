@@ -1,0 +1,61 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/ast/converters"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/model",
+  "moonbit-community/z0/src/proof",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct GenericModelConverter {
+  // private fields
+}
+pub fn GenericModelConverter::add(Self, String) -> Unit
+pub fn GenericModelConverter::add_initialize_value(Self, String, String) -> Unit
+pub fn GenericModelConverter::add_unit(Self, String, Bool) -> Unit
+pub fn GenericModelConverter::as_model_converter(Self) -> ModelConverter
+pub fn GenericModelConverter::hide(Self, String) -> Unit
+pub fn GenericModelConverter::new() -> Self
+
+pub struct GenericProofConverter {
+  // private fields
+}
+pub fn GenericProofConverter::add_label(Self, String) -> Unit
+pub fn GenericProofConverter::as_proof_converter(Self) -> ProofConverter
+pub fn GenericProofConverter::new() -> Self
+
+pub struct ModelConverter {
+  // private fields
+}
+pub fn ModelConverter::apply_model(Self, @model.Model) -> @util.Availability[@model.Model]
+pub fn ModelConverter::concat(Self, Self) -> Self
+pub fn ModelConverter::convert_initialize_values(Self, Array[String]) -> @util.Availability[Array[String]]
+pub fn ModelConverter::get_units(Self, Array[String]) -> @util.Availability[Array[String]]
+pub fn ModelConverter::identity() -> Self
+pub fn ModelConverter::steps_text(Self) -> String
+pub fn ModelConverter::translate(Self, @ast.AstTranslator) -> @util.Availability[Self]
+pub fn ModelConverter::unsupported(String) -> Self
+
+type ModelUnitAction
+
+pub struct ProofConverter {
+  // private fields
+}
+pub fn ProofConverter::apply_labels(Self, Array[String]) -> @util.Availability[Array[String]]
+pub fn ProofConverter::apply_proof(Self, @proof.ProofObject) -> @util.Availability[@proof.ProofObject]
+pub fn ProofConverter::concat(Self, Self) -> Self
+pub fn ProofConverter::identity() -> Self
+pub fn ProofConverter::steps_text(Self) -> String
+pub fn ProofConverter::translate(Self, @ast.AstTranslator) -> @util.Availability[Self]
+pub fn ProofConverter::unsupported(String) -> Self
+
+// Type aliases
+
+// Traits
+

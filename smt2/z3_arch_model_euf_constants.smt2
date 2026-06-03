@@ -1,0 +1,8 @@
+(set-logic QF_UF)
+(set-option :produce-models true)
+(declare-sort U 0)
+(declare-const a U)
+(declare-const b U)
+(assert (distinct a b))
+(check-sat)
+(get-model)

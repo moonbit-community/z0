@@ -1,0 +1,6 @@
+(check-sat)
+(reset-assertions)
+(get-info :reason-unknown)
+(check-sat)
+(reset)
+(get-info :reason-unknown)

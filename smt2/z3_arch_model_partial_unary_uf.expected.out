@@ -1,0 +1,16 @@
+sat
+(
+  ;; universe U: @U0 @U1
+  (declare-fun @U0 () U)
+  (declare-fun @U1 () U)
+  ;; cardinality constraint for U
+  (forall ((x U)) (or (= x @U0) (= x @U1)))
+  (define-fun a () U
+    @U0)
+  (define-fun b () U
+    @U1)
+  (define-fun f ((x0 U)) U
+    (ite (= x0 @U0)
+      @U1
+      #unspecified))
+)

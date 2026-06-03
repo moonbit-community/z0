@@ -1,0 +1,1 @@
+(assert (as nil List))

@@ -1,0 +1,85 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/parsers/smt2"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/cmd_context",
+  "moonbit-community/z0/src/error/parse_error",
+  "moonbit-community/z0/src/solver",
+  "moonbit-community/z0/src/source",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+pub fn parse_command(@ast.AstManager, SExpr) -> @cmd_context.Command raise
+
+pub fn parse_next(SExprCursor) -> ParseNext raise @parse_error.ParseError
+
+pub fn parse_program(String) -> Array[SExpr] raise @parse_error.ParseError
+
+pub fn parse_term(@ast.AstManager, SExpr) -> @util.ExprId raise
+
+pub fn run_smt2_result_with_factory(String, @solver.SolverFactory) -> Smt2RunResult
+
+pub fn run_smt2_with_factory(String, @solver.SolverFactory) -> String
+
+// Errors
+
+// Types and methods
+pub(all) enum ParseNext {
+  Next(SExpr, SExprCursor)
+  End(SExprCursor)
+}
+
+pub(all) enum SExpr {
+  Atom(String, @source.SourceSpan)
+  StringLit(String, @source.SourceSpan)
+  List(Array[SExpr], @source.SourceSpan)
+} derive(Eq)
+pub fn SExpr::repr(Self) -> String
+pub fn SExpr::span(Self) -> @source.SourceSpan
+pub impl Show for SExpr
+
+pub struct SExprCursor {
+  scanner : Scanner
+}
+pub fn SExprCursor::new(String) -> Self
+
+pub struct Scanner {
+  input : String
+  mut index : Int
+  mut line : Int
+  mut column : Int
+}
+pub fn Scanner::new(String) -> Self
+pub fn Scanner::next_token(Self) -> Token raise @parse_error.ParseError
+
+pub struct Smt2RunResult {
+  // private fields
+}
+pub fn Smt2RunResult::exit_code(Self) -> Int
+pub fn Smt2RunResult::output(Self) -> String
+pub fn Smt2RunResult::stderr(Self) -> String
+
+pub(all) struct Token {
+  kind : TokenKind
+  span : @source.SourceSpan
+} derive(Eq)
+pub fn Token::eof(@source.SourceSpan) -> Self
+pub fn Token::lparen(@source.SourceSpan) -> Self
+pub fn Token::rparen(@source.SourceSpan) -> Self
+pub fn Token::string_lit(String, @source.SourceSpan) -> Self
+pub fn Token::symbol(String, @source.SourceSpan) -> Self
+
+pub(all) enum TokenKind {
+  LParen
+  RParen
+  Symbol(String)
+  StringToken(String)
+  Eof
+} derive(Eq)
+
+// Type aliases
+
+// Traits
+

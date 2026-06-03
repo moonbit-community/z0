@@ -1,0 +1,95 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/tactic"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/ast/converters",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/stats",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct DependencyConverter {
+  // private fields
+}
+pub fn DependencyConverter::add_label(Self, String) -> Unit
+pub fn DependencyConverter::labels_text(Self) -> String
+pub fn DependencyConverter::new() -> Self
+
+pub struct Goal {
+  // private fields
+}
+pub fn Goal::add(Self, @util.ExprId) -> Unit
+pub fn Goal::dependency_converter(Self) -> DependencyConverter
+pub fn Goal::depth(Self) -> Int
+pub fn Goal::formula(Self, Int) -> @util.ExprId?
+pub fn Goal::is_decided_sat(Self) -> Bool
+pub fn Goal::is_decided_unsat(Self) -> Bool
+pub fn Goal::manager(Self) -> @ast.AstManager
+pub fn Goal::model_converter(Self) -> @converters.ModelConverter
+pub fn Goal::new(@ast.AstManager) -> Self
+pub fn Goal::precision(Self) -> GoalPrecision
+pub fn Goal::proof_converter(Self) -> @converters.ProofConverter
+pub fn Goal::reason_unknown_text(Self) -> String
+pub fn Goal::requires_model(Self) -> Bool
+pub fn Goal::requires_proof(Self) -> Bool
+pub fn Goal::requires_unsat_core(Self) -> Bool
+pub fn Goal::sat_preserved(Self) -> Bool
+pub fn Goal::set_depth(Self, Int) -> Unit
+pub fn Goal::set_precision(Self, GoalPrecision) -> Unit
+pub fn Goal::set_reason_unknown(Self, @util.ReasonUnknown) -> Unit
+pub fn Goal::set_requires_model(Self, Bool) -> Unit
+pub fn Goal::set_requires_proof(Self, Bool) -> Unit
+pub fn Goal::set_requires_unsat_core(Self, Bool) -> Unit
+pub fn Goal::size(Self) -> Int
+pub fn Goal::unsat_preserved(Self) -> Bool
+
+pub(all) enum GoalPrecision {
+  Precise
+  Under
+  Over
+  UnderOver
+} derive(Eq)
+pub fn GoalPrecision::to_text(Self) -> String
+
+pub struct Tactic {
+  // private fields
+}
+pub fn Tactic::and_then(Self, Self) -> Self
+pub fn Tactic::apply(Self, Goal) -> @util.Availability[TacticResult]
+pub fn Tactic::cleanup(Self) -> @util.Availability[Unit]
+pub fn Tactic::collect_statistics(Self) -> @stats.Statistics
+pub fn Tactic::describe_params(Self) -> @params.ParamDescrs
+pub fn Tactic::fail(String) -> Self
+pub fn Tactic::name(Self) -> String
+pub fn Tactic::new(String, (Goal) -> @util.Availability[TacticResult]) -> Self
+pub fn Tactic::set_cleanup(Self, () -> @util.Availability[Unit]) -> Unit
+pub fn Tactic::set_collect_statistics(Self, () -> @stats.Statistics) -> Unit
+pub fn Tactic::set_describe_params(Self, () -> @params.ParamDescrs) -> Unit
+pub fn Tactic::set_logic(Self, String) -> @util.Availability[Unit]
+pub fn Tactic::set_logic_callback(Self, (String) -> @util.Availability[Unit]) -> Unit
+pub fn Tactic::set_translate(Self, (@ast.AstTranslator) -> @util.Availability[Self]) -> Unit
+pub fn Tactic::set_updt_params(Self, (@params.Params) -> @util.Availability[Unit]) -> Unit
+pub fn Tactic::simplify() -> Self
+pub fn Tactic::skip() -> Self
+pub fn Tactic::solve_eqs() -> Self
+pub fn Tactic::translate(Self, @ast.AstTranslator) -> @util.Availability[Self]
+pub fn Tactic::tseitin_cnf() -> Self
+pub fn Tactic::updt_params(Self, @params.Params) -> @util.Availability[Unit]
+
+pub struct TacticResult {
+  // private fields
+}
+pub fn TacticResult::from_goals(Array[Goal]) -> Self
+pub fn TacticResult::goal(Self, Int) -> Goal?
+pub fn TacticResult::goal_count(Self) -> Int
+
+// Type aliases
+
+// Traits
+

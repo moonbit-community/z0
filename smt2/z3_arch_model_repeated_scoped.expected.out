@@ -1,0 +1,15 @@
+sat
+(
+  (define-fun p () Bool
+    true)
+)
+(
+  (define-fun p () Bool
+    true)
+)
+unsat
+sat
+(
+  (define-fun p () Bool
+    true)
+)

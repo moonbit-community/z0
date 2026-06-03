@@ -1,0 +1,8 @@
+(set-logic QF_UF)
+(declare-const p Bool)
+(define-fun m () Bool p)
+(assert m)
+(check-sat)
+(reset)
+(set-logic QF_UF)
+(assert m)

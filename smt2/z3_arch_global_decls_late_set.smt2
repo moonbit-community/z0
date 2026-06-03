@@ -1,0 +1,5 @@
+(push)
+(set-option :global-decls true)
+(declare-const p Bool)
+(pop)
+(assert p)

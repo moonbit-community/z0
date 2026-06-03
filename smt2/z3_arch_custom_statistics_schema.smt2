@@ -1,0 +1,1 @@
+(get-info :all-statistics)

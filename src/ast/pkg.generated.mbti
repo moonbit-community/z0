@@ -1,0 +1,215 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/ast"
+
+import {
+  "moonbit-community/z0/src/error/solver_error",
+  "moonbit-community/z0/src/error/type_error",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum ArithCompareOp {
+  Lt
+  Le
+  Gt
+  Ge
+} derive(Eq)
+pub fn ArithCompareOp::symbol(Self) -> String
+
+pub struct AstManager {
+  // private fields
+}
+pub fn AstManager::arith_family(Self) -> FamilyId
+pub fn AstManager::bool_family(Self) -> FamilyId
+pub fn AstManager::bool_sort(Self) -> @util.SortId
+pub fn AstManager::commit_scope(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn AstManager::decl_family(Self, @util.FuncDeclId) -> FamilyId
+pub fn AstManager::declare_const(Self, String, @util.SortId) -> @util.FuncDeclId raise @type_error.TypeError
+pub fn AstManager::declare_fun(Self, String, Array[@util.SortId], @util.SortId) -> @util.FuncDeclId raise @type_error.TypeError
+pub fn AstManager::declare_sort(Self, String, Int) -> @util.SortId raise
+pub fn AstManager::define_bool_macro(Self, String, @util.ExprId) -> Unit raise @type_error.TypeError
+pub fn AstManager::define_macro(Self, String, @util.ExprId) -> Unit raise @type_error.TypeError
+pub fn AstManager::define_scoped_macro(Self, String, @util.ExprId) -> Unit
+pub fn AstManager::ensure_family_supported(Self, FamilyId) -> @util.Availability[Unit]
+pub fn AstManager::expand_macros(Self, @util.ExprId) -> MacroExpansion raise @type_error.TypeError
+pub fn AstManager::expr_family(Self, @util.ExprId) -> FamilyId
+pub fn AstManager::expr_sort(Self, @util.ExprId) -> @util.SortId
+pub fn AstManager::family_descriptor(Self, FamilyId) -> FamilyDescriptor
+pub fn AstManager::family_name(Self, FamilyId) -> String
+pub fn AstManager::full_reset(Self) -> Unit
+pub fn AstManager::get_decl(Self, @util.FuncDeclId) -> FuncDecl
+pub fn AstManager::get_expr(Self, @util.ExprId) -> Expr
+pub fn AstManager::install_macros(Self, MacroManager) -> Unit
+pub fn AstManager::int_sort(Self) -> @util.SortId
+pub fn AstManager::lookup_decl(Self, String) -> @util.FuncDeclId?
+pub fn AstManager::lookup_family(Self, String) -> FamilyId?
+pub fn AstManager::lookup_macro(Self, String) -> @util.ExprId?
+pub fn AstManager::lookup_sort(Self, String) -> @util.SortId?
+pub fn AstManager::mk_and(Self, Array[@util.ExprId]) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_app(Self, @util.FuncDeclId, Array[@util.ExprId]) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_arith_compare(Self, ArithCompareOp, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_bool(Self, Bool) -> @util.ExprId
+pub fn AstManager::mk_distinct(Self, Array[@util.ExprId]) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_eq(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_ge(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_gt(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_implies(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_int(Self, Int) -> @util.ExprId
+pub fn AstManager::mk_le(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_lt(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_macro_ref(Self, String) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_not(Self, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_or(Self, Array[@util.ExprId]) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::mk_xor(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+pub fn AstManager::new() -> Self
+pub fn AstManager::pop_scope(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn AstManager::pretty(Self, @util.ExprId) -> String
+pub fn AstManager::push_scope(Self) -> Unit
+pub fn AstManager::sort_family(Self, @util.SortId) -> FamilyId
+pub fn AstManager::sort_name(Self, @util.SortId) -> String
+pub fn AstManager::uf_family(Self) -> FamilyId
+
+pub struct AstTranslator {
+  // private fields
+}
+pub fn AstTranslator::new(AstManager, AstManager) -> Self
+pub fn AstTranslator::translate_decl(Self, @util.FuncDeclId) -> @util.FuncDeclId raise
+pub fn AstTranslator::translate_expr(Self, @util.ExprId) -> @util.ExprId raise
+pub fn AstTranslator::translate_sort(Self, @util.SortId) -> @util.SortId raise
+
+pub(all) struct BoolMacro {
+  name : String
+  expr : @util.ExprId
+} derive(Eq)
+
+pub(all) enum DeclPluginHook {
+  PluginClone
+  PluginInherit
+  ParameterTranslation
+  MkFresh
+  IsValue
+  IsModelValue
+  AreEqual
+  AreDistinct
+  GetSomeValue
+  IsConsideredUninterpreted
+  Translate
+} derive(Eq)
+pub fn DeclPluginHook::name(Self) -> String
+
+pub(all) struct DefinedName {
+  name : String
+  expr : @util.ExprId
+} derive(Eq)
+
+pub struct DefinedNames {
+  // private fields
+}
+pub fn DefinedNames::insert(Self, String, @util.ExprId) -> Unit
+pub fn DefinedNames::lookup(Self, String) -> @util.ExprId?
+pub fn DefinedNames::new() -> Self
+pub fn DefinedNames::pop(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn DefinedNames::push(Self) -> Unit
+
+pub(all) struct Expr {
+  id : @util.ExprId
+  kind : ExprKind
+  sort : @util.SortId
+} derive(Eq)
+
+pub(all) enum ExprKind {
+  BoolValue(Bool)
+  IntValue(Int)
+  App(@util.FuncDeclId, Array[@util.ExprId])
+  MacroRef(String)
+  Not(@util.ExprId)
+  And(Array[@util.ExprId])
+  Or(Array[@util.ExprId])
+  Implies(@util.ExprId, @util.ExprId)
+  Xor(@util.ExprId, @util.ExprId)
+  Eq(@util.ExprId, @util.ExprId)
+  Distinct(Array[@util.ExprId])
+  ArithCompare(ArithCompareOp, @util.ExprId, @util.ExprId)
+} derive(Eq)
+
+pub struct FamilyDescriptor {
+  // private fields
+}
+pub fn FamilyDescriptor::has_hook(Self, DeclPluginHook) -> Bool
+pub fn FamilyDescriptor::hook_manifest_text(Self) -> String
+pub fn FamilyDescriptor::hook_status(Self, DeclPluginHook) -> @util.Availability[Unit]
+pub fn FamilyDescriptor::id(Self) -> FamilyId
+pub fn FamilyDescriptor::is_supported(Self) -> Bool
+pub fn FamilyDescriptor::name(Self) -> String
+pub fn FamilyDescriptor::new(id~ : FamilyId, name~ : String, supported~ : Bool, owner~ : String) -> Self
+pub fn FamilyDescriptor::owner(Self) -> String
+pub fn FamilyDescriptor::support_text(Self) -> String
+
+pub struct FamilyId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn FamilyId::new(Int) -> Self
+pub fn FamilyId::to_int(Self) -> Int
+pub impl Show for FamilyId
+
+pub(all) struct FuncDecl {
+  id : @util.FuncDeclId
+  name : String
+  domain : Array[@util.SortId]
+  range : @util.SortId
+  family : FamilyId
+} derive(Eq)
+
+pub(all) struct MacroExpansion {
+  result : @util.ExprId
+  proof : String?
+  dependency : String?
+} derive(Eq)
+pub fn MacroExpansion::dependency_text(Self) -> String
+pub fn MacroExpansion::proof_text(Self) -> String
+pub fn MacroExpansion::result(Self) -> @util.ExprId
+
+pub struct MacroManager {
+  // private fields
+}
+pub fn MacroManager::copy_to(Self, Self) -> Unit
+pub fn MacroManager::expand_macros(Self, AstManager, @util.ExprId) -> MacroExpansion raise @type_error.TypeError
+pub fn MacroManager::insert(Self, String, @util.ExprId) -> Unit
+pub fn MacroManager::lookup(Self, String) -> @util.ExprId?
+pub fn MacroManager::new() -> Self
+pub fn MacroManager::pop(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn MacroManager::push(Self) -> Unit
+pub fn MacroManager::reset(Self) -> Unit
+
+pub(all) struct NnfResult {
+  result : @util.ExprId
+  new_defs : Array[DefinedName]
+  new_def_proofs : Array[String]
+  result_proof : String?
+  aux_decl_visibility : String
+} derive(Eq)
+pub fn NnfResult::identity(@util.ExprId) -> Self
+pub fn NnfResult::new_defs_count(Self) -> Int
+pub fn NnfResult::result(Self) -> @util.ExprId
+
+pub(all) struct Sort {
+  id : @util.SortId
+  name : String
+  kind : SortKind
+  family : FamilyId
+} derive(Eq)
+
+pub(all) enum SortKind {
+  BoolSort
+  IntSort
+  UninterpretedSort(String)
+} derive(Eq)
+
+// Type aliases
+
+// Traits
+

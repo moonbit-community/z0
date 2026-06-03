@@ -1,0 +1,6 @@
+(set-option :produce-models true)
+(declare-const p Bool)
+(check-sat)
+(get-model)
+(eval p)
+(get-info :reason-unknown)

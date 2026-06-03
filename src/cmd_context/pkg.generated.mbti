@@ -1,0 +1,94 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/cmd_context"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/solver",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Command {
+  SetLogic(String)
+  SetOption(String, String)
+  SetInfo(String, String)
+  GetOption(String)
+  DeclareSort(String, Int)
+  DeclareConst(String, @util.SortId)
+  DeclareFun(String, Array[@util.SortId], @util.SortId)
+  DefineFun(String, Array[(String, @util.SortId)], @util.SortId, @util.ExprId)
+  Assert(@util.ExprId)
+  AssertNamed(@util.ExprId, String)
+  Push(Int)
+  Pop(Int)
+  Reset
+  ResetAssertions
+  CheckSat
+  CheckSatAssuming(Array[@util.ExprId])
+  GetModel
+  GetValue(Array[ModelQueryTerm])
+  Eval(ModelQueryTerm, Bool)
+  GetProof
+  GetUnsatCore
+  GetUnsatAssumptions
+  GetInfo(String)
+  Echo(String)
+  Exit
+} derive(Eq)
+pub impl Show for Command
+
+pub struct CommandContext {
+  // private fields
+}
+pub fn CommandContext::append_runner_message(Self, String) -> Unit
+pub fn CommandContext::cancel_api(Self) -> Unit
+pub fn CommandContext::cancel_user(Self) -> Unit
+pub fn CommandContext::diagnostic_output_channel(Self) -> String
+pub fn CommandContext::error_behavior(Self) -> String
+pub fn CommandContext::execute(Self, Command) -> Unit raise
+pub fn CommandContext::exited(Self) -> Bool
+pub fn CommandContext::global_decls(Self) -> Bool
+pub fn CommandContext::is_canceled(Self) -> Bool
+pub fn CommandContext::manager(Self) -> @ast.AstManager
+pub fn CommandContext::new(@solver.SolverFactory) -> Self
+pub fn CommandContext::new_with_factory(@solver.SolverFactory) -> Self
+pub fn CommandContext::output(Self) -> String
+pub fn CommandContext::produce_models(Self) -> Bool
+pub fn CommandContext::produce_proofs(Self) -> Bool
+pub fn CommandContext::produce_unsat_assumptions(Self) -> Bool
+pub fn CommandContext::produce_unsat_cores(Self) -> Bool
+pub fn CommandContext::regular_output_channel(Self) -> String
+pub fn CommandContext::reset_cancel(Self) -> Unit
+pub fn CommandContext::stderr_output(Self) -> String
+
+pub struct ModelQueryTerm {
+  // private fields
+} derive(Eq)
+pub fn ModelQueryTerm::display(Self) -> String
+pub fn ModelQueryTerm::expr(Self) -> @util.ExprId
+pub fn ModelQueryTerm::new(String, @util.ExprId) -> Self
+
+pub struct Options {
+  // private fields
+}
+pub fn Options::auto_config(Self) -> Bool
+pub fn Options::diagnostic_output_channel(Self) -> String
+pub fn Options::global_decls(Self) -> Bool
+pub fn Options::new() -> Self
+pub fn Options::print_success(Self) -> Bool
+pub fn Options::produce_models(Self) -> Bool
+pub fn Options::produce_proofs(Self) -> Bool
+pub fn Options::produce_unsat_assumptions(Self) -> Bool
+pub fn Options::produce_unsat_cores(Self) -> Bool
+pub fn Options::regular_output_channel(Self) -> String
+pub fn Options::reproducible_resource_limit(Self) -> Int?
+pub fn Options::set(Self, String, String) -> Unit raise
+
+// Type aliases
+
+// Traits
+

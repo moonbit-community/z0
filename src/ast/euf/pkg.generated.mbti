@@ -1,0 +1,35 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/ast/euf"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/error/solver_error",
+  "moonbit-community/z0/src/error/type_error",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct EufSolver {
+  // private fields
+}
+pub fn EufSolver::assert_disequal(Self, @util.ExprId, @util.ExprId) -> Unit raise @type_error.TypeError
+pub fn EufSolver::assert_equal(Self, @util.ExprId, @util.ExprId) -> Unit raise @type_error.TypeError
+pub fn EufSolver::check(Self) -> EufStatus
+pub fn EufSolver::new(@ast.AstManager) -> Self
+pub fn EufSolver::pop_scope(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn EufSolver::push_scope(Self) -> Unit
+pub fn EufSolver::same_class(Self, @util.ExprId, @util.ExprId) -> Bool raise @type_error.TypeError
+
+pub(all) enum EufStatus {
+  EufSat
+  EufUnsat
+} derive(Eq)
+
+// Type aliases
+
+// Traits
+

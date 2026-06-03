@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/error/solver_error"
+
+// Values
+
+// Errors
+pub(all) suberror SolverError {
+  SolverError(String)
+} derive(Eq)
+pub fn SolverError::format(Self) -> String
+pub fn SolverError::prefix(Self) -> String
+pub impl Show for SolverError
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

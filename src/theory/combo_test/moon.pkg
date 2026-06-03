@@ -1,0 +1,12 @@
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/egraph",
+  "moonbit-community/z0/src/solver/default_factory",
+  "moonbit-community/z0/src/solver/smt_adapter",
+  "moonbit-community/z0/src/theory/arith_lite",
+  "moonbit-community/z0/src/theory/core" @theory_core,
+  "moonbit-community/z0/src/theory/euf_solver",
+  "moonbit-community/z0/src/theory/fake_combo",
+  "moonbit-community/z0/src/theory/ids",
+  "moonbit-community/z0/src/util",
+} for "test"

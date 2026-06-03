@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/theory/euf_solver"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/theory/core",
+  "moonbit-community/z0/src/theory/ids",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+pub fn euf_theory_factory(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryFactory
+
+pub fn euf_theory_plugin(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryPlugin
+
+// Errors
+
+// Types and methods
+pub struct EufModelObligations {
+  // private fields
+}
+pub fn EufModelObligations::add_function_obligation(Self, @util.FuncDeclId) -> Unit
+pub fn EufModelObligations::add_uninterpreted_value(Self, @core.TheoryTermRef) -> Unit
+pub fn EufModelObligations::new() -> Self
+pub fn EufModelObligations::summary_text(Self) -> String
+
+pub struct EufProofHints {
+  // private fields
+}
+pub fn EufProofHints::add_congruence(Self, @ids.TheoryId, String) -> @core.ProofHintId
+pub fn EufProofHints::kind_text(Self, @core.ProofHintId) -> String
+pub fn EufProofHints::new() -> Self
+
+// Type aliases
+
+// Traits
+

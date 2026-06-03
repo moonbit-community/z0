@@ -1,0 +1,80 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/model"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+type BoolConstInterp
+
+pub struct FuncInterp {
+  // private fields
+}
+pub fn FuncInterp::add_entry(Self, Array[String], String) -> Unit
+pub fn FuncInterp::format(Self) -> String
+pub fn FuncInterp::new(String, Array[String], String) -> Self
+pub fn FuncInterp::set_else(Self, String) -> Unit
+
+type FuncInterpEntry
+
+type FuncInterpRecord
+
+pub struct Model {
+  // private fields
+}
+pub fn Model::add_bool_const(Self, @util.FuncDeclId, String, Bool) -> Unit
+pub fn Model::add_func_interp(Self, @util.FuncDeclId, FuncInterp) -> Unit
+pub fn Model::add_universe_value(Self, @util.SortId, String, ModelValue) -> Unit
+pub fn Model::add_value_const(Self, @util.FuncDeclId, @util.SortId, String, ModelValue, name? : String) -> Unit
+pub fn Model::bool_const_value(Self, @util.FuncDeclId) -> Bool?
+pub fn Model::eval(Self, @ast.AstManager, @util.ExprId, completion~ : Bool) -> ModelValue?
+pub fn Model::format(Self) -> String
+pub fn Model::fresh_uninterpreted_value(Self, @util.SortId, String) -> ModelValue
+pub fn Model::new() -> Self
+pub fn Model::universe_values(Self, @util.SortId) -> Array[ModelValue]
+
+pub struct ModelHandle {
+  // private fields
+}
+pub fn ModelHandle::disabled(String) -> Self
+pub fn ModelHandle::mark_stale(Self) -> Unit
+pub fn ModelHandle::new(Int, @util.ResultKind) -> Self
+pub fn ModelHandle::to_text(Self) -> String
+pub fn ModelHandle::view(Self) -> @util.Availability[ModelRef]
+
+pub struct ModelRef {
+  // private fields
+}
+pub fn ModelRef::to_text(Self) -> String
+
+pub struct ModelValue {
+  // private fields
+}
+pub fn ModelValue::bool(Bool) -> Self
+pub fn ModelValue::format_smt2(Self) -> String
+pub fn ModelValue::int(Int) -> Self
+pub fn ModelValue::sort(Self) -> @util.SortId?
+pub fn ModelValue::to_text(Self) -> String
+
+type SortValueCounter
+
+type UniverseInterp
+
+type ValueConstInterp
+
+pub struct ValueFactory {
+  // private fields
+}
+pub fn ValueFactory::fresh_uninterpreted(Self, @util.SortId, String) -> ModelValue
+pub fn ValueFactory::new() -> Self
+
+// Type aliases
+
+// Traits
+

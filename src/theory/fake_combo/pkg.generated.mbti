@@ -1,0 +1,31 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/theory/fake_combo"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/theory/core",
+  "moonbit-community/z0/src/theory/ids",
+}
+
+// Values
+pub fn fake_combo_param_descrs() -> @params.ParamDescrs
+
+pub fn fake_combo_theory_factory(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryFactory
+
+pub fn fake_combo_theory_plugin(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryPlugin
+
+// Errors
+
+// Types and methods
+pub struct FakeComboHarness {
+  // private fields
+}
+pub fn FakeComboHarness::log_text(Self) -> String
+pub fn FakeComboHarness::new(@ids.TheoryId, @ast.FamilyId) -> Self
+pub fn FakeComboHarness::plugin(Self) -> @core.TheoryPlugin
+
+// Type aliases
+
+// Traits
+

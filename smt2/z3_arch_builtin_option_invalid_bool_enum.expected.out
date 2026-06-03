@@ -1,0 +1,7 @@
+true
+(error ":print-warning expects true or false")
+true
+continued-execution
+(error ":error-behavior expects continued-execution or immediate-exit")
+continued-execution
+after
