@@ -1,0 +1,11 @@
+import {
+  "moonbit-community/z0/src/error/io_error",
+  "moonbit-community/z0/src/frontend/assembly",
+  "moonbit-community/z0/src/parsers/smt2",
+  "moonbitlang/x/fs",
+  "moonbitlang/x/sys",
+}
+
+options(
+  "is-main": true,
+)

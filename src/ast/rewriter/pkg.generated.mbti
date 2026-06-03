@@ -1,0 +1,34 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/ast/rewriter"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/error/type_error",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+pub fn expand_macros(@ast.AstManager, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+
+pub fn rewrite_bool(@ast.AstManager, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
+
+pub fn rewrite_bool_result(@ast.AstManager, @util.ExprId) -> RewriteResult raise @type_error.TypeError
+
+// Errors
+
+// Types and methods
+pub(all) struct RewriteResult {
+  result : @util.ExprId
+  proof : String?
+  dependency : String?
+  unsupported : @util.ReasonUnknown?
+} derive(Eq)
+pub fn RewriteResult::dependency_text(Self) -> String
+pub fn RewriteResult::proof_text(Self) -> String
+pub fn RewriteResult::result(Self) -> @util.ExprId
+pub fn RewriteResult::unsupported_text(Self) -> String
+
+// Type aliases
+
+// Traits
+

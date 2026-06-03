@@ -1,0 +1,5 @@
+(declare-const p Bool)
+(define-fun m () Bool p)
+(assert (not m))
+(assert p)
+(check-sat)

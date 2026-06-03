@@ -1,0 +1,6 @@
+(set-option :produce-models true)
+(declare-sort U 0)
+(declare-const a U)
+(check-sat)
+(eval a)
+(eval a :completion true)

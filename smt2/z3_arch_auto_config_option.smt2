@@ -1,0 +1,5 @@
+(get-option :auto-config)
+(set-option :auto-config true)
+(get-option :auto-config)
+(reset)
+(get-option :auto-config)

@@ -1,0 +1,14 @@
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/egraph",
+  "moonbit-community/z0/src/error/solver_error",
+  "moonbit-community/z0/src/error/type_error",
+  "moonbit-community/z0/src/model",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/proof",
+  "moonbit-community/z0/src/sat" @pure_sat,
+  "moonbit-community/z0/src/stats",
+  "moonbit-community/z0/src/theory/core" @theory_core,
+  "moonbit-community/z0/src/theory/ids" @theory_ids,
+  "moonbit-community/z0/src/util",
+}

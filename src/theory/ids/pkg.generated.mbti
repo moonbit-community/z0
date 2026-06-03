@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/theory/ids"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct TheoryId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn TheoryId::new(Int) -> Self
+pub fn TheoryId::null() -> Self
+pub fn TheoryId::to_int(Self) -> Int
+pub impl Show for TheoryId
+
+pub struct TheoryVar {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn TheoryVar::new(Int) -> Self
+pub fn TheoryVar::null() -> Self
+pub fn TheoryVar::to_int(Self) -> Int
+pub impl Show for TheoryVar
+
+// Type aliases
+
+// Traits
+

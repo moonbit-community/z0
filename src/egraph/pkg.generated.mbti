@@ -1,0 +1,100 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/egraph"
+
+import {
+  "moonbit-community/z0/src/theory/ids",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct EGraph {
+  // private fields
+}
+pub fn EGraph::add_axiom_justification(Self, @ids.TheoryId) -> JustificationId
+pub fn EGraph::add_equality_justification(Self, EnodeId, EnodeId) -> JustificationId
+pub fn EGraph::args(Self, EnodeId) -> Array[EnodeId]
+pub fn EGraph::attach_theory_var(Self, EnodeId, @ids.TheoryId, @ids.TheoryVar) -> Unit
+pub fn EGraph::enqueue_new_diseq(Self, EnodeId) -> Unit
+pub fn EGraph::enqueue_new_eq(Self, EnodeId, EnodeId) -> Unit
+pub fn EGraph::expr_handle(Self, EnodeId) -> EnodeExpr?
+pub fn EGraph::find(Self, @util.ExprId) -> EnodeId?
+pub fn EGraph::generation(Self, EnodeId) -> Int
+pub fn EGraph::is_relevant(Self, EnodeId) -> Bool
+pub fn EGraph::justification_text(Self, JustificationId) -> String
+pub fn EGraph::justification_valid(Self, JustificationId) -> Bool
+pub fn EGraph::mk_enode(Self, @util.ExprId, Array[EnodeId], Int) -> EnodeId
+pub fn EGraph::mk_enode_with_key(Self, @util.ExprId, Array[EnodeId], Int, Int) -> EnodeId
+pub fn EGraph::new() -> Self
+pub fn EGraph::new_diseq(Self, Int) -> EnodeId?
+pub fn EGraph::new_diseq_count(Self) -> Int
+pub fn EGraph::new_diseq_text(Self, Int) -> String
+pub fn EGraph::new_eq(Self, Int) -> EnodeParentLink?
+pub fn EGraph::new_eq_count(Self) -> Int
+pub fn EGraph::new_eq_text(Self, Int) -> String
+pub fn EGraph::node_count(Self) -> Int
+pub fn EGraph::operator_key(Self, EnodeId) -> Int
+pub fn EGraph::parents(Self, EnodeId) -> Array[EnodeId]
+pub fn EGraph::pop(Self, Int) -> Unit
+pub fn EGraph::push(Self) -> Unit
+pub fn EGraph::scope_depth(Self) -> Int
+pub fn EGraph::set_relevant(Self, EnodeId) -> Unit
+pub fn EGraph::theory_attachments(Self, EnodeId) -> Array[EnodeTheoryVarAttachment]
+pub fn EGraph::theory_var_text(Self, EnodeId, @ids.TheoryId) -> String
+
+pub struct EGraphCongruence {
+  // private fields
+}
+pub fn EGraphCongruence::add_term(Self, EnodeId) -> Unit
+pub fn EGraphCongruence::assert_disequal(Self, EnodeId, EnodeId) -> Unit
+pub fn EGraphCongruence::close(Self, EGraph) -> Unit
+pub fn EGraphCongruence::find(Self, EnodeId) -> EnodeId
+pub fn EGraphCongruence::has_conflict(Self) -> Bool
+pub fn EGraphCongruence::merge(Self, EnodeId, EnodeId) -> Bool
+pub fn EGraphCongruence::new() -> Self
+pub fn EGraphCongruence::pop(Self, Int) -> Unit
+pub fn EGraphCongruence::push(Self) -> Unit
+pub fn EGraphCongruence::same_class(Self, EnodeId, EnodeId) -> Bool
+
+pub struct EnodeExpr {
+  // private fields
+}
+pub fn EnodeExpr::enode(Self) -> EnodeId
+pub fn EnodeExpr::expr(Self) -> @util.ExprId
+pub fn EnodeExpr::new(EnodeId, @util.ExprId) -> Self
+
+pub struct EnodeId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn EnodeId::new(Int) -> Self
+pub fn EnodeId::to_int(Self) -> Int
+pub impl Show for EnodeId
+
+pub struct EnodeParentLink {
+  // private fields
+}
+pub fn EnodeParentLink::child(Self) -> EnodeId
+pub fn EnodeParentLink::new(EnodeId, EnodeId) -> Self
+pub fn EnodeParentLink::parent(Self) -> EnodeId
+
+pub struct EnodeTheoryVarAttachment {
+  // private fields
+}
+pub fn EnodeTheoryVarAttachment::new(@ids.TheoryId, @ids.TheoryVar) -> Self
+pub fn EnodeTheoryVarAttachment::theory_id(Self) -> @ids.TheoryId
+pub fn EnodeTheoryVarAttachment::theory_var(Self) -> @ids.TheoryVar
+
+pub struct JustificationId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn JustificationId::new(Int) -> Self
+pub fn JustificationId::to_int(Self) -> Int
+pub impl Show for JustificationId
+
+// Type aliases
+
+// Traits
+

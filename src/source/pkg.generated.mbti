@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/source"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct ByteOffset(Int) derive(Compare, Eq, Hash)
+pub fn ByteOffset::new(Int) -> Self
+pub fn ByteOffset::to_int(Self) -> Int
+
+pub(all) struct Column(Int) derive(Compare, Eq, Hash)
+pub fn Column::new(Int) -> Self
+pub fn Column::to_int(Self) -> Int
+
+pub(all) struct Line(Int) derive(Compare, Eq, Hash)
+pub fn Line::new(Int) -> Self
+pub fn Line::to_int(Self) -> Int
+
+pub(all) struct SourcePos {
+  line : Line
+  column : Column
+  offset : ByteOffset
+} derive(Eq)
+pub fn SourcePos::column(Self) -> Int
+pub fn SourcePos::line(Self) -> Int
+pub fn SourcePos::new(line~ : Int, column~ : Int, offset~ : Int) -> Self
+pub fn SourcePos::offset(Self) -> Int
+
+pub(all) struct SourceSpan {
+  start : SourcePos
+  end : SourcePos
+} derive(Eq)
+pub fn SourceSpan::format(Self) -> String
+pub fn SourceSpan::new(start~ : SourcePos, end~ : SourcePos) -> Self
+pub impl Show for SourceSpan
+
+// Type aliases
+
+// Traits
+

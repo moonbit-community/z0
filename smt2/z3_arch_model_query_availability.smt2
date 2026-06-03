@@ -1,0 +1,7 @@
+(set-option :produce-models true)
+(declare-sort U 0)
+(declare-const a U)
+(get-model)
+(get-value (a))
+(check-sat)
+(eval a)

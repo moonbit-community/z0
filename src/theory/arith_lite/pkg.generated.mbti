@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/theory/arith_lite"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/theory/core",
+  "moonbit-community/z0/src/theory/ids",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+pub fn arith_lite_param_descrs() -> @params.ParamDescrs
+
+pub fn arith_lite_theory_factory(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryFactory
+
+pub fn arith_lite_theory_plugin(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryPlugin
+
+// Errors
+
+// Types and methods
+pub struct ArithLiteProblem {
+  // private fields
+}
+pub fn ArithLiteProblem::assert_eq_const(Self, String, Int) -> Unit
+pub fn ArithLiteProblem::assert_ge_const(Self, String, Int) -> Unit
+pub fn ArithLiteProblem::assert_le_const(Self, String, Int) -> Unit
+pub fn ArithLiteProblem::check(Self) -> ArithLiteResult
+pub fn ArithLiteProblem::new() -> Self
+pub fn ArithLiteProblem::reject_fragment(Self, String) -> Unit
+
+pub(all) enum ArithLiteResult {
+  ArithLiteSat
+  ArithLiteUnsat(String)
+  ArithLiteUnsupported(@util.ReasonUnknown)
+} derive(Eq)
+pub fn ArithLiteResult::to_text(Self) -> String
+
+// Type aliases
+
+// Traits
+

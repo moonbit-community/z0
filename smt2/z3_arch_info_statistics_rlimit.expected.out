@@ -1,0 +1,4 @@
+(:rlimit 1)
+sat
+(:all-statistics solver.checks)
+(:rlimit 5)

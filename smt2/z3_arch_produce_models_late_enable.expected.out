@@ -1,0 +1,5 @@
+sat
+(
+  (define-fun p () Bool
+    true)
+)

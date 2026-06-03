@@ -1,0 +1,4 @@
+error: model is not available: no-current-result
+error: value is not available: no-current-result
+sat
+error: eval is not available: unknown(model-eval-failed)

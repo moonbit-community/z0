@@ -1,0 +1,7 @@
+(get-option :print-warning)
+(set-option :print-warning maybe)
+(get-option :print-warning)
+(get-option :error-behavior)
+(set-option :error-behavior stop)
+(get-option :error-behavior)
+(echo "after")

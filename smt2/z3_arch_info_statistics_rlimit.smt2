@@ -1,0 +1,6 @@
+(set-option :reproducible-resource-limit 8)
+(get-info :rlimit)
+(declare-const p Bool)
+(check-sat)
+(get-info :all-statistics)
+(get-info :rlimit)

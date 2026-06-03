@@ -1,0 +1,5 @@
+(set-option :produce-unsat-assumptions true)
+(declare-const p Bool)
+(assert p)
+(check-sat-assuming ((not p)))
+(get-unsat-assumptions)

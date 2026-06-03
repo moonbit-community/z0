@@ -1,0 +1,1 @@
+(error "push count must be non-negative")

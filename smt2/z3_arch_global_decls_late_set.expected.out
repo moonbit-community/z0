@@ -1,0 +1,1 @@
+solver: cannot set :global-decls while scopes are active

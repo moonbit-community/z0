@@ -1,0 +1,8 @@
+unknown: maybe
+(
+  (define-fun p () Bool
+    true)
+)
+((p true))
+true
+(:reason-unknown maybe)

@@ -1,0 +1,5 @@
+(set-logic QF_UF)
+(declare-sort U 0)
+(declare-const a U)
+(assert (forall ((x U)) (= x a)))
+(check-sat)

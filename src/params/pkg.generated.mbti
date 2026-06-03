@@ -1,0 +1,85 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/params"
+
+import {
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct ParamDescrs {
+  // private fields
+}
+pub fn ParamDescrs::add_bool(Self, String, Bool, String, String) -> Unit
+pub fn ParamDescrs::add_bool_with_policy(Self, String, Bool, String, String, ParamLifecycle, Int, Bool) -> Unit
+pub fn ParamDescrs::add_int(Self, String, Int, String, String) -> Unit
+pub fn ParamDescrs::add_int_with_policy(Self, String, Int, String, String, ParamLifecycle, Int, Bool) -> Unit
+pub fn ParamDescrs::add_smt_setup_defaults(Self) -> Unit
+pub fn ParamDescrs::add_solver_model_proof_defaults(Self) -> Unit
+pub fn ParamDescrs::add_string(Self, String, String, String, String) -> Unit
+pub fn ParamDescrs::add_string_with_policy(Self, String, String, String, String, ParamLifecycle, Int, Bool) -> Unit
+pub fn ParamDescrs::apply_order(Self, String) -> Int
+pub fn ParamDescrs::description(Self, String) -> String
+pub fn ParamDescrs::keys_text(Self) -> String
+pub fn ParamDescrs::kind_text(Self, String) -> String
+pub fn ParamDescrs::lifecycle_text(Self, String) -> String
+pub fn ParamDescrs::new() -> Self
+pub fn ParamDescrs::owner(Self, String) -> String
+pub fn ParamDescrs::requires_reset(Self, String) -> Bool
+pub fn ParamDescrs::validate_set(Self, String, ParamSetStage) -> @util.Availability[Unit]
+
+pub(all) enum ParamKind {
+  BoolParam
+  IntParam
+  StringParam
+} derive(Eq)
+
+pub(all) enum ParamLifecycle {
+  SetupOnly
+  PreAssertion
+  PerCheck
+  Dynamic
+} derive(Eq)
+pub fn ParamLifecycle::dynamic() -> Self
+pub fn ParamLifecycle::per_check() -> Self
+pub fn ParamLifecycle::pre_assertion() -> Self
+pub fn ParamLifecycle::setup_only() -> Self
+
+pub(all) enum ParamSetStage {
+  SetupStage
+  PreAssertionStage
+  PostAssertionStage
+  PerCheckStage
+} derive(Eq)
+pub fn ParamSetStage::per_check() -> Self
+pub fn ParamSetStage::post_assertion() -> Self
+pub fn ParamSetStage::pre_assertion() -> Self
+pub fn ParamSetStage::setup() -> Self
+
+pub(all) enum ParamValue {
+  BoolValue(Bool)
+  IntValue(Int)
+  StringValue(String)
+} derive(Eq)
+
+pub struct Params {
+  // private fields
+}
+pub fn Params::get_bool(Self, String) -> @util.Availability[Bool]
+pub fn Params::get_int(Self, String) -> @util.Availability[Int]
+pub fn Params::get_string(Self, String) -> @util.Availability[String]
+pub fn Params::new(ParamDescrs) -> Self
+pub fn Params::set_bool(Self, String, Bool) -> @util.Availability[Bool]
+pub fn Params::set_bool_at(Self, String, Bool, ParamSetStage) -> @util.Availability[Bool]
+pub fn Params::set_int(Self, String, Int) -> @util.Availability[Int]
+pub fn Params::set_int_at(Self, String, Int, ParamSetStage) -> @util.Availability[Int]
+pub fn Params::set_string(Self, String, String) -> @util.Availability[String]
+pub fn Params::set_string_at(Self, String, String, ParamSetStage) -> @util.Availability[String]
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,4 @@
+unknown: maybe
+error: model is not available: wrong-result(expected=sat, actual=unknown-no-model)
+error: eval is not available: wrong-result(expected=sat, actual=unknown-no-model)
+(:reason-unknown maybe)

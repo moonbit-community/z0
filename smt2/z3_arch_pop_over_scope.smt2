@@ -1,0 +1,5 @@
+(push)
+(declare-const p Bool)
+(pop 2)
+(assert p)
+(check-sat)

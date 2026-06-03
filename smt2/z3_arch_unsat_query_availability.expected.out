@@ -1,0 +1,7 @@
+error: unsat core is not available: no-current-result
+error: unsat assumptions are not available: no-current-result
+sat
+error: unsat core is not available: wrong-result(expected=unsat, actual=sat)
+error: unsat assumptions are not available: wrong-result(expected=unsat, actual=sat)
+error: unsat core is not available: stale
+error: unsat assumptions are not available: stale

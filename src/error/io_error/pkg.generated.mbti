@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/error/io_error"
+
+// Values
+
+// Errors
+pub(all) suberror IoError {
+  IoError(String)
+} derive(Eq)
+pub fn IoError::format(Self) -> String
+pub fn IoError::prefix(Self) -> String
+pub impl Show for IoError
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

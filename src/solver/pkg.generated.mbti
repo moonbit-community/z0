@@ -1,0 +1,156 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/solver"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/model",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/proof",
+  "moonbit-community/z0/src/stats",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct AssumptionSet {
+  // private fields
+}
+pub fn AssumptionSet::add(Self, @util.ExprId) -> Unit
+pub fn AssumptionSet::items(Self) -> Array[@util.ExprId]
+pub fn AssumptionSet::length(Self) -> Int
+pub fn AssumptionSet::new() -> Self
+
+pub struct CheckSatAssumingResult {
+  // private fields
+}
+pub fn CheckSatAssumingResult::from_result(CheckSatResult) -> Self
+pub fn CheckSatAssumingResult::new(CheckSatResult, UnsatAssumptionSet) -> Self
+pub fn CheckSatAssumingResult::new_with_core(CheckSatResult, UnsatAssumptionSet, UnsatCore) -> Self
+pub fn CheckSatAssumingResult::result(Self) -> CheckSatResult
+pub fn CheckSatAssumingResult::unsat_assumptions(Self) -> UnsatAssumptionSet
+pub fn CheckSatAssumingResult::unsat_core(Self) -> UnsatCore
+
+pub(all) enum CheckSatResult {
+  CheckSat
+  CheckUnsat
+  CheckUnknown(@util.ReasonUnknown, Bool)
+} derive(Eq)
+pub fn CheckSatResult::reason_unknown(Self) -> @util.ReasonUnknown?
+pub fn CheckSatResult::result_kind(Self) -> @util.ResultKind
+pub fn CheckSatResult::sat() -> Self
+pub fn CheckSatResult::to_text(Self) -> String
+pub fn CheckSatResult::unknown_no_model(@util.ReasonUnknown) -> Self
+pub fn CheckSatResult::unknown_with_model(@util.ReasonUnknown) -> Self
+pub fn CheckSatResult::unsat() -> Self
+
+pub struct Solver {
+  // private fields
+}
+pub fn Solver::assert_expr(Self, @util.ExprId) -> @util.Availability[Unit]
+pub fn Solver::assert_expr_tracked(Self, @util.ExprId, TrackedExpr) -> @util.Availability[TrackedAssertionId]
+pub fn Solver::check_sat(Self) -> CheckSatResult
+pub fn Solver::check_sat_assuming(Self, AssumptionSet) -> CheckSatResult
+pub fn Solver::collect_statistics(Self) -> StatisticsSnapshot
+pub fn Solver::describe_params(Self) -> @params.ParamDescrs
+pub fn Solver::eval(Self, @util.ExprId, completion~ : Bool) -> @util.Availability[@model.ModelValue]
+pub fn Solver::get_assertion(Self, Int) -> @util.ExprId?
+pub fn Solver::get_model(Self) -> @util.Availability[@model.Model]
+pub fn Solver::get_model_text(Self) -> @util.Availability[String]
+pub fn Solver::get_num_assertions(Self) -> Int
+pub fn Solver::get_proof(Self) -> @util.Availability[@proof.ProofRef]
+pub fn Solver::get_scope_level(Self) -> Int
+pub fn Solver::get_unsat_assumptions(Self) -> @util.Availability[UnsatAssumptionSet]
+pub fn Solver::get_unsat_core(Self) -> @util.Availability[UnsatCore]
+pub fn Solver::get_value(Self, @util.ExprId) -> @util.Availability[@model.ModelValue]
+pub fn Solver::model_available(Self) -> @util.Availability[Unit]
+pub fn Solver::new(@ast.AstManager, SolverFactoryConfig, SolverBackend) -> Self
+pub fn Solver::pop(Self, Int) -> @util.Availability[Unit]
+pub fn Solver::push(Self, Int) -> @util.Availability[Unit]
+pub fn Solver::reason_unknown(Self) -> @util.Availability[@util.ReasonUnknown]
+pub fn Solver::set_produce_models(Self, Bool) -> @util.Availability[Bool]
+pub fn Solver::set_produce_proofs(Self, Bool) -> @util.Availability[Bool]
+pub fn Solver::set_produce_unsat_assumptions(Self, Bool) -> @util.Availability[Bool]
+pub fn Solver::set_produce_unsat_cores(Self, Bool) -> @util.Availability[Bool]
+pub fn Solver::translate(Self, @ast.AstManager) -> @util.Availability[Self]
+pub fn Solver::updt_params(Self, @params.Params) -> @util.Availability[Unit]
+
+pub struct SolverBackend {
+  // private fields
+}
+pub fn SolverBackend::new(assert_expr~ : (@util.ExprId) -> @util.Availability[Unit], assert_expr_tracked~ : (@util.ExprId, TrackedExpr) -> @util.Availability[Unit], push~ : (Int) -> @util.Availability[Unit], pop~ : (Int) -> @util.Availability[Unit], check_sat_assuming~ : (AssumptionSet) -> CheckSatAssumingResult, model~ : () -> @util.Availability[@model.Model], proof~ : () -> @util.Availability[@proof.ProofRef], collect_statistics~ : () -> @stats.Statistics, translate? : (@ast.AstManager, SolverFactoryConfig) -> @util.Availability[Self]) -> Self
+
+pub struct SolverFactory {
+  // private fields
+}
+pub fn SolverFactory::create(Self, @ast.AstManager, SolverFactoryConfig) -> Solver
+pub fn SolverFactory::new((@ast.AstManager, SolverFactoryConfig) -> Solver) -> Self
+
+pub struct SolverFactoryConfig {
+  // private fields
+}
+pub fn SolverFactoryConfig::describe_params(Self) -> @params.ParamDescrs
+pub fn SolverFactoryConfig::logic(Self) -> String
+pub fn SolverFactoryConfig::new() -> Self
+pub fn SolverFactoryConfig::params(Self) -> @params.Params
+pub fn SolverFactoryConfig::produce_models(Self) -> Bool
+pub fn SolverFactoryConfig::produce_proofs(Self) -> Bool
+pub fn SolverFactoryConfig::produce_unsat_assumptions(Self) -> Bool
+pub fn SolverFactoryConfig::produce_unsat_cores(Self) -> Bool
+pub fn SolverFactoryConfig::with_logic(Self, String) -> Self
+pub fn SolverFactoryConfig::with_produce_models(Self, Bool) -> Self
+pub fn SolverFactoryConfig::with_produce_proofs(Self, Bool) -> Self
+pub fn SolverFactoryConfig::with_produce_unsat_assumptions(Self, Bool) -> Self
+pub fn SolverFactoryConfig::with_produce_unsat_cores(Self, Bool) -> Self
+
+pub struct StatisticsSnapshot {
+  // private fields
+}
+pub fn StatisticsSnapshot::incomplete_reasons_text(Self) -> String
+pub fn StatisticsSnapshot::keys_text(Self) -> String
+pub fn StatisticsSnapshot::new(@stats.Statistics, Array[@util.ReasonUnknown]) -> Self
+
+pub struct TrackedAssertionId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn TrackedAssertionId::new(Int) -> Self
+pub fn TrackedAssertionId::to_int(Self) -> Int
+
+pub struct TrackedExpr {
+  // private fields
+}
+pub fn TrackedExpr::display_name(Self) -> String
+pub fn TrackedExpr::new(@util.ExprId, String?) -> Self
+pub fn TrackedExpr::tracker(Self) -> @util.ExprId
+
+pub struct UnsatAssumptionSet {
+  // private fields
+}
+pub fn UnsatAssumptionSet::empty() -> Self
+pub fn UnsatAssumptionSet::from_exprs(Array[@util.ExprId]) -> Self
+pub fn UnsatAssumptionSet::items(Self) -> Array[@util.ExprId]
+pub fn UnsatAssumptionSet::length(Self) -> Int
+pub fn UnsatAssumptionSet::to_text(Self) -> String
+
+pub struct UnsatCore {
+  // private fields
+}
+pub fn UnsatCore::empty() -> Self
+pub fn UnsatCore::length(Self) -> Int
+pub fn UnsatCore::single(UnsatCoreEntry) -> Self
+pub fn UnsatCore::to_text(Self) -> String
+pub fn UnsatCore::to_text_with_expr(Self, (@util.ExprId) -> String) -> String
+pub fn UnsatCore::with_entry(Self, UnsatCoreEntry) -> Self
+
+pub struct UnsatCoreEntry {
+  // private fields
+}
+pub fn UnsatCoreEntry::new(@util.ExprId, String?) -> Self
+pub fn UnsatCoreEntry::to_text(Self) -> String
+
+// Type aliases
+
+// Traits
+

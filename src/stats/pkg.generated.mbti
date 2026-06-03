@@ -1,0 +1,56 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/stats"
+
+import {
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+type StatKind derive(Eq)
+
+pub struct StatManifest {
+  // private fields
+}
+pub fn StatManifest::add_counter(Self, String, String, StatMergePolicy, String) -> @util.Availability[Unit]
+pub fn StatManifest::add_timer_ms(Self, String, String, StatMergePolicy, String) -> @util.Availability[Unit]
+pub fn StatManifest::keys_text(Self) -> String
+pub fn StatManifest::kind_text(Self, String) -> String
+pub fn StatManifest::new() -> Self
+pub fn StatManifest::owner(Self, String) -> String
+
+pub(all) enum StatMergePolicy {
+  Sum
+  Latest
+} derive(Eq)
+pub fn StatMergePolicy::latest() -> Self
+pub fn StatMergePolicy::sum() -> Self
+
+pub(all) enum StatValue {
+  Counter(Int)
+  TimerMs(Double)
+} derive(Eq)
+
+pub struct Statistics {
+  // private fields
+}
+pub fn Statistics::add_timer_ms(Self, String, Double) -> Unit
+pub fn Statistics::inc_counter(Self, String, Int) -> Unit
+pub fn Statistics::incomplete_reasons(Self, StatManifest) -> Array[@util.ReasonUnknown]
+pub fn Statistics::keys_text(Self) -> String
+pub fn Statistics::mark_incomplete(Self, @util.ReasonUnknown) -> Unit
+pub fn Statistics::merge(Self, Self) -> Unit
+pub fn Statistics::new() -> Self
+pub fn Statistics::record_model_query(Self) -> Unit
+pub fn Statistics::record_proof_query(Self) -> Unit
+pub fn Statistics::record_solver_check(Self) -> Unit
+pub fn Statistics::value(Self, String) -> @util.Availability[StatValue]
+pub fn Statistics::value_text(Self, String) -> String
+
+// Type aliases
+
+// Traits
+

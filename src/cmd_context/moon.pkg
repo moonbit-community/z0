@@ -1,0 +1,16 @@
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/ast/rewriter",
+  "moonbit-community/z0/src/error/parse_error",
+  "moonbit-community/z0/src/error/solver_error",
+  "moonbit-community/z0/src/error/type_error",
+  "moonbit-community/z0/src/error/unsupported_error",
+  "moonbit-community/z0/src/model",
+  "moonbit-community/z0/src/solver",
+  "moonbit-community/z0/src/util",
+}
+
+import {
+  "moonbit-community/z0/src/frontend/assembly",
+  "moonbit-community/z0/src/stats",
+} for "test"

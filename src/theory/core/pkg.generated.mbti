@@ -1,0 +1,221 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/theory/core"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/sat",
+  "moonbit-community/z0/src/stats",
+  "moonbit-community/z0/src/theory/ids",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct AntecedentId {
+  // private fields
+} derive(Eq)
+pub fn AntecedentId::is_valid_at(Self, Int) -> Bool
+pub fn AntecedentId::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn AntecedentId::owner(Self) -> @ids.TheoryId
+pub fn AntecedentId::to_int(Self) -> Int
+pub impl Show for AntecedentId
+
+pub struct DiseqFact {
+  // private fields
+} derive(Eq)
+pub fn DiseqFact::is_valid_at(Self, Int) -> Bool
+pub fn DiseqFact::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn DiseqFact::owner(Self) -> @ids.TheoryId
+pub fn DiseqFact::scope_generation(Self) -> Int
+pub fn DiseqFact::to_int(Self) -> Int
+pub impl Show for DiseqFact
+
+pub struct EqFact {
+  // private fields
+} derive(Eq)
+pub fn EqFact::is_valid_at(Self, Int) -> Bool
+pub fn EqFact::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn EqFact::owner(Self) -> @ids.TheoryId
+pub fn EqFact::scope_generation(Self) -> Int
+pub fn EqFact::to_int(Self) -> Int
+pub impl Show for EqFact
+
+pub struct ModelValidationView {
+  // private fields
+}
+pub fn ModelValidationView::empty() -> Self
+pub fn ModelValidationView::eval_text(Self, @util.ExprId, completion~ : Bool) -> String?
+pub fn ModelValidationView::new(eval_text~ : (@util.ExprId, Bool) -> String?) -> Self
+
+pub struct ProofHintId {
+  // private fields
+} derive(Eq)
+pub fn ProofHintId::is_valid_at(Self, Int) -> Bool
+pub fn ProofHintId::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn ProofHintId::owner(Self) -> @ids.TheoryId
+pub fn ProofHintId::to_int(Self) -> Int
+pub impl Show for ProofHintId
+
+pub struct TheoryActions {
+  // private fields
+}
+pub fn TheoryActions::add_clause(Self, Array[@sat.Literal]) -> Unit
+pub fn TheoryActions::add_extension_assumption(Self, @sat.Literal, @util.ExprId, String?) -> Unit
+pub fn TheoryActions::add_lemma(Self, Array[@sat.Literal]) -> Unit
+pub fn TheoryActions::add_lemma_with_hint(Self, Array[@sat.Literal], ProofHintId) -> Unit
+pub fn TheoryActions::collect_statistics(Self) -> @stats.Statistics
+pub fn TheoryActions::conflict(Self, AntecedentId) -> Unit
+pub fn TheoryActions::create_proof_hint(Self, @ids.TheoryId, String) -> ProofHintId
+pub fn TheoryActions::current_root(Self, TheoryTermRef) -> TheoryTermRef?
+pub fn TheoryActions::enqueue(Self, @sat.Literal, AntecedentId) -> Unit
+pub fn TheoryActions::internalize_bool(Self, @util.ExprId) -> @sat.Literal?
+pub fn TheoryActions::internalize_term_ref(Self, @util.ExprId) -> TheoryTermRef?
+pub fn TheoryActions::mark_unknown(Self, @util.ReasonUnknown) -> Unit
+pub fn TheoryActions::materialize_antecedent(Self, AntecedentId) -> Array[@sat.Literal]
+pub fn TheoryActions::new(scope_depth~ : () -> Int, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit) -> Self
+pub fn TheoryActions::new_with_context(scope_depth~ : () -> Int, internalize_bool~ : (@util.ExprId) -> @sat.Literal?, add_clause~ : (Array[@sat.Literal]) -> Unit, add_lemma~ : (Array[@sat.Literal]) -> Unit, add_lemma_with_hint~ : (Array[@sat.Literal], ProofHintId) -> Unit, add_extension_assumption~ : (@sat.Literal, @util.ExprId, String?) -> Unit, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, conflict~ : (AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit, materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal], create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId) -> Self
+pub fn TheoryActions::new_with_justification(scope_depth~ : () -> Int, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit, materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal], create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId) -> Self
+pub fn TheoryActions::noop() -> Self
+pub fn TheoryActions::params(Self) -> @params.Params?
+pub fn TheoryActions::params_available(Self) -> Bool
+pub fn TheoryActions::sat_value(Self, @sat.Literal) -> Bool?
+pub fn TheoryActions::scope_depth(Self) -> Int
+
+pub struct TheoryAssertedLiteral {
+  // private fields
+}
+pub fn TheoryAssertedLiteral::literal(Self) -> @sat.Literal
+pub fn TheoryAssertedLiteral::new(@sat.Literal) -> Self
+
+pub(all) enum TheoryCheckResult {
+  TheoryCheckContinue
+  TheoryCheckDone
+  TheoryCheckGiveUp(@util.ReasonUnknown)
+} derive(Eq)
+
+pub struct TheoryContextView {
+  // private fields
+}
+pub fn TheoryContextView::new(scope_depth~ : Int) -> Self
+pub fn TheoryContextView::scope_depth(Self) -> Int
+
+pub struct TheoryFactory {
+  // private fields
+}
+pub fn TheoryFactory::create(Self) -> TheoryPlugin
+pub fn TheoryFactory::descriptor(Self) -> TheoryFactoryDescriptor
+pub fn TheoryFactory::new(TheoryFactoryDescriptor, () -> TheoryPlugin) -> Self
+
+pub struct TheoryFactoryDescriptor {
+  // private fields
+}
+pub fn TheoryFactoryDescriptor::auto_config(Self) -> Bool
+pub fn TheoryFactoryDescriptor::families(Self) -> Array[@ast.FamilyId]
+pub fn TheoryFactoryDescriptor::id(Self) -> @ids.TheoryId
+pub fn TheoryFactoryDescriptor::matches_family(Self, @ast.FamilyId) -> Bool
+pub fn TheoryFactoryDescriptor::matches_logic(Self, String) -> Bool
+pub fn TheoryFactoryDescriptor::name(Self) -> String
+pub fn TheoryFactoryDescriptor::new(id~ : @ids.TheoryId, name~ : String, families~ : Array[@ast.FamilyId], logics~ : Array[String], auto_config~ : Bool) -> Self
+
+pub(all) enum TheoryInternalizeResult {
+  TheoryHandled(TheoryTermRef)
+  TheoryNotOwned
+  TheoryUnsupported(@util.ReasonUnknown)
+} derive(Eq)
+
+pub struct TheoryPlugin {
+  // private fields
+}
+pub fn TheoryPlugin::asserted(Self, TheoryContextView, TheoryActions, TheoryAssertedLiteral) -> Unit
+pub fn TheoryPlugin::can_propagate(Self, TheoryContextView) -> Bool
+pub fn TheoryPlugin::collect_statistics(Self) -> @stats.Statistics
+pub fn TheoryPlugin::configure(Self, @params.Params) -> Unit
+pub fn TheoryPlugin::default_unimplemented(@ids.TheoryId, String, Array[@ast.FamilyId]) -> Self
+pub fn TheoryPlugin::describe_params(Self) -> @params.ParamDescrs
+pub fn TheoryPlugin::families(Self) -> Array[@ast.FamilyId]
+pub fn TheoryPlugin::finalize_check(Self, TheoryContextView, TheoryActions) -> Unit
+pub fn TheoryPlugin::finalize_model(Self, TheoryContextView, TheoryActions) -> Unit
+pub fn TheoryPlugin::get_antecedents(Self, AntecedentId) -> Array[@sat.Literal]
+pub fn TheoryPlugin::has_unhandled(Self) -> Bool
+pub fn TheoryPlugin::id(Self) -> @ids.TheoryId
+pub fn TheoryPlugin::include_func_interp(Self, @util.FuncDeclId) -> Bool
+pub fn TheoryPlugin::init_model(Self, TheoryContextView, TheoryActions) -> Unit
+pub fn TheoryPlugin::init_search(Self, TheoryContextView, TheoryActions) -> Unit
+pub fn TheoryPlugin::internalize_atom(Self, TheoryContextView, TheoryActions, @ast.FamilyId, @util.ExprId) -> TheoryInternalizeResult
+pub fn TheoryPlugin::internalize_equality(Self, TheoryContextView, TheoryActions, @util.ExprId, @util.ExprId) -> TheoryInternalizeResult
+pub fn TheoryPlugin::internalize_term(Self, TheoryContextView, TheoryActions, @ast.FamilyId, @util.ExprId) -> TheoryInternalizeResult
+pub fn TheoryPlugin::mk_value(Self, TheoryContextView, TheoryActions, TheoryTermRef) -> @util.ExprId?
+pub fn TheoryPlugin::model_add_dep(Self, TheoryContextView, TheoryActions, TheoryTermRef, @util.ExprId) -> Unit
+pub fn TheoryPlugin::model_add_value(Self, TheoryContextView, TheoryActions, TheoryTermRef, @util.ExprId) -> Unit
+pub fn TheoryPlugin::model_incomplete_reason(Self) -> @util.ReasonUnknown?
+pub fn TheoryPlugin::name(Self) -> String
+pub fn TheoryPlugin::new_diseq(Self, TheoryContextView, TheoryActions, DiseqFact) -> Unit
+pub fn TheoryPlugin::new_eq(Self, TheoryContextView, TheoryActions, EqFact) -> Unit
+pub fn TheoryPlugin::on_check_done(Self, TheoryContextView, TheoryActions) -> Unit
+pub fn TheoryPlugin::owns_family(Self, @ast.FamilyId) -> Bool
+pub fn TheoryPlugin::pop(Self, TheoryContextView, Int) -> Unit
+pub fn TheoryPlugin::proof_hint(Self, ProofHintId) -> String
+pub fn TheoryPlugin::propagate(Self, TheoryContextView, TheoryActions) -> TheoryPropagateResult
+pub fn TheoryPlugin::push(Self, TheoryContextView) -> Unit
+pub fn TheoryPlugin::relevant(Self, TheoryContextView, TheoryTermRef) -> Unit
+pub fn TheoryPlugin::restart(Self, TheoryContextView) -> Unit
+pub fn TheoryPlugin::set_asserted(Self, (TheoryContextView, TheoryActions, TheoryAssertedLiteral) -> Unit) -> Unit
+pub fn TheoryPlugin::set_can_propagate(Self, (TheoryContextView) -> Bool) -> Unit
+pub fn TheoryPlugin::set_collect_statistics(Self, () -> @stats.Statistics) -> Unit
+pub fn TheoryPlugin::set_configure(Self, (@params.Params) -> Unit) -> Unit
+pub fn TheoryPlugin::set_describe_params(Self, () -> @params.ParamDescrs) -> Unit
+pub fn TheoryPlugin::set_finalize_check(Self, (TheoryContextView, TheoryActions) -> Unit) -> Unit
+pub fn TheoryPlugin::set_finalize_model(Self, (TheoryContextView, TheoryActions) -> Unit) -> Unit
+pub fn TheoryPlugin::set_get_antecedents(Self, (AntecedentId) -> Array[@sat.Literal]) -> Unit
+pub fn TheoryPlugin::set_has_unhandled(Self, () -> Bool) -> Unit
+pub fn TheoryPlugin::set_include_func_interp(Self, (@util.FuncDeclId) -> Bool) -> Unit
+pub fn TheoryPlugin::set_init_model(Self, (TheoryContextView, TheoryActions) -> Unit) -> Unit
+pub fn TheoryPlugin::set_init_search(Self, (TheoryContextView, TheoryActions) -> Unit) -> Unit
+pub fn TheoryPlugin::set_internalize_atom(Self, (TheoryContextView, TheoryActions, @ast.FamilyId, @util.ExprId) -> TheoryInternalizeResult) -> Unit
+pub fn TheoryPlugin::set_internalize_equality(Self, (TheoryContextView, TheoryActions, @util.ExprId, @util.ExprId) -> TheoryInternalizeResult) -> Unit
+pub fn TheoryPlugin::set_internalize_term(Self, (TheoryContextView, TheoryActions, @ast.FamilyId, @util.ExprId) -> TheoryInternalizeResult) -> Unit
+pub fn TheoryPlugin::set_mk_value(Self, (TheoryContextView, TheoryActions, TheoryTermRef) -> @util.ExprId?) -> Unit
+pub fn TheoryPlugin::set_model_add_dep(Self, (TheoryContextView, TheoryActions, TheoryTermRef, @util.ExprId) -> Unit) -> Unit
+pub fn TheoryPlugin::set_model_add_value(Self, (TheoryContextView, TheoryActions, TheoryTermRef, @util.ExprId) -> Unit) -> Unit
+pub fn TheoryPlugin::set_model_incomplete_reason(Self, () -> @util.ReasonUnknown?) -> Unit
+pub fn TheoryPlugin::set_new_diseq(Self, (TheoryContextView, TheoryActions, DiseqFact) -> Unit) -> Unit
+pub fn TheoryPlugin::set_new_eq(Self, (TheoryContextView, TheoryActions, EqFact) -> Unit) -> Unit
+pub fn TheoryPlugin::set_on_check_done(Self, (TheoryContextView, TheoryActions) -> Unit) -> Unit
+pub fn TheoryPlugin::set_pop(Self, (TheoryContextView, Int) -> Unit) -> Unit
+pub fn TheoryPlugin::set_proof_hint(Self, (ProofHintId) -> String) -> Unit
+pub fn TheoryPlugin::set_propagate(Self, (TheoryContextView, TheoryActions) -> TheoryPropagateResult) -> Unit
+pub fn TheoryPlugin::set_push(Self, (TheoryContextView) -> Unit) -> Unit
+pub fn TheoryPlugin::set_relevant(Self, (TheoryContextView, TheoryTermRef) -> Unit) -> Unit
+pub fn TheoryPlugin::set_restart(Self, (TheoryContextView) -> Unit) -> Unit
+pub fn TheoryPlugin::set_theory_check(Self, (TheoryContextView, TheoryActions) -> TheoryCheckResult) -> Unit
+pub fn TheoryPlugin::set_updt_params(Self, (@params.Params) -> @util.Availability[Unit]) -> Unit
+pub fn TheoryPlugin::set_validate_model(Self, (TheoryContextView, TheoryActions, ModelValidationView) -> @util.Availability[Unit]) -> Unit
+pub fn TheoryPlugin::set_validate_unsat_core(Self, (TheoryContextView, TheoryActions) -> @util.Availability[Unit]) -> Unit
+pub fn TheoryPlugin::theory_check(Self, TheoryContextView, TheoryActions) -> TheoryCheckResult
+pub fn TheoryPlugin::updt_params(Self, @params.Params) -> @util.Availability[Unit]
+pub fn TheoryPlugin::validate_model(Self, TheoryContextView, TheoryActions, ModelValidationView) -> @util.Availability[Unit]
+pub fn TheoryPlugin::validate_unsat_core(Self, TheoryContextView, TheoryActions) -> @util.Availability[Unit]
+
+pub(all) enum TheoryPropagateResult {
+  TheoryPropagateDone
+  TheoryPropagateGiveUp(@util.ReasonUnknown)
+} derive(Eq)
+
+pub struct TheoryTermRef {
+  // private fields
+} derive(Eq)
+pub fn TheoryTermRef::is_valid_at(Self, Int) -> Bool
+pub fn TheoryTermRef::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn TheoryTermRef::owner(Self) -> @ids.TheoryId
+pub fn TheoryTermRef::scope_generation(Self) -> Int
+pub fn TheoryTermRef::to_int(Self) -> Int
+pub impl Show for TheoryTermRef
+
+// Type aliases
+
+// Traits
+

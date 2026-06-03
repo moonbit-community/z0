@@ -1,0 +1,5 @@
+(get-option :reproducible-resource-limit)
+(set-option :reproducible-resource-limit 7)
+(get-option :reproducible-resource-limit)
+(reset)
+(get-option :reproducible-resource-limit)

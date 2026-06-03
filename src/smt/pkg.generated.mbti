@@ -1,0 +1,171 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/smt"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/egraph",
+  "moonbit-community/z0/src/error/solver_error",
+  "moonbit-community/z0/src/error/type_error",
+  "moonbit-community/z0/src/model",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/proof",
+  "moonbit-community/z0/src/sat",
+  "moonbit-community/z0/src/theory/core",
+  "moonbit-community/z0/src/theory/ids",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+pub fn setup_selected_names(TheoryRegistry, SmtSetupMode) -> String
+
+// Errors
+
+// Types and methods
+type EGraphAssertionRoute derive(Eq)
+
+pub struct EGraphDispatchState {
+  // private fields
+}
+pub fn EGraphDispatchState::diseq_fact_count(Self) -> Int
+pub fn EGraphDispatchState::drain_new_facts(Self, @egraph.EGraph, Array[@core.TheoryPlugin], @core.TheoryContextView, (@core.TheoryPlugin) -> @core.TheoryActions) -> Unit
+pub fn EGraphDispatchState::eq_fact_count(Self) -> Int
+pub fn EGraphDispatchState::new() -> Self
+pub fn EGraphDispatchState::pop(Self, Int) -> Unit
+pub fn EGraphDispatchState::push(Self) -> Unit
+
+type EGraphEufCheckResult derive(Eq)
+
+pub struct SmtContext {
+  // private fields
+}
+pub fn SmtContext::assert_expr(Self, @util.ExprId) -> Unit
+pub fn SmtContext::attach_theory_var(Self, @util.ExprId, @ids.TheoryId, @ids.TheoryVar) -> Unit
+pub fn SmtContext::bool_literal2enode_text(Self, @util.ExprId) -> String
+pub fn SmtContext::cache_state_text(Self) -> String
+pub fn SmtContext::check_sat(Self) -> SmtContextResult
+pub fn SmtContext::check_sat_assuming(Self, Array[@util.ExprId]) -> SmtContextAssumptionResult
+pub fn SmtContext::dispatch_egraph_facts(Self) -> Unit
+pub fn SmtContext::egraph_diseq_fact_count(Self) -> Int
+pub fn SmtContext::egraph_eq_fact_count(Self) -> Int
+pub fn SmtContext::egraph_new_diseq_count(Self) -> Int
+pub fn SmtContext::egraph_new_eq_count(Self) -> Int
+pub fn SmtContext::enqueue_egraph_diseq(Self, @util.ExprId) -> Unit
+pub fn SmtContext::enqueue_egraph_eq(Self, @util.ExprId, @util.ExprId) -> Unit
+pub fn SmtContext::expr2enode_text(Self, @util.ExprId) -> String
+pub fn SmtContext::internalize_bool_text(Self, @util.ExprId) -> String
+pub fn SmtContext::internalize_theory_term(Self, @ast.FamilyId, @util.ExprId) -> @core.TheoryInternalizeResult
+pub fn SmtContext::last_model(Self) -> @model.Model?
+pub fn SmtContext::lookup_bool_text(Self, @util.ExprId) -> String
+pub fn SmtContext::mk_enode_text(Self, @util.ExprId) -> String
+pub fn SmtContext::new(@ast.AstManager) -> Self
+pub fn SmtContext::pop(Self, Int) -> Unit
+pub fn SmtContext::proof_hint_log_text(Self) -> String
+pub fn SmtContext::push(Self) -> Unit
+pub fn SmtContext::record_unsupported_term(Self, @util.ExprId, @util.ReasonUnknown) -> Unit
+pub fn SmtContext::register_theory(Self, @core.TheoryPlugin) -> Unit
+pub fn SmtContext::registered_theory_count(Self) -> Int
+pub fn SmtContext::root_clause_count(Self) -> Int
+pub fn SmtContext::sat_clause_event_log_text(Self) -> String
+pub fn SmtContext::sat_core_id(Self) -> Int
+pub fn SmtContext::sat_var_count(Self) -> Int
+pub fn SmtContext::setup_theories(Self, TheoryRegistry, SmtSetupMode, @params.Params) -> Unit
+pub fn SmtContext::unsupported_term_count(Self) -> Int
+
+pub(all) enum SmtContextAssumptionResult {
+  SmtAssumptionSat
+  SmtAssumptionUnsat(Array[@util.ExprId], Array[SmtUnsatCoreEntry])
+  SmtAssumptionUnknown(String)
+}
+
+pub(all) enum SmtContextResult {
+  SmtContextSat(@model.Model)
+  SmtContextUnsat
+  SmtContextUnknown(String)
+}
+
+pub struct SmtInternalizer {
+  // private fields
+}
+pub fn SmtInternalizer::expr2enode(Self, @util.ExprId) -> @egraph.EnodeId?
+pub fn SmtInternalizer::expr2literal(Self, @util.ExprId) -> SmtLiteral raise @type_error.TypeError
+pub fn SmtInternalizer::internalize_bool(Self, @util.ExprId) -> @sat.Literal raise @type_error.TypeError
+pub fn SmtInternalizer::literal2enode(Self, @sat.Literal) -> @egraph.EnodeId?
+pub fn SmtInternalizer::literal2expr(Self, @sat.Literal) -> @util.ExprId?
+pub fn SmtInternalizer::lookup_bool_text(Self, @util.ExprId) -> String
+pub fn SmtInternalizer::mk_enode(Self, @util.ExprId) -> @egraph.EnodeId
+pub fn SmtInternalizer::new(@ast.AstManager, @sat.SatSolverCore, @egraph.EGraph) -> Self
+pub fn SmtInternalizer::pop_scope(Self, Int) -> Unit
+pub fn SmtInternalizer::push_scope(Self) -> Unit
+pub fn SmtInternalizer::sat_var_count(Self) -> Int
+pub fn SmtInternalizer::to_bool_var(Self, @util.ExprId) -> @sat.BoolVar raise @type_error.TypeError
+
+pub struct SmtLiteral {
+  // private fields
+}
+pub fn SmtLiteral::as_sat(Self) -> @sat.Literal
+pub fn SmtLiteral::negate(Self) -> Self
+pub fn SmtLiteral::new(@sat.Literal) -> Self
+pub fn SmtLiteral::to_text(Self) -> String
+
+pub(all) enum SmtSetupMode {
+  CFG_BASIC
+  CFG_LOGIC(String)
+  CFG_AUTO
+} derive(Eq)
+pub fn SmtSetupMode::auto() -> Self
+pub fn SmtSetupMode::basic() -> Self
+pub fn SmtSetupMode::logic(String) -> Self
+
+pub struct SmtUnsatCoreEntry {
+  // private fields
+} derive(Eq)
+pub fn SmtUnsatCoreEntry::expr(Self) -> @util.ExprId
+pub fn SmtUnsatCoreEntry::name(Self) -> String?
+pub fn SmtUnsatCoreEntry::new(@util.ExprId, String?) -> Self
+pub fn SmtUnsatCoreEntry::to_text(Self) -> String
+
+pub struct Solver {
+  // private fields
+}
+pub fn Solver::assert_expr(Self, @util.ExprId) -> Unit raise @type_error.TypeError
+pub fn Solver::check_sat(Self) -> SolverResult
+pub fn Solver::check_sat_assuming(Self, Array[@util.ExprId]) -> SolverAssumptionResult
+pub fn Solver::checked_proof_object(Self) -> @util.Availability[@proof.ProofObject]
+pub fn Solver::context_root_clause_count(Self) -> Int
+pub fn Solver::context_sat_core_id(Self) -> Int
+pub fn Solver::get_assertion(Self, Int) -> @util.ExprId?
+pub fn Solver::get_model(Self) -> @model.Model?
+pub fn Solver::get_num_assertions(Self) -> Int
+pub fn Solver::get_scope_level(Self) -> Int
+pub fn Solver::new(@ast.AstManager) -> Self
+pub fn Solver::pop(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn Solver::proof_object(Self) -> @proof.ProofObject
+pub fn Solver::push(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn Solver::registered_theory_count(Self) -> Int
+pub fn Solver::setup_theories(Self, TheoryRegistry, SmtSetupMode, @params.Params) -> Unit
+
+pub(all) enum SolverAssumptionResult {
+  AssumptionSat
+  AssumptionUnsat(Array[@util.ExprId], Array[SmtUnsatCoreEntry])
+  AssumptionUnknown(String)
+} derive(Eq)
+
+pub(all) enum SolverResult {
+  Sat
+  Unsat
+  Unknown(String)
+} derive(Eq)
+
+pub struct TheoryRegistry {
+  // private fields
+}
+pub fn TheoryRegistry::factories(Self) -> Array[@core.TheoryFactory]
+pub fn TheoryRegistry::instantiate(Self, SmtSetupMode) -> Array[@core.TheoryPlugin]
+pub fn TheoryRegistry::new() -> Self
+pub fn TheoryRegistry::register(Self, @core.TheoryFactory) -> Unit
+pub fn TheoryRegistry::selected_factories(Self, SmtSetupMode) -> Array[@core.TheoryFactory]
+
+// Type aliases
+
+// Traits
+

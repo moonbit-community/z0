@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/solver/tactic_adapter"
+
+import {
+  "moonbit-community/z0/src/solver",
+  "moonbit-community/z0/src/tactic",
+}
+
+// Values
+pub fn solver2tactic(@solver.SolverFactory) -> @tactic.Tactic
+
+pub fn tactic2solver_factory(@tactic.Tactic) -> @solver.SolverFactory
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

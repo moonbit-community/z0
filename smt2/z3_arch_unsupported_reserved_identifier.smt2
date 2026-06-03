@@ -1,0 +1,1 @@
+(assert (par true))

@@ -1,0 +1,220 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/sat"
+
+import {
+  "moonbit-community/z0/src/stats",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum AssumptionCheckResult {
+  AssumptionSat(SatCoreModel)
+  AssumptionUnsat(AssumptionCore)
+  AssumptionUnknown(String)
+} derive(Eq)
+
+pub(all) struct AssumptionCore {
+  literals : Array[Literal]
+} derive(Eq)
+pub fn AssumptionCore::literals(Self) -> Array[Literal]
+pub fn AssumptionCore::text(Self) -> String
+
+pub struct BoolVar {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn BoolVar::new(Int) -> Self
+pub fn BoolVar::to_int(Self) -> Int
+pub impl Show for BoolVar
+
+pub struct Clause {
+  // private fields
+} derive(Eq)
+pub fn Clause::contains_bool_var(Self, BoolVar) -> Bool
+pub fn Clause::empty() -> Self
+pub fn Clause::has_var_above(Self, BoolVar) -> Bool
+pub fn Clause::is_tautology(Self) -> Bool
+pub fn Clause::length(Self) -> Int
+pub fn Clause::literals(Self) -> Array[Literal]
+pub fn Clause::new(Array[Literal]) -> Self
+pub fn Clause::unit(Literal) -> Self
+pub fn Clause::with_extra_literals(Self, Array[Literal]) -> Self
+pub impl Show for Clause
+
+pub struct ClauseDb {
+  // private fields
+}
+pub fn ClauseDb::active_clauses(Self) -> Array[Clause]
+pub fn ClauseDb::add_learned_clause(Self, Clause) -> ClauseId
+pub fn ClauseDb::add_root_clause(Self, Clause) -> ClauseId
+pub fn ClauseDb::clause_count(Self) -> Int
+pub fn ClauseDb::clause_literals(Self, ClauseId) -> Array[Literal]
+pub fn ClauseDb::delete_clause(Self, ClauseId) -> Unit
+pub fn ClauseDb::delete_clauses_touching_vars(Self, Array[BoolVar]) -> Unit
+pub fn ClauseDb::delete_clauses_with_vars_above(Self, BoolVar) -> Unit
+pub fn ClauseDb::deleted_clause_count(Self) -> Int
+pub fn ClauseDb::event_log_text(Self) -> String
+pub fn ClauseDb::learned_clause_count(Self) -> Int
+pub fn ClauseDb::new() -> Self
+pub fn ClauseDb::root_clause_count(Self) -> Int
+
+pub(all) struct ClauseEvent {
+  action : String
+  clause_id : ClauseId
+  status : ClauseStatus
+} derive(Eq)
+
+pub struct ClauseId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn ClauseId::new(Int) -> Self
+pub fn ClauseId::to_int(Self) -> Int
+pub impl Show for ClauseId
+
+pub(all) enum ClauseStatus {
+  Input
+  Asserted
+  Redundant
+  Deleted
+  Theory(String, Bool, String?)
+} derive(Eq)
+
+pub struct ClauseTheoryProofHint {
+  // private fields
+} derive(Eq)
+pub fn ClauseTheoryProofHint::kind_text(Self) -> String
+pub fn ClauseTheoryProofHint::owner_text(Self) -> String
+
+pub struct ExtConstraintId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn ExtConstraintId::new(Int) -> Self
+pub fn ExtConstraintId::to_int(Self) -> Int
+pub impl Show for ExtConstraintId
+
+pub struct ExtJustificationId {
+  // private fields
+} derive(Compare, Eq, Hash)
+pub fn ExtJustificationId::new(Int) -> Self
+pub fn ExtJustificationId::to_int(Self) -> Int
+pub impl Show for ExtJustificationId
+
+pub(all) enum ExtensionAction {
+  ExtensionNoAction
+  ExtensionAssign(Literal, ExtJustificationId)
+  ExtensionConflict(ExtJustificationId)
+  ExtensionUnknown(@util.ReasonUnknown)
+} derive(Eq)
+
+pub struct Literal {
+  // private fields
+} derive(Eq)
+pub fn Literal::bool_var(Self) -> BoolVar
+pub fn Literal::from_index(Int) -> Self
+pub fn Literal::index(Self) -> Int
+pub fn Literal::is_positive(Self) -> Bool
+pub fn Literal::neg(BoolVar) -> Self
+pub fn Literal::negate(Self) -> Self
+pub fn Literal::new(BoolVar, Bool) -> Self
+pub fn Literal::pos(BoolVar) -> Self
+pub fn Literal::value(Self, Array[Bool?]) -> Bool?
+pub impl Show for Literal
+
+pub struct SatAssignmentView {
+  // private fields
+} derive(Eq)
+pub fn SatAssignmentView::value(Self, BoolVar) -> Bool?
+
+pub struct SatCoreModel {
+  // private fields
+} derive(Eq)
+pub fn SatCoreModel::value(Self, BoolVar) -> Bool?
+
+pub(all) enum SatCoreResult {
+  SatCoreSat(SatCoreModel)
+  SatCoreUnsat
+  SatCoreUnknown(String)
+} derive(Eq)
+
+pub(all) struct SatCoreSnapshot {
+  vars : Int
+  root_clauses : Int
+  learned_clauses : Int
+  deleted_clauses : Int
+  decisions : Int
+  propagations : Int
+  activity_text : String
+  phase_text : String
+} derive(Eq)
+pub fn SatCoreSnapshot::to_statistics(Self) -> @stats.Statistics
+
+pub(all) struct SatExtension {
+  init_search : () -> ExtensionAction
+  tracking_assumptions : () -> Array[Literal]
+  add_assumptions : (Array[Literal]) -> Unit
+  should_research : (AssumptionCore) -> Bool
+  can_propagate : () -> Bool
+  unit_propagate : () -> ExtensionAction
+  propagated : (Literal, ExtConstraintId) -> WatchAction
+  asserted : (Literal) -> Unit
+  is_external : (BoolVar) -> Bool
+  set_eliminated : (BoolVar) -> Unit
+  get_antecedents : (ExtJustificationId) -> Array[Literal]
+  describe_justification : (ExtJustificationId) -> ClauseStatus
+  check : (SatAssignmentView) -> ExtensionAction
+  reason_unknown : () -> @util.ReasonUnknown?
+  collect_statistics : () -> @stats.Statistics
+  validate : (SatAssignmentView) -> @util.Availability[Unit]
+  init_use_list : () -> Unit
+  gc : () -> Unit
+  gc_vars : (BoolVar) -> Unit
+  is_blocked : (ExtConstraintId) -> Bool
+}
+pub fn SatExtension::no_extension() -> Self
+
+pub struct SatProofStatusHook {
+  // private fields
+}
+pub fn SatProofStatusHook::clause_added(Self, ClauseId, ClauseStatus) -> Unit
+pub fn SatProofStatusHook::clause_deleted(Self, ClauseId) -> Unit
+pub fn SatProofStatusHook::events_text(Self) -> String
+pub fn SatProofStatusHook::new() -> Self
+pub fn SatProofStatusHook::result(Self, SatCoreResult) -> Unit
+
+pub struct SatSolverCore {
+  // private fields
+}
+pub fn SatSolverCore::add_clause(Self, Clause) -> ClauseId
+pub fn SatSolverCore::add_theory_clause(Self, Clause, owner~ : String, redundant~ : Bool, hint~ : String?) -> ClauseId
+pub fn SatSolverCore::add_var(Self) -> BoolVar
+pub fn SatSolverCore::check(Self) -> SatCoreResult
+pub fn SatSolverCore::check_with_assumptions(Self, Array[Literal]) -> AssumptionCheckResult
+pub fn SatSolverCore::clause_event_log_text(Self) -> String
+pub fn SatSolverCore::clause_theory_proof_hints(Self) -> Array[ClauseTheoryProofHint]
+pub fn SatSolverCore::collect_statistics(Self) -> @stats.Statistics
+pub fn SatSolverCore::external_watch_count(Self) -> Int
+pub fn SatSolverCore::gc(Self) -> Unit
+pub fn SatSolverCore::gc_vars(Self, BoolVar) -> Unit
+pub fn SatSolverCore::has_unsat_proof_clause(Self) -> Bool
+pub fn SatSolverCore::inspect_state(Self) -> SatCoreSnapshot
+pub fn SatSolverCore::new() -> Self
+pub fn SatSolverCore::reset_search_state(Self) -> Unit
+pub fn SatSolverCore::set_extension(Self, SatExtension) -> Unit
+pub fn SatSolverCore::unhinted_theory_clause_count(Self) -> Int
+pub fn SatSolverCore::user_pop(Self, Int) -> Unit
+pub fn SatSolverCore::user_push(Self) -> Unit
+pub fn SatSolverCore::user_scope_depth(Self) -> Int
+pub fn SatSolverCore::watch_external(Self, Literal, ExtConstraintId) -> Unit
+
+pub(all) enum WatchAction {
+  KeepWatch
+  DropWatch
+} derive(Eq)
+
+// Type aliases
+
+// Traits
+

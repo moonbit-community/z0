@@ -1,0 +1,4 @@
+error: proof is not available: no-current-result
+sat
+error: proof is not available: wrong-result(expected=unsat, actual=sat)
+error: proof is not available: stale

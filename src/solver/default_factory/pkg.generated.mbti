@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/solver/default_factory"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/solver",
+}
+
+// Values
+pub fn default_configured_theory_names(@ast.AstManager, @solver.SolverFactoryConfig) -> String
+
+pub fn default_factory() -> @solver.SolverFactory
+
+pub fn default_params_descrs() -> @params.ParamDescrs
+
+pub fn default_strategy_text(@solver.SolverFactoryConfig) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

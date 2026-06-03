@@ -1,0 +1,77 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/proof"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/params",
+  "moonbit-community/z0/src/util",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct ProofChecker {
+  // private fields
+}
+pub fn ProofChecker::check(Self, ProofRef) -> @util.Availability[Unit]
+pub fn ProofChecker::from_params(@params.Params) -> Self
+pub fn ProofChecker::name(Self) -> String
+pub fn ProofChecker::unsupported(String) -> Self
+
+pub struct ProofHandle {
+  // private fields
+}
+pub fn ProofHandle::disabled(String) -> Self
+pub fn ProofHandle::from_object(Int, ProofKind, ProofObject) -> Self
+pub fn ProofHandle::mark_stale(Self) -> Unit
+pub fn ProofHandle::new(Int, ProofKind) -> Self
+pub fn ProofHandle::no_current_result() -> Self
+pub fn ProofHandle::view(Self) -> @util.Availability[ProofRef]
+
+pub struct ProofHint {
+  // private fields
+} derive(Eq)
+pub fn ProofHint::kind_text(Self) -> String
+pub fn ProofHint::new(String) -> Self
+pub fn ProofHint::owner_text(Self) -> String
+pub fn ProofHint::with_owner(String, String) -> Self
+
+pub struct ProofHintChecker {
+  // private fields
+}
+pub fn ProofHintChecker::check_hint(Self, ProofHint) -> @util.Availability[Unit]
+pub fn ProofHintChecker::name(Self) -> String
+pub fn ProofHintChecker::new(String, (ProofHint) -> @util.Availability[Unit]) -> Self
+
+pub struct ProofKind {
+  // private fields
+} derive(Eq)
+pub fn ProofKind::ast() -> Self
+pub fn ProofKind::to_text(Self) -> String
+
+pub struct ProofObject {
+  // private fields
+} derive(Eq)
+pub fn ProofObject::from_ast_expr(@ast.AstManager, @util.ExprId) -> Self
+pub fn ProofObject::from_root_and_hints(String, Array[ProofHint]) -> Self
+pub fn ProofObject::hints(Self) -> Array[ProofHint]
+pub fn ProofObject::root_text(Self) -> String
+
+pub struct ProofObjectChecker {
+  // private fields
+}
+pub fn ProofObjectChecker::check(Self, ProofObject) -> @util.Availability[Unit]
+pub fn ProofObjectChecker::new(Array[ProofHintChecker]) -> Self
+
+pub struct ProofRef {
+  // private fields
+}
+pub fn ProofRef::object(Self) -> ProofObject?
+pub fn ProofRef::to_text(Self) -> String
+
+// Type aliases
+
+// Traits
+

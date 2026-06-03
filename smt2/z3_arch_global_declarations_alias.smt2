@@ -1,0 +1,7 @@
+(set-option :global-declarations true)
+(push)
+(declare-const p Bool)
+(pop)
+(assert p)
+(check-sat)
+(get-option :global-declarations)

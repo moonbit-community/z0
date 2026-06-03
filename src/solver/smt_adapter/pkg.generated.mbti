@@ -1,0 +1,39 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/solver/smt_adapter"
+
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/smt",
+  "moonbit-community/z0/src/solver",
+  "moonbit-community/z0/src/theory/core",
+}
+
+// Values
+pub fn configured_theory_names(@ast.AstManager, @solver.SolverFactoryConfig) -> String
+
+pub fn configured_theory_names_with_theory_factories(@ast.AstManager, @solver.SolverFactoryConfig, Array[@core.TheoryFactory]) -> String
+
+pub fn default_factory() -> @solver.SolverFactory
+
+pub fn factory_with_theory_factories(Array[@core.TheoryFactory]) -> @solver.SolverFactory
+
+pub fn new_concrete_solver(@ast.AstManager, @solver.SolverFactoryConfig) -> @smt.Solver
+
+pub fn new_concrete_solver_with_registry(@ast.AstManager, @solver.SolverFactoryConfig, @smt.TheoryRegistry) -> @smt.Solver
+
+pub fn new_concrete_solver_with_theory_factories(@ast.AstManager, @solver.SolverFactoryConfig, Array[@core.TheoryFactory]) -> @smt.Solver
+
+pub fn new_solver(@ast.AstManager, @solver.SolverFactoryConfig) -> @solver.Solver
+
+pub fn new_solver_with_registry(@ast.AstManager, @solver.SolverFactoryConfig, @smt.TheoryRegistry) -> @solver.Solver
+
+pub fn new_solver_with_theory_factories(@ast.AstManager, @solver.SolverFactoryConfig, Array[@core.TheoryFactory]) -> @solver.Solver
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

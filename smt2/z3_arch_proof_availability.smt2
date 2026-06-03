@@ -1,0 +1,8 @@
+(set-option :produce-proofs true)
+(get-proof)
+(declare-const p Bool)
+(assert p)
+(check-sat)
+(get-proof)
+(assert (not p))
+(get-proof)

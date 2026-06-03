@@ -1,0 +1,1 @@
+(get-option :smt.relevancy)

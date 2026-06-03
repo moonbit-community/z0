@@ -1,0 +1,5 @@
+(declare-const p Bool)
+(assert p)
+(set-option :produce-models true)
+(check-sat)
+(get-model)

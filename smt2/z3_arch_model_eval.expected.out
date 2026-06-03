@@ -1,0 +1,4 @@
+sat
+((p true) ((not p) false))
+true
+true

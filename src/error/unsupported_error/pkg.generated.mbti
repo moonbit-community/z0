@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/z0/src/error/unsupported_error"
+
+import {
+  "moonbit-community/z0/src/source",
+}
+
+// Values
+
+// Errors
+pub(all) suberror UnsupportedError {
+  UnsupportedError(String, @source.SourceSpan?)
+} derive(Eq)
+pub fn UnsupportedError::format(Self) -> String
+pub fn UnsupportedError::prefix(Self) -> String
+pub impl Show for UnsupportedError
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+
