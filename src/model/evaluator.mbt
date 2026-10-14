@@ -28,12 +28,16 @@ fn bool_model_value(value : Bool) -> ModelValue {
 }
 
 ///|
-fn int_model_value(value : Int) -> ModelValue {
+fn int_model_value(value : Int32) -> ModelValue {
   ModelValue::int(value)
 }
 
 ///|
-fn compare_int_values(op : @ast.ArithCompareOp, lhs : Int, rhs : Int) -> Bool {
+fn compare_int_values(
+  op : @ast.ArithCompareOp,
+  lhs : Int32,
+  rhs : Int32,
+) -> Bool {
   match op {
     Lt => lhs < rhs
     Le => lhs <= rhs

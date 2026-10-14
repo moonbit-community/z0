@@ -5,7 +5,7 @@ pub struct CancelFlag {
 
 ///|
 pub fn CancelFlag::new() -> CancelFlag {
-  { reason: None }
+  { reason: None, }
 }
 
 ///|

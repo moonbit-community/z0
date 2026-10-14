@@ -39,12 +39,12 @@ struct ModelUnitAction {
 
 ///|
 fn ModelUnitAction::add(name : String, value : Bool) -> ModelUnitAction {
-  { name, value: Some(value) }
+  { name, value: Some(value), }
 }
 
 ///|
 fn ModelUnitAction::hide(name : String) -> ModelUnitAction {
-  { name, value: None }
+  { name, value: None, }
 }
 
 ///|
@@ -194,7 +194,7 @@ pub struct GenericModelConverter {
 
 ///|
 pub fn GenericModelConverter::new() -> GenericModelConverter {
-  { converter: ModelConverter::identity() }
+  { converter: ModelConverter::identity(), }
 }
 
 ///|

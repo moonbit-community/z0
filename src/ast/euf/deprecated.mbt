@@ -9,7 +9,7 @@ pub struct EufSolver {
   priv manager : @ast.AstManager
   priv graph : @egraph.EGraph
   priv congruence : @egraph.EGraphCongruence
-  priv mut scope_depth : Int
+  priv mut scope_depth : Int32
 }
 
 ///|
@@ -135,7 +135,7 @@ pub fn EufSolver::push_scope(self : EufSolver) -> Unit {
 ///|
 pub fn EufSolver::pop_scope(
   self : EufSolver,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   if count < 0 {
     raise @solver_error.SolverError("cannot pop a negative number of scopes")

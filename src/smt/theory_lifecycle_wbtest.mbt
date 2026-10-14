@@ -161,8 +161,8 @@ fn theory_lifecycle_assumption_result_text(
 
 ///|
 fn model_lifecycle_plugin(
-  id : Int,
-  family : Int,
+  id : Int32,
+  family : Int32,
   name : String,
   log : Array[String],
 ) -> @theory_core.TheoryPlugin {
@@ -233,8 +233,8 @@ test "smt_context_late_theory_registration_marks_current_result_stale" {
 
 ///|
 fn fake_lifecycle_factory(
-  id : Int,
-  family : Int,
+  id : Int32,
+  family : Int32,
   name : String,
   log : Array[String],
 ) -> @theory_core.TheoryFactory {

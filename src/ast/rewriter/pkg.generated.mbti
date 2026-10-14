@@ -31,4 +31,3 @@ pub fn RewriteResult::unsupported_text(Self) -> String
 // Type aliases
 
 // Traits
-

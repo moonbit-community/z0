@@ -18,4 +18,3 @@ pub fn tactic2solver_factory(@tactic.Tactic) -> @solver.SolverFactory
 // Type aliases
 
 // Traits
-

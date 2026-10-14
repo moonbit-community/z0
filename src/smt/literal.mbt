@@ -15,7 +15,7 @@ pub fn SmtLiteral::as_sat(self : SmtLiteral) -> @pure_sat.Literal {
 
 ///|
 pub fn SmtLiteral::negate(self : SmtLiteral) -> SmtLiteral {
-  { literal: self.literal.negate() }
+  { literal: self.literal.negate(), }
 }
 
 ///|

@@ -17,7 +17,7 @@ fn ParamKind::to_text(self : ParamKind) -> String {
 ///|
 pub(all) enum ParamValue {
   BoolValue(Bool)
-  IntValue(Int)
+  IntValue(Int32)
   StringValue(String)
 } derive(Eq)
 
@@ -118,7 +118,7 @@ priv struct ParamDescriptor {
   owner : String
   description : String
   lifecycle : ParamLifecycle
-  apply_order : Int
+  apply_order : Int32
   requires_reset : Bool
 }
 
@@ -129,7 +129,7 @@ pub struct ParamDescrs {
 
 ///|
 pub fn ParamDescrs::new() -> ParamDescrs {
-  { entries: [] }
+  { entries: [], }
 }
 
 ///|
@@ -159,7 +159,7 @@ pub fn ParamDescrs::add_bool_with_policy(
   owner : String,
   description : String,
   lifecycle : ParamLifecycle,
-  apply_order : Int,
+  apply_order : Int32,
   requires_reset : Bool,
 ) -> Unit {
   self.entries.push(ParamDescriptor::{
@@ -178,7 +178,7 @@ pub fn ParamDescrs::add_bool_with_policy(
 pub fn ParamDescrs::add_int(
   self : ParamDescrs,
   name : String,
-  default : Int,
+  default : Int32,
   owner : String,
   description : String,
 ) -> Unit {
@@ -197,11 +197,11 @@ pub fn ParamDescrs::add_int(
 pub fn ParamDescrs::add_int_with_policy(
   self : ParamDescrs,
   name : String,
-  default : Int,
+  default : Int32,
   owner : String,
   description : String,
   lifecycle : ParamLifecycle,
-  apply_order : Int,
+  apply_order : Int32,
   requires_reset : Bool,
 ) -> Unit {
   self.entries.push(ParamDescriptor::{
@@ -243,7 +243,7 @@ pub fn ParamDescrs::add_string_with_policy(
   owner : String,
   description : String,
   lifecycle : ParamLifecycle,
-  apply_order : Int,
+  apply_order : Int32,
   requires_reset : Bool,
 ) -> Unit {
   self.entries.push(ParamDescriptor::{
@@ -359,7 +359,7 @@ pub fn ParamDescrs::lifecycle_text(self : ParamDescrs, name : String) -> String 
 }
 
 ///|
-pub fn ParamDescrs::apply_order(self : ParamDescrs, name : String) -> Int {
+pub fn ParamDescrs::apply_order(self : ParamDescrs, name : String) -> Int32 {
   match self.find(name) {
     Some(entry) => entry.apply_order
     None => -1

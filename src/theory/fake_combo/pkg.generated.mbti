@@ -28,4 +28,3 @@ pub fn FakeComboHarness::plugin(Self) -> @core.TheoryPlugin
 // Type aliases
 
 // Traits
-

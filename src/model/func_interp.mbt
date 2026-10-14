@@ -19,7 +19,7 @@ pub fn FuncInterp::new(
   domain : Array[String],
   range : String,
 ) -> FuncInterp {
-  { name, domain: domain.copy(), range, entries: [], else_value: None }
+  { name, domain: domain.copy(), range, entries: [], else_value: None, }
 }
 
 ///|
@@ -44,11 +44,11 @@ pub fn FuncInterp::add_entry(
 ) -> Unit {
   for i, entry in self.entries {
     if func_interp_args_equal(entry.args, args) {
-      self.entries[i] = { args: args.copy(), value }
+      self.entries[i] = { args: args.copy(), value, }
       return
     }
   }
-  self.entries.push({ args: args.copy(), value })
+  self.entries.push({ args: args.copy(), value, })
 }
 
 ///|
@@ -98,7 +98,7 @@ fn FuncInterp::evaluate(
 fn compare_func_interp_entry(
   lhs : FuncInterpEntry,
   rhs : FuncInterpEntry,
-) -> Int {
+) -> Int32 {
   lhs.args.join("\u{0}").compare(rhs.args.join("\u{0}"))
 }
 
@@ -144,7 +144,7 @@ fn FuncInterp::write_entries(
   _self : FuncInterp,
   builder : StringBuilder,
   entries : Array[FuncInterpEntry],
-  index : Int,
+  index : Int32,
   fallback : String,
   base_indent : String,
 ) -> Unit {

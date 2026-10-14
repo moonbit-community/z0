@@ -8,7 +8,7 @@ struct FakeExtensionState {
 
 ///|
 fn FakeExtensionState::new() -> FakeExtensionState {
-  { propagated: [], antecedents: [], checked: [], propagated_once: false }
+  { propagated: [], antecedents: [], checked: [], propagated_once: false, }
 }
 
 ///|
@@ -21,7 +21,7 @@ fn bool_option_text(value : Bool?) -> String {
 }
 
 ///|
-fn positive_count_text(count : Int) -> String {
+fn positive_count_text(count : Int32) -> String {
   if count > 0 {
     "queried"
   } else {

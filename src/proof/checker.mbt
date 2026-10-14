@@ -7,7 +7,7 @@ pub struct ProofObjectChecker {
 pub fn ProofObjectChecker::new(
   checkers : Array[ProofHintChecker],
 ) -> ProofObjectChecker {
-  { checkers: checkers.copy() }
+  { checkers: checkers.copy(), }
 }
 
 ///|

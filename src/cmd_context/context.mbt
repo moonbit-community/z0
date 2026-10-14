@@ -326,7 +326,7 @@ fn CommandContext::assert_named_expr(
 ///|
 fn CommandContext::push_scopes(
   self : CommandContext,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   if count < 0 {
     raise @solver_error.SolverError("cannot push a negative number of scopes")
@@ -347,7 +347,7 @@ fn CommandContext::push_scopes(
 ///|
 fn CommandContext::pop_scopes(
   self : CommandContext,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   match self.solver.pop(count) {
     @util.Available(_) => ()

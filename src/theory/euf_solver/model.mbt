@@ -6,7 +6,7 @@ pub struct EufModelObligations {
 
 ///|
 pub fn EufModelObligations::new() -> EufModelObligations {
-  { values: [], functions: [] }
+  { values: [], functions: [], }
 }
 
 ///|

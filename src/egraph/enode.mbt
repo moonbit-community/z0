@@ -1,15 +1,15 @@
 ///|
 pub struct EnodeId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn EnodeId::new(value : Int) -> EnodeId {
+pub fn EnodeId::new(value : Int32) -> EnodeId {
   { value, }
 }
 
 ///|
-pub fn EnodeId::to_int(self : EnodeId) -> Int {
+pub fn EnodeId::to_int(self : EnodeId) -> Int32 {
   self.value
 }
 
@@ -26,7 +26,7 @@ pub struct EnodeExpr {
 
 ///|
 pub fn EnodeExpr::new(enode : EnodeId, expr : @util.ExprId) -> EnodeExpr {
-  { enode, expr }
+  { enode, expr, }
 }
 
 ///|
@@ -50,7 +50,7 @@ pub fn EnodeParentLink::new(
   child : EnodeId,
   parent : EnodeId,
 ) -> EnodeParentLink {
-  { child, parent }
+  { child, parent, }
 }
 
 ///|
@@ -74,7 +74,7 @@ pub fn EnodeTheoryVarAttachment::new(
   theory_id : @ids.TheoryId,
   theory_var : @ids.TheoryVar,
 ) -> EnodeTheoryVarAttachment {
-  { theory_id, theory_var }
+  { theory_id, theory_var, }
 }
 
 ///|
@@ -95,8 +95,8 @@ pub fn EnodeTheoryVarAttachment::theory_var(
 priv struct EnodeRecord {
   id : EnodeId
   expr : @util.ExprId
-  operator_key : Int
-  generation : Int
+  operator_key : Int32
+  generation : Int32
   args : Array[EnodeId]
   parents : Array[EnodeId]
   theory_vars : Array[EnodeTheoryVarAttachment]
@@ -108,8 +108,8 @@ fn EnodeRecord::new(
   id : EnodeId,
   expr : @util.ExprId,
   args : Array[EnodeId],
-  generation : Int,
-  operator_key : Int,
+  generation : Int32,
+  operator_key : Int32,
 ) -> EnodeRecord {
   EnodeRecord::{
     id,

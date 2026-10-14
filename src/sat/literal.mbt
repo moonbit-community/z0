@@ -1,15 +1,15 @@
 ///|
 pub struct BoolVar {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn BoolVar::new(value : Int) -> BoolVar {
+pub fn BoolVar::new(value : Int32) -> BoolVar {
   { value, }
 }
 
 ///|
-pub fn BoolVar::to_int(self : BoolVar) -> Int {
+pub fn BoolVar::to_int(self : BoolVar) -> Int32 {
   self.value
 }
 
@@ -26,22 +26,22 @@ pub struct Literal {
 
 ///|
 pub fn Literal::new(bool_var : BoolVar, positive : Bool) -> Literal {
-  { bool_var, positive }
+  { bool_var, positive, }
 }
 
 ///|
 pub fn Literal::pos(bool_var : BoolVar) -> Literal {
-  { bool_var, positive: true }
+  { bool_var, positive: true, }
 }
 
 ///|
 pub fn Literal::neg(bool_var : BoolVar) -> Literal {
-  { bool_var, positive: false }
+  { bool_var, positive: false, }
 }
 
 ///|
 pub fn Literal::negate(self : Literal) -> Literal {
-  { bool_var: self.bool_var, positive: !self.positive }
+  { bool_var: self.bool_var, positive: !self.positive, }
 }
 
 ///|
@@ -55,12 +55,12 @@ pub fn Literal::is_positive(self : Literal) -> Bool {
 }
 
 ///|
-pub fn Literal::index(self : Literal) -> Int {
+pub fn Literal::index(self : Literal) -> Int32 {
   2 * (self.bool_var.to_int() - 1) + (if self.positive { 0 } else { 1 })
 }
 
 ///|
-pub fn Literal::from_index(index : Int) -> Literal {
+pub fn Literal::from_index(index : Int32) -> Literal {
   let bool_var = BoolVar::new(index / 2 + 1)
   if index % 2 == 0 {
     Literal::pos(bool_var)

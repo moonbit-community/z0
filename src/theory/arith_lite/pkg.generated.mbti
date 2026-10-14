@@ -39,4 +39,3 @@ pub fn ArithLiteResult::to_text(Self) -> String
 // Type aliases
 
 // Traits
-

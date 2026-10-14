@@ -7,7 +7,7 @@ fn bool_param_to_text(value : @util.Availability[Bool]) -> String {
 }
 
 ///|
-fn int_param_to_text(value : @util.Availability[Int]) -> String {
+fn int_param_to_text(value : @util.Availability[Int32]) -> String {
   match value {
     @util.Available(v) => "int:\{v}"
     @util.Unavailable(reason) => reason.to_text()

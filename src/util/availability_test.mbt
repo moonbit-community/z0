@@ -1,5 +1,5 @@
 ///|
-fn availability_to_text(value : Availability[Int]) -> String {
+fn availability_to_text(value : Availability[Int32]) -> String {
   match value {
     Available(v) => "available:\{v}"
     Unavailable(reason) => "unavailable:\{reason.to_text()}"

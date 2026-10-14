@@ -32,7 +32,7 @@ pub fn parse_args(args : Array[String]) -> ShellAction {
 priv struct ShellResult {
   stdout : String
   stderr : String
-  exit_code : Int
+  exit_code : Int32
 }
 
 ///|
@@ -72,9 +72,9 @@ pub fn read_input_file(path : String) -> String raise @io_error.IoError {
 fn shell_result(
   stdout : String,
   stderr : String,
-  exit_code : Int,
+  exit_code : Int32,
 ) -> ShellResult {
-  { stdout, stderr, exit_code }
+  { stdout, stderr, exit_code, }
 }
 
 ///|

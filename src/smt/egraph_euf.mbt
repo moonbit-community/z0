@@ -26,7 +26,7 @@ fn EGraphEufSearch::new(
   internalizer : SmtInternalizer,
   graph : @egraph.EGraph,
 ) -> EGraphEufSearch {
-  { manager, internalizer, graph, congruence: @egraph.EGraphCongruence::new() }
+  { manager, internalizer, graph, congruence: @egraph.EGraphCongruence::new(), }
 }
 
 ///|

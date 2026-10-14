@@ -9,7 +9,7 @@ pub fn ModelQueryTerm::new(
   display : String,
   expr : @util.ExprId,
 ) -> ModelQueryTerm {
-  { display, expr }
+  { display, expr, }
 }
 
 ///|
@@ -28,14 +28,14 @@ pub(all) enum Command {
   SetOption(String, String)
   SetInfo(String, String)
   GetOption(String)
-  DeclareSort(String, Int)
+  DeclareSort(String, Int32)
   DeclareConst(String, @util.SortId)
   DeclareFun(String, Array[@util.SortId], @util.SortId)
   DefineFun(String, Array[(String, @util.SortId)], @util.SortId, @util.ExprId)
   Assert(@util.ExprId)
   AssertNamed(@util.ExprId, String)
-  Push(Int)
-  Pop(Int)
+  Push(Int32)
+  Pop(Int32)
   Reset
   ResetAssertions
   CheckSat

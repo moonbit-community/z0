@@ -9,7 +9,7 @@ pub fn AstTranslator::new(
   source : AstManager,
   target : AstManager,
 ) -> AstTranslator {
-  { source, target }
+  { source, target, }
 }
 
 ///|

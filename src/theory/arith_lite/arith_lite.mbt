@@ -1,9 +1,9 @@
 ///|
 priv struct ArithLiteVarState {
   name : String
-  lower : Int?
-  upper : Int?
-  value : Int?
+  lower : Int32?
+  upper : Int32?
+  value : Int32?
 }
 
 ///|
@@ -30,11 +30,14 @@ pub struct ArithLiteProblem {
 
 ///|
 pub fn ArithLiteProblem::new() -> ArithLiteProblem {
-  { vars: [], unsupported: None }
+  { vars: [], unsupported: None, }
 }
 
 ///|
-fn ArithLiteProblem::find_index(self : ArithLiteProblem, name : String) -> Int {
+fn ArithLiteProblem::find_index(
+  self : ArithLiteProblem,
+  name : String,
+) -> Int32 {
   for i in 0..<self.vars.length() {
     if self.vars[i].name == name {
       return i
@@ -47,7 +50,7 @@ fn ArithLiteProblem::find_index(self : ArithLiteProblem, name : String) -> Int {
 fn ArithLiteProblem::ensure_index(
   self : ArithLiteProblem,
   name : String,
-) -> Int {
+) -> Int32 {
   let index = self.find_index(name)
   if index >= 0 {
     index
@@ -66,7 +69,7 @@ fn ArithLiteProblem::ensure_index(
 pub fn ArithLiteProblem::assert_eq_const(
   self : ArithLiteProblem,
   name : String,
-  value : Int,
+  value : Int32,
 ) -> Unit {
   let index = self.ensure_index(name)
   self.vars[index] = ArithLiteVarState::{
@@ -81,7 +84,7 @@ pub fn ArithLiteProblem::assert_eq_const(
 pub fn ArithLiteProblem::assert_ge_const(
   self : ArithLiteProblem,
   name : String,
-  value : Int,
+  value : Int32,
 ) -> Unit {
   let index = self.ensure_index(name)
   let old = self.vars[index]
@@ -101,7 +104,7 @@ pub fn ArithLiteProblem::assert_ge_const(
 pub fn ArithLiteProblem::assert_le_const(
   self : ArithLiteProblem,
   name : String,
-  value : Int,
+  value : Int32,
 ) -> Unit {
   let index = self.ensure_index(name)
   let old = self.vars[index]

@@ -21,7 +21,7 @@ pub struct Goal {
   priv manager : @ast.AstManager
   priv formulas : Array[@util.ExprId]
   priv mut precision : GoalPrecision
-  priv mut depth : Int
+  priv mut depth : Int32
   priv mut reason_unknown : @util.ReasonUnknown?
   priv mut model_converter : @converters.ModelConverter
   priv mut proof_converter : @converters.ProofConverter
@@ -59,12 +59,12 @@ pub fn Goal::add(self : Goal, formula : @util.ExprId) -> Unit {
 }
 
 ///|
-pub fn Goal::size(self : Goal) -> Int {
+pub fn Goal::size(self : Goal) -> Int32 {
   self.formulas.length()
 }
 
 ///|
-pub fn Goal::formula(self : Goal, index : Int) -> @util.ExprId? {
+pub fn Goal::formula(self : Goal, index : Int32) -> @util.ExprId? {
   self.formulas.get(index)
 }
 
@@ -79,12 +79,12 @@ pub fn Goal::set_precision(self : Goal, precision : GoalPrecision) -> Unit {
 }
 
 ///|
-pub fn Goal::depth(self : Goal) -> Int {
+pub fn Goal::depth(self : Goal) -> Int32 {
   self.depth
 }
 
 ///|
-pub fn Goal::set_depth(self : Goal, depth : Int) -> Unit {
+pub fn Goal::set_depth(self : Goal, depth : Int32) -> Unit {
   self.depth = depth
 }
 

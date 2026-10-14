@@ -909,7 +909,7 @@ fn z3_arch_validate_parser_runner_entry(
 }
 
 ///|
-fn z3_arch_parse_command_count(entry : Z3ArchManifestEntry) -> Int raise {
+fn z3_arch_parse_command_count(entry : Z3ArchManifestEntry) -> Int32 raise {
   if entry.command_count.is_empty() {
     fail("manifest command count is empty: \{entry.id}")
   }

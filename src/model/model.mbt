@@ -1,6 +1,6 @@
 ///|
 pub struct ModelRef {
-  priv id : Int
+  priv id : Int32
   priv result : @util.ResultKind
 }
 
@@ -11,7 +11,7 @@ pub fn ModelRef::to_text(self : ModelRef) -> String {
 
 ///|
 pub struct ModelHandle {
-  priv id : Int
+  priv id : Int32
   priv result : @util.ResultKind
   priv disabled : String?
   priv mut stale : Bool
@@ -78,11 +78,11 @@ pub fn Model::add_universe_value(
       if !Model::universe_has_value(values, value) {
         values.push(value)
       }
-      self.universes[i] = { sort, name, values }
+      self.universes[i] = { sort, name, values, }
       return
     }
   }
-  self.universes.push({ sort, name, values: [value] })
+  self.universes.push({ sort, name, values: [value], })
 }
 
 ///|
@@ -94,11 +94,11 @@ pub fn Model::add_bool_const(
 ) -> Unit {
   for i, entry in self.bool_consts {
     if entry.decl == decl {
-      self.bool_consts[i] = { decl, name, value }
+      self.bool_consts[i] = { decl, name, value, }
       return
     }
   }
-  self.bool_consts.push({ decl, name, value })
+  self.bool_consts.push({ decl, name, value, })
 }
 
 ///|
@@ -108,21 +108,21 @@ pub fn Model::add_value_const(
   sort : @util.SortId,
   sort_name : String,
   value : ModelValue,
-  name? : String = "",
+  name~ : String = "",
 ) -> Unit {
   if name == "" {
     return
   }
   for i, entry in self.value_consts {
     if entry.decl == decl {
-      self.value_consts[i] = { decl, name, sort_name, value }
+      self.value_consts[i] = { decl, name, sort_name, value, }
       if value.is_universe_member() {
         self.add_universe_value(sort, sort_name, value)
       }
       return
     }
   }
-  self.value_consts.push({ decl, name, sort_name, value })
+  self.value_consts.push({ decl, name, sort_name, value, })
   if value.is_universe_member() {
     self.add_universe_value(sort, sort_name, value)
   }
@@ -164,7 +164,7 @@ fn Model::complete_value_const(
     Some(value) => value
     None => {
       let value = self.fresh_uninterpreted_value(sort, sort_name)
-      self.value_consts.push({ decl, name, sort_name, value })
+      self.value_consts.push({ decl, name, sort_name, value, })
       value
     }
   }
@@ -181,11 +181,11 @@ pub fn Model::add_func_interp(
   }
   for i, entry in self.func_interps {
     if entry.decl == decl {
-      self.func_interps[i] = { decl, interp }
+      self.func_interps[i] = { decl, interp, }
       return
     }
   }
-  self.func_interps.push({ decl, interp })
+  self.func_interps.push({ decl, interp, })
 }
 
 ///|
@@ -202,12 +202,12 @@ fn Model::universe_has_value(
 }
 
 ///|
-fn compare_model_value(lhs : ModelValue, rhs : ModelValue) -> Int {
+fn compare_model_value(lhs : ModelValue, rhs : ModelValue) -> Int32 {
   lhs.to_text().compare(rhs.to_text())
 }
 
 ///|
-fn compare_universe_interp(lhs : UniverseInterp, rhs : UniverseInterp) -> Int {
+fn compare_universe_interp(lhs : UniverseInterp, rhs : UniverseInterp) -> Int32 {
   let lhs_id = lhs.sort.to_int()
   let rhs_id = rhs.sort.to_int()
   if lhs_id < rhs_id {
@@ -225,7 +225,7 @@ fn Model::universe_interps(self : Model) -> Array[UniverseInterp] {
   for universe in self.universes {
     let values = universe.values.copy()
     values.sort_by(compare_model_value)
-    entries.push({ sort: universe.sort, name: universe.name, values })
+    entries.push({ sort: universe.sort, name: universe.name, values, })
   }
   entries.sort_by(compare_universe_interp)
   entries
@@ -250,7 +250,7 @@ pub fn Model::universe_values(
 fn compare_bool_const_interp(
   lhs : BoolConstInterp,
   rhs : BoolConstInterp,
-) -> Int {
+) -> Int32 {
   let lhs_id = lhs.decl.to_int()
   let rhs_id = rhs.decl.to_int()
   if lhs_id < rhs_id {
@@ -273,7 +273,7 @@ fn Model::bool_const_interps(self : Model) -> Array[BoolConstInterp] {
 fn compare_value_const_interp(
   lhs : ValueConstInterp,
   rhs : ValueConstInterp,
-) -> Int {
+) -> Int32 {
   let lhs_id = lhs.decl.to_int()
   let rhs_id = rhs.decl.to_int()
   if lhs_id < rhs_id {
@@ -301,7 +301,7 @@ fn Model::value_const_interps(self : Model) -> Array[ValueConstInterp] {
 fn compare_func_interp_record(
   lhs : FuncInterpRecord,
   rhs : FuncInterpRecord,
-) -> Int {
+) -> Int32 {
   let lhs_id = lhs.decl.to_int()
   let rhs_id = rhs.decl.to_int()
   if lhs_id < rhs_id {
@@ -334,8 +334,8 @@ fn Model::func_interp_value(
 }
 
 ///|
-pub fn ModelHandle::new(id : Int, result : @util.ResultKind) -> ModelHandle {
-  { id, result, disabled: None, stale: false }
+pub fn ModelHandle::new(id : Int32, result : @util.ResultKind) -> ModelHandle {
+  { id, result, disabled: None, stale: false, }
 }
 
 ///|
@@ -364,7 +364,7 @@ pub fn ModelHandle::view(self : ModelHandle) -> @util.Availability[ModelRef] {
       } else {
         match self.result {
           @util.ResultKind::Sat | @util.ResultKind::Unknown(true) =>
-            @util.Available(ModelRef::{ id: self.id, result: self.result })
+            @util.Available(ModelRef::{ id: self.id, result: self.result, })
           @util.ResultKind::NoResult =>
             @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
           _ =>

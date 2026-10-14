@@ -53,4 +53,3 @@ pub fn Statistics::value_text(Self, String) -> String
 // Type aliases
 
 // Traits
-

@@ -1,17 +1,17 @@
 ///|
 pub struct ResourceLimit {
-  priv mut used : Int
-  priv max_steps : Int?
+  priv mut used : Int32
+  priv max_steps : Int32?
 }
 
 ///|
 pub fn ResourceLimit::unlimited() -> ResourceLimit {
-  { used: 0, max_steps: None }
+  { used: 0, max_steps: None, }
 }
 
 ///|
-pub fn ResourceLimit::with_step_limit(max_steps : Int) -> ResourceLimit {
-  { used: 0, max_steps: Some(max_steps) }
+pub fn ResourceLimit::with_step_limit(max_steps : Int32) -> ResourceLimit {
+  { used: 0, max_steps: Some(max_steps), }
 }
 
 ///|
@@ -32,7 +32,7 @@ pub fn ResourceLimit::checkpoint(self : ResourceLimit) -> Availability[Unit] {
 }
 
 ///|
-pub fn ResourceLimit::used_steps(self : ResourceLimit) -> Int {
+pub fn ResourceLimit::used_steps(self : ResourceLimit) -> Int32 {
   self.used
 }
 

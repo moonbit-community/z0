@@ -5,7 +5,7 @@ pub struct DependencyConverter {
 
 ///|
 pub fn DependencyConverter::new() -> DependencyConverter {
-  { labels: [] }
+  { labels: [], }
 }
 
 ///|

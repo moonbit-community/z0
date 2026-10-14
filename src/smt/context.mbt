@@ -53,7 +53,7 @@ pub struct SmtContext {
   priv extension_propagations : Array[SmtTheoryPropagation]
   priv extension_conflicts : Array[@pure_sat.ExtJustificationId]
   priv theories : Array[@theory_core.TheoryPlugin]
-  priv mut qhead : Int
+  priv mut qhead : Int32
   priv mut last_model : @model.Model?
   priv mut cache_stale : Bool
   priv mut last_result : @util.ResultKind
@@ -285,7 +285,7 @@ pub fn SmtContext::setup_theories(
 }
 
 ///|
-pub fn SmtContext::registered_theory_count(self : SmtContext) -> Int {
+pub fn SmtContext::registered_theory_count(self : SmtContext) -> Int32 {
   self.theories.length()
 }
 
@@ -295,7 +295,7 @@ pub fn SmtContext::record_unsupported_term(
   expr : @util.ExprId,
   reason : @util.ReasonUnknown,
 ) -> Unit {
-  self.unsupported_terms.push_item(TheoryUnsupportedTerm::{ expr, reason })
+  self.unsupported_terms.push_item(TheoryUnsupportedTerm::{ expr, reason, })
   self.mark_caches_stale()
 }
 
@@ -326,7 +326,7 @@ pub fn SmtContext::internalize_theory_term(
 }
 
 ///|
-pub fn SmtContext::unsupported_term_count(self : SmtContext) -> Int {
+pub fn SmtContext::unsupported_term_count(self : SmtContext) -> Int32 {
   self.unsupported_terms.length()
 }
 
@@ -603,7 +603,7 @@ fn SmtContext::euf_asserted_equality_edges(
   let edges : Array[EufEqualityEdge] = []
   for assertion in self.assertions.items() {
     match self.manager.get_expr(assertion).kind {
-      Eq(lhs, rhs) => edges.push(EufEqualityEdge::{ lhs, rhs, assertion })
+      Eq(lhs, rhs) => edges.push(EufEqualityEdge::{ lhs, rhs, assertion, })
       _ => ()
     }
   }
@@ -972,7 +972,7 @@ pub fn SmtContext::push(self : SmtContext) -> Unit {
 }
 
 ///|
-pub fn SmtContext::pop(self : SmtContext, count : Int) -> Unit {
+pub fn SmtContext::pop(self : SmtContext, count : Int32) -> Unit {
   self.assertions.pop_scope(count) catch {
     _ => return
   }
@@ -1059,12 +1059,12 @@ pub fn SmtContext::dispatch_egraph_facts(self : SmtContext) -> Unit {
 }
 
 ///|
-pub fn SmtContext::egraph_eq_fact_count(self : SmtContext) -> Int {
+pub fn SmtContext::egraph_eq_fact_count(self : SmtContext) -> Int32 {
   self.egraph_dispatch.eq_fact_count()
 }
 
 ///|
-pub fn SmtContext::egraph_diseq_fact_count(self : SmtContext) -> Int {
+pub fn SmtContext::egraph_diseq_fact_count(self : SmtContext) -> Int32 {
   self.egraph_dispatch.diseq_fact_count()
 }
 
@@ -1721,7 +1721,7 @@ fn SmtContext::euf_assumptions_conflict(
 ///|
 fn euf_assumption_trial(
   core : Array[@util.ExprId],
-  skipped : Int,
+  skipped : Int32,
 ) -> Array[@util.ExprId] {
   let trial : Array[@util.ExprId] = []
   for i in 0..<core.length() {
@@ -2008,17 +2008,17 @@ pub fn SmtContext::last_model(self : SmtContext) -> @model.Model? {
 }
 
 ///|
-pub fn SmtContext::sat_core_id(_self : SmtContext) -> Int {
+pub fn SmtContext::sat_core_id(_self : SmtContext) -> Int32 {
   1
 }
 
 ///|
-pub fn SmtContext::root_clause_count(self : SmtContext) -> Int {
+pub fn SmtContext::root_clause_count(self : SmtContext) -> Int32 {
   self.sat_core.inspect_state().root_clauses
 }
 
 ///|
-pub fn SmtContext::sat_var_count(self : SmtContext) -> Int {
+pub fn SmtContext::sat_var_count(self : SmtContext) -> Int32 {
   self.internalizer.sat_var_count()
 }
 
@@ -2095,11 +2095,11 @@ pub fn SmtContext::attach_theory_var(
 }
 
 ///|
-pub fn SmtContext::egraph_new_eq_count(self : SmtContext) -> Int {
+pub fn SmtContext::egraph_new_eq_count(self : SmtContext) -> Int32 {
   self.egraph.new_eq_count()
 }
 
 ///|
-pub fn SmtContext::egraph_new_diseq_count(self : SmtContext) -> Int {
+pub fn SmtContext::egraph_new_diseq_count(self : SmtContext) -> Int32 {
   self.egraph.new_diseq_count()
 }

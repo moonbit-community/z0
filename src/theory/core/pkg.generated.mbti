@@ -218,4 +218,3 @@ pub impl Show for TheoryTermRef
 // Type aliases
 
 // Traits
-

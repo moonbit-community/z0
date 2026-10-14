@@ -77,4 +77,3 @@ pub fn ValueFactory::new() -> Self
 // Type aliases
 
 // Traits
-

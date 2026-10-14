@@ -34,4 +34,3 @@ pub fn EufProofHints::new() -> Self
 // Type aliases
 
 // Traits
-

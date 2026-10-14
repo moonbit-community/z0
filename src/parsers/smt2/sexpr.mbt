@@ -18,7 +18,7 @@ pub struct SExprCursor {
 
 ///|
 pub fn SExprCursor::new(input : String) -> SExprCursor {
-  SExprCursor::{ scanner: Scanner::new(input) }
+  SExprCursor::{ scanner: Scanner::new(input), }
 }
 
 ///|

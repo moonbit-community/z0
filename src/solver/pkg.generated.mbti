@@ -153,4 +153,3 @@ pub fn UnsatCoreEntry::to_text(Self) -> String
 // Type aliases
 
 // Traits
-

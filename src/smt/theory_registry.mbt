@@ -5,7 +5,7 @@ pub struct TheoryRegistry {
 
 ///|
 pub fn TheoryRegistry::new() -> TheoryRegistry {
-  { factories: [] }
+  { factories: [], }
 }
 
 ///|

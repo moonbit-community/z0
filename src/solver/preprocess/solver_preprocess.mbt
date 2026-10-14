@@ -6,14 +6,14 @@ pub struct SolverPreprocess {
 
 ///|
 pub fn SolverPreprocess::new(base : @solver.SolverFactory) -> SolverPreprocess {
-  { base, enabled: true }
+  { base, enabled: true, }
 }
 
 ///|
 pub fn SolverPreprocess::disabled(
   base : @solver.SolverFactory,
 ) -> SolverPreprocess {
-  { base, enabled: false }
+  { base, enabled: false, }
 }
 
 ///|

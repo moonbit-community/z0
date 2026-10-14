@@ -91,4 +91,3 @@ pub fn Options::set(Self, String, String) -> Unit raise
 // Type aliases
 
 // Traits
-

@@ -193,7 +193,7 @@ pub fn AstManager::sort_name(
 pub fn AstManager::declare_sort(
   self : AstManager,
   name : String,
-  arity : Int,
+  arity : Int32,
 ) -> @util.SortId raise {
   if arity != 0 {
     raise @unsupported_error.UnsupportedError(
@@ -320,7 +320,7 @@ pub fn AstManager::push_scope(self : AstManager) -> Unit {
 ///|
 pub fn AstManager::pop_scope(
   self : AstManager,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   self.sorts.pop_scope(count)
   self.decls.pop_scope(count)
@@ -330,7 +330,7 @@ pub fn AstManager::pop_scope(
 ///|
 pub fn AstManager::commit_scope(
   self : AstManager,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   self.sorts.commit_scope(count)
   self.decls.commit_scope(count)
@@ -386,7 +386,7 @@ fn AstManager::intern(
     }
   }
   let id = @util.ExprId::new(self.exprs.length())
-  self.exprs.push(Expr::{ id, kind, sort })
+  self.exprs.push(Expr::{ id, kind, sort, })
   id
 }
 
@@ -396,7 +396,7 @@ pub fn AstManager::mk_bool(self : AstManager, value : Bool) -> @util.ExprId {
 }
 
 ///|
-pub fn AstManager::mk_int(self : AstManager, value : Int) -> @util.ExprId {
+pub fn AstManager::mk_int(self : AstManager, value : Int32) -> @util.ExprId {
   self.intern(IntValue(value), self.int_sort())
 }
 

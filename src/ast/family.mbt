@@ -1,15 +1,15 @@
 ///|
 pub struct FamilyId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn FamilyId::new(value : Int) -> FamilyId {
+pub fn FamilyId::new(value : Int32) -> FamilyId {
   { value, }
 }
 
 ///|
-pub fn FamilyId::to_int(self : FamilyId) -> Int {
+pub fn FamilyId::to_int(self : FamilyId) -> Int32 {
   self.value
 }
 
@@ -82,7 +82,7 @@ pub fn FamilyDescriptor::new(
   supported~ : Bool,
   owner~ : String,
 ) -> FamilyDescriptor {
-  { id, name, supported, owner }
+  { id, name, supported, owner, }
 }
 
 ///|

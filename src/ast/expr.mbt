@@ -19,7 +19,7 @@ pub fn ArithCompareOp::symbol(self : ArithCompareOp) -> String {
 ///|
 pub(all) enum ExprKind {
   BoolValue(Bool)
-  IntValue(Int)
+  IntValue(Int32)
   App(@util.FuncDeclId, Array[@util.ExprId])
   MacroRef(String)
   Not(@util.ExprId)

@@ -11,12 +11,12 @@ pub struct Options {
   priv mut diagnostic_output_channel : String
   priv mut diagnostic_output_channel_explicit : Bool
   priv mut regular_output_channel : String
-  priv mut random_seed : Int
-  priv mut verbosity : Int
+  priv mut random_seed : Int32
+  priv mut verbosity : Int32
   priv mut numeral_as_real : Bool
   priv mut int_real_coercions : Bool
   priv mut error_behavior : String
-  priv mut reproducible_resource_limit : Int?
+  priv mut reproducible_resource_limit : Int32?
 }
 
 ///|
@@ -52,7 +52,7 @@ fn parse_bool_option(value : String) -> Bool? {
 }
 
 ///|
-fn parse_nonnegative_int_option(value : String) -> Int? {
+fn parse_nonnegative_int_option(value : String) -> Int32? {
   if value.is_empty() {
     None
   } else {
@@ -344,6 +344,6 @@ pub fn Options::regular_output_channel(self : Options) -> String {
 }
 
 ///|
-pub fn Options::reproducible_resource_limit(self : Options) -> Int? {
+pub fn Options::reproducible_resource_limit(self : Options) -> Int32? {
   self.reproducible_resource_limit
 }
