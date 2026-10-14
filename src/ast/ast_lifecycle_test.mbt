@@ -1,12 +1,15 @@
 ///|
-fn bool_const_expr(manager : AstManager, name : String) -> @util.ExprId raise {
+fn bool_const_expr(
+  manager : @ast.AstManager,
+  name : String,
+) -> @util.ExprId raise {
   let decl = manager.declare_const(name, manager.bool_sort())
   manager.mk_app(decl, [])
 }
 
 ///|
 fn uf_const_expr(
-  manager : AstManager,
+  manager : @ast.AstManager,
   name : String,
   sort : @util.SortId,
 ) -> @util.ExprId raise {
@@ -16,7 +19,7 @@ fn uf_const_expr(
 
 ///|
 test "family_registry_has_bool_uf_and_reserved_families" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let bool_family = manager.bool_family()
   let uf_family = manager.uf_family()
   let arith_family = manager.arith_family()
@@ -32,8 +35,8 @@ test "family_registry_has_bool_uf_and_reserved_families" {
     content="clone,inherit,parameter_translation,mk_fresh,is_value,is_model_value,are_equal,are_distinct,get_some_value,is_considered_uninterpreted,translate",
   )
   match manager.family_descriptor(bool_family).hook_status(IsValue) {
-    @util.Available(_) => inspect("available", content="available")
-    @util.Unavailable(reason) => inspect(reason.to_text(), content="available")
+    Available(_) => inspect("available", content="available")
+    Unavailable(reason) => inspect(reason.to_text(), content="available")
   }
   match manager.lookup_family("array") {
     Some(array_family) =>
@@ -47,7 +50,7 @@ test "family_registry_has_bool_uf_and_reserved_families" {
 
 ///|
 test "ast_manager_has_builtin_int_sort_and_arith_family" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   inspect(manager.int_sort(), content="sort#1")
   inspect(
     manager.lookup_sort("Int") == Some(manager.int_sort()),
@@ -59,14 +62,14 @@ test "ast_manager_has_builtin_int_sort_and_arith_family" {
     content="arith",
   )
   match manager.ensure_family_supported(manager.arith_family()) {
-    @util.Available(_) => inspect("available", content="available")
-    @util.Unavailable(reason) => inspect(reason.to_text(), content="available")
+    Available(_) => inspect("available", content="available")
+    Unavailable(reason) => inspect(reason.to_text(), content="available")
   }
 }
 
 ///|
 test "ast_integer_literals_and_comparisons_are_typed_and_pretty" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let one = manager.mk_int(1)
   let two = manager.mk_int(2)
   inspect(manager.expr_sort(one), content="sort#1")
@@ -91,7 +94,7 @@ test "ast_integer_literals_and_comparisons_are_typed_and_pretty" {
 
 ///|
 test "sorts_declarations_and_exprs_carry_owner_family" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let u = manager.declare_sort("U", 0)
   let p = bool_const_expr(manager, "p")
   let a = uf_const_expr(manager, "a", u)
@@ -112,13 +115,13 @@ test "sorts_declarations_and_exprs_carry_owner_family" {
 
 ///|
 test "reserved_family_declaration_path_reports_typed_unsupported" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   match manager.lookup_family("bv") {
     Some(family) =>
       match manager.ensure_family_supported(family) {
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           inspect(reason.to_text(), content="unsupported(bv)")
-        @util.Available(_) =>
+        Available(_) =>
           inspect("unexpected supported family", content="unsupported")
       }
     None => inspect("missing bv family", content="unsupported")
@@ -126,9 +129,9 @@ test "reserved_family_declaration_path_reports_typed_unsupported" {
   match manager.lookup_family("array") {
     Some(family) =>
       match manager.family_descriptor(family).hook_status(Translate) {
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           inspect(reason.to_text(), content="unsupported(array.translate)")
-        @util.Available(_) =>
+        Available(_) =>
           inspect("unexpected supported hook", content="unsupported")
       }
     None => inspect("missing array family", content="unsupported")
@@ -137,7 +140,7 @@ test "reserved_family_declaration_path_reports_typed_unsupported" {
 
 ///|
 test "ast_manager_full_reset_rebuilds_builtin_state" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let u = manager.declare_sort("U", 0)
   ignore(uf_const_expr(manager, "a", u))
   ignore(manager.mk_bool(true))
@@ -152,15 +155,15 @@ test "ast_manager_full_reset_rebuilds_builtin_state" {
 
 ///|
 test "ast_translator_copies_uninterpreted_sort_decl_and_expr" {
-  let source = AstManager::new()
+  let source = @ast.AstManager::new()
   let u = source.declare_sort("U", 0)
   let a_decl = source.declare_const("a", u)
   let f_decl = source.declare_fun("f", [u], u)
   let a = source.mk_app(a_decl, [])
   let term = source.mk_app(f_decl, [a])
-  let target = AstManager::new()
+  let target = @ast.AstManager::new()
   ignore(target.declare_sort("Preexisting", 0))
-  let translator = AstTranslator::new(source, target)
+  let translator = @ast.AstTranslator::new(source, target)
   let translated = translator.translate_expr(term)
   inspect(target.pretty(translated), content="(f a)")
   inspect(target.sort_name(target.expr_sort(translated)), content="U")
@@ -168,7 +171,7 @@ test "ast_translator_copies_uninterpreted_sort_decl_and_expr" {
 
 ///|
 test "family_sort_checks_reject_bool_and_uf_mismatches" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let u = manager.declare_sort("U", 0)
   let a = uf_const_expr(manager, "a", u)
   let p = bool_const_expr(manager, "p")
@@ -209,11 +212,11 @@ test "family_sort_checks_reject_bool_and_uf_mismatches" {
 
 ///|
 test "macro_manager_scopes_copy_and_expand_bool_macros" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let p = bool_const_expr(manager, "p")
-  let macros = MacroManager::new()
+  let macros = @ast.MacroManager::new()
   macros.insert("m", p)
-  let copied = MacroManager::new()
+  let copied = @ast.MacroManager::new()
   macros.copy_to(copied)
   inspect(copied.lookup("m") == Some(p), content="true")
   manager.install_macros(copied)
@@ -228,16 +231,16 @@ test "macro_manager_scopes_copy_and_expand_bool_macros" {
 
 ///|
 test "defined_names_scope_and_nnf_identity_result" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let p = bool_const_expr(manager, "p")
-  let names = DefinedNames::new()
+  let names = @ast.DefinedNames::new()
   names.insert("p_def", p)
   names.push()
   names.insert("local", p)
   names.pop(1)
   inspect(names.lookup("p_def") == Some(p), content="true")
   inspect(names.lookup("local") is None, content="true")
-  let result = NnfResult::identity(p)
+  let result = @ast.NnfResult::identity(p)
   inspect(result.result(), content="expr#0")
   inspect(result.new_defs_count(), content="0")
 }

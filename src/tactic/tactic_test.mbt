@@ -1,34 +1,38 @@
 ///|
-fn tactic_result_text(result : @util.Availability[TacticResult]) -> String {
+fn tactic_result_text(
+  result : @util.Availability[@tactic.TacticResult],
+) -> String {
   match result {
-    @util.Available(value) => "goals:\{value.goal_count()}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(value) => "goals:\{value.goal_count()}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
-fn tactic_availability_text(value : @util.Availability[Tactic]) -> String {
+fn tactic_availability_text(
+  value : @util.Availability[@tactic.Tactic],
+) -> String {
   match value {
-    @util.Available(tactic) => "available:\{tactic.name()}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(tactic) => "available:\{tactic.name()}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn tactic_result_goal_text(
   manager : @ast.AstManager,
-  result : @util.Availability[TacticResult],
+  result : @util.Availability[@tactic.TacticResult],
 ) -> String {
   match result {
-    @util.Available(value) =>
+    Available(value) =>
       match value.goal(0) {
         Some(goal) => {
           let parts : Array[String] = []
@@ -47,72 +51,75 @@ fn tactic_result_goal_text(
         }
         None => "no-goal"
       }
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn tactic_result_goal_metadata_text(
-  result : @util.Availability[TacticResult],
+  result : @util.Availability[@tactic.TacticResult],
 ) -> String {
   match result {
-    @util.Available(value) =>
+    Available(value) =>
       match value.goal(0) {
         Some(goal) =>
           "\{goal.dependency_converter().labels_text()}:\{goal.requires_model()},\{goal.requires_proof()},\{goal.requires_unsat_core()}:\{goal.sat_preserved()},\{goal.unsat_preserved()}"
         None => "no-goal"
       }
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn tactic_result_goal_model_converter_text(
-  result : @util.Availability[TacticResult],
+  result : @util.Availability[@tactic.TacticResult],
 ) -> String {
   match result {
-    @util.Available(value) =>
+    Available(value) =>
       match value.goal(0) {
         Some(goal) => goal.model_converter().steps_text()
         None => "no-goal"
       }
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn tactic_result_goal_proof_labels_text(
-  result : @util.Availability[TacticResult],
+  result : @util.Availability[@tactic.TacticResult],
 ) -> String {
   match result {
-    @util.Available(value) =>
+    Available(value) =>
       match value.goal(0) {
         Some(goal) =>
           match goal.proof_converter().apply_labels(["named-input"]) {
-            @util.Available(labels) => labels.join(",")
-            @util.Unavailable(reason) => reason.to_text()
+            Available(labels) => labels.join(",")
+            Unavailable(reason) => reason.to_text()
           }
         None => "no-goal"
       }
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 test "skip_tactic_preserves_goal_and_fail_tactic_is_explicitly_unsupported" {
   let manager = @ast.AstManager::new()
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_bool(true))
-  inspect(tactic_result_text(Tactic::skip().apply(goal)), content="goals:1")
   inspect(
-    tactic_result_text(Tactic::fail("phase-9-seed").apply(goal)),
+    tactic_result_text(@tactic.Tactic::skip().apply(goal)),
+    content="goals:1",
+  )
+  inspect(
+    tactic_result_text(@tactic.Tactic::fail("phase-9-seed").apply(goal)),
     content="unsupported(phase-9-seed)",
   )
 }
 
 ///|
 test "tactic_statistics_use_stable_seed_key" {
-  let stats = Tactic::skip().collect_statistics()
+  let stats = @tactic.Tactic::skip().collect_statistics()
   inspect(stats.keys_text(), content="tactic.skip.queries")
 }
 
@@ -121,7 +128,7 @@ test "tactic_lifecycle_hooks_are_available_by_default" {
   let source = @ast.AstManager::new()
   let target = @ast.AstManager::new()
   let translator = @ast.AstTranslator::new(source, target)
-  let tactic = Tactic::skip()
+  let tactic = @tactic.Tactic::skip()
   inspect(
     tactic_availability_text(tactic.translate(translator)),
     content="available:skip",
@@ -141,8 +148,8 @@ test "tactic_lifecycle_hooks_are_available_by_default" {
 
 ///|
 test "tactic_params_and_statistics_hooks_are_callback_driven" {
-  let tactic = Tactic::new("fake-hook", fn(goal) {
-    @util.Available(TacticResult::from_goals([goal]))
+  let tactic = @tactic.Tactic::new("fake-hook", fn(goal) {
+    Available(@tactic.TacticResult::from_goals([goal]))
   })
   let log : Array[String] = []
   tactic.set_describe_params(fn() {
@@ -160,11 +167,11 @@ test "tactic_params_and_statistics_hooks_are_callback_driven" {
   })
   tactic.set_updt_params(fn(params) {
     match params.get_bool("tactic.fake.enabled") {
-      @util.Available(value) => {
+      Available(value) => {
         log.push("update:\{value}")
-        @util.Available(())
+        Available(())
       }
-      @util.Unavailable(reason) => @util.Unavailable(reason)
+      Unavailable(reason) => Unavailable(reason)
     }
   })
   tactic.set_collect_statistics(fn() {
@@ -196,22 +203,28 @@ test "simplify_tactic_rewrites_bool_formulas_and_tracks_decisions" {
   let manager = @ast.AstManager::new()
   let p_decl = manager.declare_const("p", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
-  let sat_goal = Goal::new(manager)
+  let sat_goal = @tactic.Goal::new(manager)
   sat_goal.add(manager.mk_bool(true))
   inspect(
-    tactic_result_goal_text(manager, Tactic::simplify().apply(sat_goal)),
+    tactic_result_goal_text(manager, @tactic.Tactic::simplify().apply(sat_goal)),
     content="empty:depth=1:sat=true",
   )
-  let rewrite_goal = Goal::new(manager)
+  let rewrite_goal = @tactic.Goal::new(manager)
   rewrite_goal.add(manager.mk_and([p, manager.mk_bool(true)]))
   inspect(
-    tactic_result_goal_text(manager, Tactic::simplify().apply(rewrite_goal)),
+    tactic_result_goal_text(
+      manager,
+      @tactic.Tactic::simplify().apply(rewrite_goal),
+    ),
     content="p:depth=1:unsat=false",
   )
-  let unsat_goal = Goal::new(manager)
+  let unsat_goal = @tactic.Goal::new(manager)
   unsat_goal.add(manager.mk_not(manager.mk_bool(true)))
   inspect(
-    tactic_result_goal_text(manager, Tactic::simplify().apply(unsat_goal)),
+    tactic_result_goal_text(
+      manager,
+      @tactic.Tactic::simplify().apply(unsat_goal),
+    ),
     content="false:depth=1:unsat=true",
   )
 }
@@ -223,10 +236,10 @@ test "tseitin_cnf_tactic_creates_ast_level_aux_clauses" {
   let q_decl = manager.declare_const("q", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
   let q = manager.mk_app(q_decl, [])
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_and([p, q]))
   inspect(
-    tactic_result_goal_text(manager, Tactic::tseitin_cnf().apply(goal)),
+    tactic_result_goal_text(manager, @tactic.Tactic::tseitin_cnf().apply(goal)),
     content="(or (not tseitin!0) p),(or (not tseitin!0) q),(or tseitin!0 (not p) (not q)),tseitin!0:depth=1:unsat=false",
   )
 }
@@ -238,10 +251,12 @@ test "tseitin_cnf_tactic_records_aux_model_hiding_converter" {
   let q_decl = manager.declare_const("q", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
   let q = manager.mk_app(q_decl, [])
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_and([p, q]))
   inspect(
-    tactic_result_goal_model_converter_text(Tactic::tseitin_cnf().apply(goal)),
+    tactic_result_goal_model_converter_text(
+      @tactic.Tactic::tseitin_cnf().apply(goal),
+    ),
     content="identity>identity>hide:tseitin!0",
   )
 }
@@ -253,9 +268,9 @@ test "tseitin_cnf_tactic_records_aux_proof_and_dependency_metadata" {
   let q_decl = manager.declare_const("q", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
   let q = manager.mk_app(q_decl, [])
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_and([p, q]))
-  let result = Tactic::tseitin_cnf().apply(goal)
+  let result = @tactic.Tactic::tseitin_cnf().apply(goal)
   inspect(
     tactic_result_goal_proof_labels_text(result),
     content="named-input,tseitin-aux:tseitin!0",
@@ -271,22 +286,31 @@ test "tseitin_cnf_tactic_preserves_literals_and_decisions" {
   let manager = @ast.AstManager::new()
   let p_decl = manager.declare_const("p", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
-  let literal_goal = Goal::new(manager)
+  let literal_goal = @tactic.Goal::new(manager)
   literal_goal.add(p)
   inspect(
-    tactic_result_goal_text(manager, Tactic::tseitin_cnf().apply(literal_goal)),
+    tactic_result_goal_text(
+      manager,
+      @tactic.Tactic::tseitin_cnf().apply(literal_goal),
+    ),
     content="p:depth=1:unsat=false",
   )
-  let sat_goal = Goal::new(manager)
+  let sat_goal = @tactic.Goal::new(manager)
   sat_goal.add(manager.mk_bool(true))
   inspect(
-    tactic_result_goal_text(manager, Tactic::tseitin_cnf().apply(sat_goal)),
+    tactic_result_goal_text(
+      manager,
+      @tactic.Tactic::tseitin_cnf().apply(sat_goal),
+    ),
     content="empty:depth=1:sat=true",
   )
-  let unsat_goal = Goal::new(manager)
+  let unsat_goal = @tactic.Goal::new(manager)
   unsat_goal.add(manager.mk_bool(false))
   inspect(
-    tactic_result_goal_text(manager, Tactic::tseitin_cnf().apply(unsat_goal)),
+    tactic_result_goal_text(
+      manager,
+      @tactic.Tactic::tseitin_cnf().apply(unsat_goal),
+    ),
     content="false:depth=1:unsat=true",
   )
 }
@@ -298,12 +322,12 @@ test "solve_eqs_tactic_substitutes_bool_constants_and_preserves_metadata" {
   let q_decl = manager.declare_const("q", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
   let q = manager.mk_app(q_decl, [])
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_eq(p, manager.mk_bool(true)))
   goal.add(manager.mk_and([p, q]))
   goal.dependency_converter().add_label("dep-solve")
   goal.set_requires_model(true)
-  let result = Tactic::solve_eqs().apply(goal)
+  let result = @tactic.Tactic::solve_eqs().apply(goal)
   inspect(
     tactic_result_goal_text(manager, result),
     content="q:depth=1:unsat=false",
@@ -322,11 +346,11 @@ test "solve_eqs_tactic_substitutes_uf_constants_into_remaining_formulas" {
   let b_decl = manager.declare_const("b", u)
   let a = manager.mk_app(a_decl, [])
   let b = manager.mk_app(b_decl, [])
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_eq(a, b))
   goal.add(manager.mk_distinct([a, b]))
   inspect(
-    tactic_result_goal_text(manager, Tactic::solve_eqs().apply(goal)),
+    tactic_result_goal_text(manager, @tactic.Tactic::solve_eqs().apply(goal)),
     content="false:depth=1:unsat=true",
   )
 }
@@ -334,7 +358,7 @@ test "solve_eqs_tactic_substitutes_uf_constants_into_remaining_formulas" {
 ///|
 test "simplify_tactic_preserves_goal_metadata" {
   let manager = @ast.AstManager::new()
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_bool(true))
   goal.dependency_converter().add_label("dep-a")
   goal.set_requires_model(true)
@@ -342,7 +366,7 @@ test "simplify_tactic_preserves_goal_metadata" {
   goal.set_requires_unsat_core(true)
   goal.set_precision(Over)
   inspect(
-    tactic_result_goal_metadata_text(Tactic::simplify().apply(goal)),
+    tactic_result_goal_metadata_text(@tactic.Tactic::simplify().apply(goal)),
     content="dep-a:true,true,true:false,true",
   )
 }
@@ -350,9 +374,9 @@ test "simplify_tactic_preserves_goal_metadata" {
 ///|
 test "and_then_tactical_applies_second_tactic_to_each_subgoal" {
   let manager = @ast.AstManager::new()
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.add(manager.mk_bool(true))
-  let tactic = Tactic::skip().and_then(Tactic::simplify())
+  let tactic = @tactic.Tactic::skip().and_then(@tactic.Tactic::simplify())
   inspect(tactic.name(), content="skip>>simplify")
   inspect(
     tactic_result_goal_text(manager, tactic.apply(goal)),
@@ -360,7 +384,7 @@ test "and_then_tactical_applies_second_tactic_to_each_subgoal" {
   )
   inspect(
     tactic_result_text(
-      Tactic::fail("first").and_then(Tactic::skip()).apply(goal),
+      @tactic.Tactic::fail("first").and_then(@tactic.Tactic::skip()).apply(goal),
     ),
     content="unsupported(first)",
   )

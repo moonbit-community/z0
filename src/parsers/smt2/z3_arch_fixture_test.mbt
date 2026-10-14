@@ -23,7 +23,7 @@ struct Z3ArchManifestEntry {
 
 ///|
 fn z3_arch_unavailable_proof() -> @util.Availability[@proof.ProofRef] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("proof-query"),
     ),
@@ -50,18 +50,18 @@ fn z3_arch_unknown_factory(
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
-        push=fn(_) { @util.Available(()) },
-        pop=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
+        push=fn(_) { Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(result)
         },
         model=fn() {
           if model_with_declared_p {
-            @util.Available(z3_arch_model_with_declared_p(manager))
+            Available(z3_arch_model_with_declared_p(manager))
           } else {
-            @util.Available(@model.Model::new())
+            Available(@model.Model::new())
           }
         },
         proof=fn() { z3_arch_unavailable_proof() },
@@ -78,21 +78,21 @@ fn z3_arch_statistics_incomplete_factory() -> @solver.SolverFactory {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
-        push=fn(_) { @util.Available(()) },
-        pop=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
+        push=fn(_) { Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::sat(),
           )
         },
-        model=fn() { @util.Available(@model.Model::new()) },
+        model=fn() { Available(@model.Model::new()) },
         proof=fn() { z3_arch_unavailable_proof() },
         collect_statistics=fn() {
           let stats = @stats.Statistics::new()
           stats.inc_counter("backend.custom", 1)
-          stats.mark_incomplete(@util.ReasonUnknown::IncompleteTheory("stats"))
+          stats.mark_incomplete(IncompleteTheory("stats"))
           stats
         },
       ),
@@ -109,40 +109,32 @@ fn z3_arch_fixture_factory(id : String) -> @solver.SolverFactory {
       z3_arch_statistics_incomplete_factory()
     "z3_arch_custom_unknown_with_model" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_with_model(
-          @util.ReasonUnknown::Other("maybe"),
-        ),
+        @solver.CheckSatResult::unknown_with_model(Other("maybe")),
         true,
       )
     "z3_arch_custom_unknown_no_model" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::Other("maybe"),
-        ),
+        @solver.CheckSatResult::unknown_no_model(Other("maybe")),
         false,
       )
     "z3_arch_custom_timeout_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(@util.ReasonUnknown::Timeout),
+        @solver.CheckSatResult::unknown_no_model(Timeout),
         false,
       )
     "z3_arch_custom_memout_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(@util.ReasonUnknown::Memout),
+        @solver.CheckSatResult::unknown_no_model(Memout),
         false,
       )
     "z3_arch_custom_max_conflicts_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::MaxConflictsReached,
-        ),
+        @solver.CheckSatResult::unknown_no_model(MaxConflictsReached),
         false,
       )
     "z3_arch_custom_resource_limit_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::ResourceLimitExceeded,
-        ),
+        @solver.CheckSatResult::unknown_no_model(ResourceLimitExceeded),
         false,
       )
     "z3_arch_custom_canceled_reason" =>
@@ -161,44 +153,32 @@ fn z3_arch_fixture_factory(id : String) -> @solver.SolverFactory {
       )
     "z3_arch_custom_invalid_core_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::InvalidCore,
-        ),
+        @solver.CheckSatResult::unknown_no_model(InvalidCore),
         false,
       )
     "z3_arch_custom_invalid_proof_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::InvalidProof,
-        ),
+        @solver.CheckSatResult::unknown_no_model(InvalidProof),
         false,
       )
     "z3_arch_custom_invalid_model_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::InvalidModel,
-        ),
+        @solver.CheckSatResult::unknown_no_model(InvalidModel),
         false,
       )
     "z3_arch_custom_incomplete_theory_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::IncompleteTheory("fake"),
-        ),
+        @solver.CheckSatResult::unknown_no_model(IncompleteTheory("fake")),
         false,
       )
     "z3_arch_custom_incomplete_quantifiers_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::IncompleteQuantifiers,
-        ),
+        @solver.CheckSatResult::unknown_no_model(IncompleteQuantifiers),
         false,
       )
     "z3_arch_custom_incomplete_lambdas_reason" =>
       z3_arch_unknown_factory(
-        @solver.CheckSatResult::unknown_no_model(
-          @util.ReasonUnknown::IncompleteLambdas,
-        ),
+        @solver.CheckSatResult::unknown_no_model(IncompleteLambdas),
         false,
       )
     _ => @assembly.solver_factory()
@@ -357,7 +337,7 @@ fn parse_z3_arch_manifest(text : String) -> Array[Z3ArchManifestEntry] {
 ///|
 fn z3_arch_read_file(path : String) -> String {
   @fs.read_file_to_string(path) catch {
-    @fs.IOError(message) => abort("failed to read \{path}: \{message}")
+    IOError(message) => abort("failed to read \{path}: \{message}")
   }
 }
 
@@ -958,8 +938,8 @@ fn z3_arch_allow_flags_valid(entry : Z3ArchManifestEntry) -> Bool {
 }
 
 ///|
-fn run_z3_arch_fixture(id : String, input : String) -> Smt2RunResult {
-  run_smt2_result_with_factory(input, z3_arch_fixture_factory(id))
+fn run_z3_arch_fixture(id : String, input : String) -> @smt2.Smt2RunResult {
+  @smt2.run_smt2_result_with_factory(input, z3_arch_fixture_factory(id))
 }
 
 ///|
@@ -1025,7 +1005,7 @@ test "z3_arch_manifest_command_counts_match_fixture_inputs" {
   for entry in entries {
     let input = z3_arch_read_file(entry.input_file)
     let expected_count = z3_arch_parse_command_count(entry)
-    let actual_count = parse_program(input).length()
+    let actual_count = @smt2.parse_program(input).length()
     if actual_count != expected_count {
       fail(
         "manifest command count mismatch for \{entry.id}: expected \{expected_count}, actual \{actual_count}",

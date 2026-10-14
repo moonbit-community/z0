@@ -34,7 +34,7 @@ test "sat_extension_unit_propagates_with_opaque_justification" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let state = FakeExtensionState::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -56,7 +56,7 @@ test "sat_extension_unit_propagates_with_opaque_justification" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -78,7 +78,7 @@ test "sat_extension_asserted_and_external_callbacks_are_observable" {
   let asserted : Array[String] = []
   let eliminated : Array[String] = []
   let mut external_queries = 0
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -101,7 +101,7 @@ test "sat_extension_asserted_and_external_callbacks_are_observable" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -124,7 +124,7 @@ test "sat_extension_set_eliminated_is_unreachable_when_elimination_disabled" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let eliminated : Array[String] = []
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -140,7 +140,7 @@ test "sat_extension_set_eliminated_is_unreachable_when_elimination_disabled" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -161,7 +161,7 @@ test "sat_extension_tracking_assumptions_participate_in_unsat_core" {
   let tracking = Literal::pos(p)
   let added : Array[String] = []
   let researched : Array[String] = []
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [tracking] },
     add_assumptions: fn(assumptions) {
@@ -182,7 +182,7 @@ test "sat_extension_tracking_assumptions_participate_in_unsat_core" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -206,7 +206,7 @@ test "sat_extension_should_research_reloads_tracking_assumptions" {
   let mut include_q = false
   let mut research_count = 0
   let added : Array[String] = []
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() {
       if include_q {
@@ -238,7 +238,7 @@ test "sat_extension_should_research_reloads_tracking_assumptions" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -259,7 +259,7 @@ test "sat_extension_watched_constraint_keep_and_drop_callbacks" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let state = FakeExtensionState::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -282,7 +282,7 @@ test "sat_extension_watched_constraint_keep_and_drop_callbacks" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -304,7 +304,7 @@ test "sat_extension_conflict_materializes_opaque_antecedents" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let state = FakeExtensionState::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -323,7 +323,7 @@ test "sat_extension_conflict_materializes_opaque_antecedents" {
     check: fn(_) { ExtensionConflict(ExtJustificationId::new(3)) },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -339,7 +339,7 @@ test "sat_extension_check_model_observes_assignment_and_backtracks" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let state = FakeExtensionState::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -368,7 +368,7 @@ test "sat_extension_check_model_observes_assignment_and_backtracks" {
     },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -390,7 +390,7 @@ test "sat_extension_conflicting_propagation_learns_theory_clause" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let state = FakeExtensionState::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -414,7 +414,7 @@ test "sat_extension_conflicting_propagation_learns_theory_clause" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -435,7 +435,7 @@ test "sat_extension_conflicting_propagation_learns_theory_clause" {
 ///|
 test "sat_extension_reason_unknown_is_typed" {
   let solver = SatSolverCore::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -448,12 +448,10 @@ test "sat_extension_reason_unknown_is_typed" {
     set_eliminated: fn(_) { () },
     get_antecedents: fn(_) { [] },
     describe_justification: fn(_) { Redundant },
-    check: fn(_) {
-      ExtensionUnknown(@util.ReasonUnknown::IncompleteTheory("fake"))
-    },
-    reason_unknown: fn() { Some(@util.ReasonUnknown::IncompleteTheory("fake")) },
+    check: fn(_) { ExtensionUnknown(IncompleteTheory("fake")) },
+    reason_unknown: fn() { Some(IncompleteTheory("fake")) },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -470,7 +468,7 @@ test "sat_extension_collect_statistics_merges_with_core_statistics" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   ignore(solver.add_clause(Clause::unit(Literal::pos(p))))
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -490,7 +488,7 @@ test "sat_extension_collect_statistics_merges_with_core_statistics" {
       statistics.inc_counter("sat.extension.fake.events", 3)
       statistics
     },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -518,7 +516,7 @@ test "sat_extension_no_extension_statistics_are_noop" {
 ///|
 test "sat_extension_validate_failure_maps_to_unknown_reason" {
   let solver = SatSolverCore::new()
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -535,11 +533,7 @@ test "sat_extension_validate_failure_maps_to_unknown_reason" {
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
     validate: fn(_) {
-      @util.Unavailable(
-        @util.AvailabilityReason::unknown(
-          @util.ReasonUnknown::ModelValidationFailed,
-        ),
-      )
+      Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
     },
     init_use_list: fn() { () },
     gc: fn() { () },
@@ -557,7 +551,7 @@ test "sat_extension_gc_use_list_hooks_are_deterministic" {
   let solver = SatSolverCore::new()
   let p = solver.add_var()
   let events : Array[String] = []
-  solver.set_extension(SatExtension::{
+  solver.set_extension({
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -573,7 +567,7 @@ test "sat_extension_gc_use_list_hooks_are_deterministic" {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { events.push("init-use-list") },
     gc: fn() { events.push("gc") },
     gc_vars: fn(max_var) { events.push("gc-vars:\{max_var}") },

@@ -17,16 +17,16 @@ fn u_const(
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn string_availability_text(value : @util.Availability[String]) -> String {
   match value {
-    @util.Available(value) => value
-    @util.Unavailable(reason) => reason.to_text()
+    Available(value) => value
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -35,8 +35,8 @@ fn solver_availability_text(
   value : @util.Availability[@solver.Solver],
 ) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -45,8 +45,8 @@ fn tracked_id_availability_text(
   value : @util.Availability[@solver.TrackedAssertionId],
 ) -> String {
   match value {
-    @util.Available(id) => "tracked:\{id.to_int()}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(id) => "tracked:\{id.to_int()}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -55,8 +55,8 @@ fn core_availability_text(
   value : @util.Availability[@solver.UnsatCore],
 ) -> String {
   match value {
-    @util.Available(core) => core.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(core) => core.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -66,11 +66,11 @@ fn assumptions_availability_text(
   value : @util.Availability[@solver.UnsatAssumptionSet],
 ) -> String {
   match value {
-    @util.Available(assumptions) =>
+    Available(assumptions) =>
       [
         for assumption in assumptions.items() => manager.pretty(assumption)
       ].join(",")
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -79,17 +79,16 @@ fn proof_availability_text(
   value : @util.Availability[@proof.ProofRef],
 ) -> String {
   match value {
-    @util.Available(proof) => proof.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(proof) => proof.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn unknown_reason_kind_text(result : @solver.CheckSatResult) -> String {
   match result.reason_unknown() {
-    Some(@util.ReasonUnknown::ModelValidationFailed) =>
-      "model-validation-failed"
-    Some(@util.ReasonUnknown::Other(reason)) => "other:\{reason}"
+    Some(ModelValidationFailed) => "model-validation-failed"
+    Some(Other(reason)) => "other:\{reason}"
     Some(reason) => reason.to_text()
     None => "none"
   }
@@ -114,11 +113,7 @@ fn model_validation_failure_registry() -> @smt.TheoryRegistry {
           [@ast.FamilyId::new(81)],
         )
         plugin.set_validate_model(fn(_, _, _) {
-          @util.Unavailable(
-            @util.AvailabilityReason::unknown(
-              @util.ReasonUnknown::ModelValidationFailed,
-            ),
-          )
+          Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
         })
         plugin
       },
@@ -131,7 +126,7 @@ fn model_validation_failure_registry() -> @smt.TheoryRegistry {
 test "smt_adapter_factory_solves_bool_sat" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = default_factory().create(
+  let solver = @smt_adapter.default_factory().create(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_models(true),
   )
@@ -147,7 +142,7 @@ test "smt_adapter_factory_solves_bool_sat" {
 test "smt_adapter_preserves_typed_model_validation_unknown_reason" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver_with_registry(
+  let solver = @smt_adapter.new_solver_with_registry(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -168,7 +163,10 @@ test "smt_adapter_preserves_typed_model_validation_unknown_reason" {
 test "smt_adapter_factory_preserves_scope_pop" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver(manager, @solver.SolverFactoryConfig::new())
+  let solver = @smt_adapter.new_solver(
+    manager,
+    @solver.SolverFactoryConfig::new(),
+  )
   inspect(unit_availability_text(solver.assert_expr(p)), content="available")
   inspect(unit_availability_text(solver.push(1)), content="available")
   inspect(
@@ -184,7 +182,7 @@ test "smt_adapter_factory_preserves_scope_pop" {
 test "smt_adapter_translate_replays_assertions_and_scope_shape" {
   let source = @ast.AstManager::new()
   let p = bool_const(source, "p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     source,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -204,7 +202,7 @@ test "smt_adapter_translate_replays_assertions_and_scope_shape" {
     content="available",
   )
   match translated_availability {
-    @util.Available(translated) => {
+    Available(translated) => {
       inspect(translated.get_scope_level(), content="1")
       inspect(translated.get_num_assertions(), content="2")
       inspect(
@@ -215,7 +213,7 @@ test "smt_adapter_translate_replays_assertions_and_scope_shape" {
       inspect(unit_availability_text(translated.pop(1)), content="available")
       inspect(translated.check_sat().to_text(), content="sat")
     }
-    @util.Unavailable(_) => fail("expected translated solver")
+    Unavailable(_) => fail("expected translated solver")
   }
 }
 
@@ -224,7 +222,7 @@ test "smt_adapter_tracked_assertion_participates_in_unsat_core" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
   )
@@ -252,7 +250,7 @@ test "smt_adapter_unsat_core_excludes_irrelevant_tracked_assertion" {
   let q = bool_const(manager, "q")
   let tracker_p = bool_const(manager, "named-p")
   let tracker_q = bool_const(manager, "named-q")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
   )
@@ -287,7 +285,7 @@ test "smt_adapter_tracked_assertion_participates_in_unsat_assumptions" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
   )
@@ -318,7 +316,7 @@ test "smt_adapter_tracked_euf_assertion_participates_in_core_and_assumptions" {
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let tracker = bool_const(manager, "named-diseq")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -356,7 +354,7 @@ test "smt_adapter_tracked_euf_scope_pop_drops_backend_record" {
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let tracker = bool_const(manager, "named-diseq")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -391,7 +389,7 @@ test "smt_adapter_tracked_mixed_conjunction_maps_bool_conflict_to_tracker" {
   let b = u_const(manager, u, "b")
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-mixed")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -425,7 +423,7 @@ test "smt_adapter_tracked_mixed_conjunction_maps_euf_conflict_to_tracker" {
   let b = u_const(manager, u, "b")
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-mixed")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -459,7 +457,7 @@ test "smt_adapter_tracked_demorgan_mixed_maps_bool_conflict_to_tracker" {
   let b = u_const(manager, u, "b")
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-demorgan")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -493,7 +491,7 @@ test "smt_adapter_tracked_demorgan_mixed_maps_euf_conflict_to_tracker" {
   let b = u_const(manager, u, "b")
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-demorgan")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -534,7 +532,7 @@ test "smt_adapter_tracked_negated_implies_mixed_maps_euf_conflict_to_tracker" {
   let b = u_const(manager, u, "b")
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-implies")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -574,7 +572,7 @@ test "smt_adapter_tracked_nested_mixed_conjunction_maps_euf_conflict_to_tracker"
   let p = bool_const(manager, "p")
   let q = bool_const(manager, "q")
   let tracker = bool_const(manager, "named-nested")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -609,7 +607,7 @@ test "smt_adapter_tracked_nested_mixed_conjunction_maps_euf_conflict_to_tracker"
 test "smt_adapter_check_sat_assuming_uses_temporary_scope" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
   )
@@ -625,7 +623,7 @@ test "smt_adapter_check_sat_assuming_drops_irrelevant_unsat_assumptions" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let q = bool_const(manager, "q")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
   )
@@ -644,7 +642,7 @@ test "smt_adapter_check_sat_assuming_drops_irrelevant_unsat_assumptions" {
 test "smt_adapter_check_sat_assuming_deduplicates_repeated_assumptions" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
   )
@@ -666,7 +664,7 @@ test "smt_adapter_check_sat_assuming_core_uses_original_compound_assumption" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let q = bool_const(manager, "q")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
   )
@@ -687,7 +685,7 @@ test "smt_adapter_check_sat_assuming_euf_assumption_uses_original_owner" {
   let u = manager.declare_sort("U", 0)
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -720,7 +718,7 @@ test "smt_adapter_check_sat_assuming_euf_assumption_drops_irrelevant_owner" {
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let c = u_const(manager, u, "c")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -754,7 +752,7 @@ test "smt_adapter_check_sat_assuming_mixed_conjunction_bool_conflict_uses_origin
   let p = bool_const(manager, "p")
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -786,7 +784,7 @@ test "smt_adapter_check_sat_assuming_mixed_conjunction_euf_conflict_uses_origina
   let p = bool_const(manager, "p")
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -819,7 +817,7 @@ test "smt_adapter_check_sat_assuming_nested_mixed_conjunction_euf_conflict_uses_
   let q = bool_const(manager, "q")
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -878,7 +876,7 @@ fn extension_core_registry(
               )
             None => ()
           }
-          @theory_core.TheoryCheckDone
+          TheoryCheckDone
         })
         plugin
       },
@@ -892,7 +890,7 @@ test "smt_adapter_extension_tracking_assumption_maps_to_unsat_core" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let core_owner = bool_const(manager, "fake-ext-core")
-  let solver = new_solver_with_registry(
+  let solver = @smt_adapter.new_solver_with_registry(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -922,7 +920,7 @@ test "smt_adapter_extension_tracking_assumption_participates_in_plain_check" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let core_owner = bool_const(manager, "fake-ext-core")
-  let solver = new_solver_with_registry(
+  let solver = @smt_adapter.new_solver_with_registry(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -945,7 +943,7 @@ test "smt_adapter_extension_tracking_assumption_maps_to_unsat_assumptions" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let core_owner = bool_const(manager, "fake-ext-core")
-  let solver = new_solver_with_registry(
+  let solver = @smt_adapter.new_solver_with_registry(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -975,7 +973,7 @@ test "smt_adapter_get_proof_carries_extension_assumption_theorem_scope" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let core_owner = bool_const(manager, "fake-ext-core")
-  let solver = new_solver_with_registry(
+  let solver = @smt_adapter.new_solver_with_registry(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -989,12 +987,12 @@ test "smt_adapter_get_proof_carries_extension_assumption_theorem_scope" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 redundant learned;final-empty:false;assumptions:fake-ext-core;result:unsat
@@ -1008,7 +1006,7 @@ test "smt_adapter_get_proof_materializes_euf_conflict_hint" {
   let u = manager.declare_sort("U", 0)
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1025,12 +1023,12 @@ test "smt_adapter_get_proof_materializes_euf_conflict_hint" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),(distinct a b));final-empty:true;result:unsat
@@ -1045,7 +1043,7 @@ test "smt_adapter_get_proof_materializes_euf_nary_distinct_conflict_hint" {
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let c = u_const(manager, u, "c")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1062,12 +1060,12 @@ test "smt_adapter_get_proof_materializes_euf_nary_distinct_conflict_hint" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),(distinct a b c));final-empty:true;result:unsat
@@ -1085,7 +1083,7 @@ test "smt_adapter_get_proof_materializes_euf_chain_conflict_hint" {
   let f = manager.declare_fun("f", [u], u)
   let f_a = manager.mk_app(f, [a])
   let f_c = manager.mk_app(f, [c])
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1106,12 +1104,12 @@ test "smt_adapter_get_proof_materializes_euf_chain_conflict_hint" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),(= b c),(distinct (f a) (f c)));final-empty:true;result:unsat
@@ -1129,7 +1127,7 @@ test "smt_adapter_get_proof_materializes_euf_negated_equality_chain_conflict_hin
   let f = manager.declare_fun("f", [u], u)
   let f_a = manager.mk_app(f, [a])
   let f_c = manager.mk_app(f, [c])
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1149,12 +1147,12 @@ test "smt_adapter_get_proof_materializes_euf_negated_equality_chain_conflict_hin
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),(= b c),(not (= (f a) (f c))));delete clause#0 deleted;final-empty:false;assumptions:(not (= (f a) (f c)));result:unsat
@@ -1168,7 +1166,7 @@ test "smt_adapter_get_proof_materializes_euf_assumption_conflict_hint" {
   let u = manager.declare_sort("U", 0)
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1184,12 +1182,12 @@ test "smt_adapter_get_proof_materializes_euf_assumption_conflict_hint" {
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),(distinct a b));delete clause#0 deleted;final-empty:false;assumptions:(distinct a b);result:unsat
@@ -1202,7 +1200,7 @@ test "smt_adapter_get_proof_materializes_euf_assumption_conflict_hint" {
 test "smt_adapter_get_proof_returns_skeleton_when_enabled_unsat" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_proofs(true),
   )
@@ -1219,7 +1217,7 @@ test "smt_adapter_get_proof_returns_skeleton_when_enabled_unsat" {
 test "smt_adapter_get_proof_carries_call_assumption_theorem_scope" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_proofs(true),
   )
@@ -1229,12 +1227,12 @@ test "smt_adapter_get_proof_carries_call_assumption_theorem_scope" {
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 redundant learned;final-empty:false;assumptions:(not p);result:unsat
@@ -1247,7 +1245,7 @@ test "smt_adapter_get_proof_carries_compound_call_assumption_theorem_scope" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let q = bool_const(manager, "q")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_proofs(true),
   )
@@ -1257,12 +1255,12 @@ test "smt_adapter_get_proof_carries_compound_call_assumption_theorem_scope" {
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 asserted input;add clause#2 asserted input;add clause#3 asserted input;add clause#4 redundant learned;delete clause#1 deleted;delete clause#2 deleted;delete clause#3 deleted;delete clause#4 deleted;final-empty:false;assumptions:(and q (not p));result:unsat
@@ -1275,7 +1273,7 @@ test "smt_adapter_get_proof_carries_tracked_assumption_theorem_scope" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_proofs(true),
   )
@@ -1295,12 +1293,12 @@ test "smt_adapter_get_proof_carries_tracked_assumption_theorem_scope" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 asserted input;add clause#2 asserted input;add clause#3 asserted input;add clause#4 asserted input;add clause#5 redundant learned;final-empty:false;assumptions:named-p;result:unsat
@@ -1315,7 +1313,7 @@ test "smt_adapter_get_proof_materializes_tracked_euf_conflict_hint" {
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let tracker = bool_const(manager, "named-diseq")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1337,12 +1335,12 @@ test "smt_adapter_get_proof_materializes_tracked_euf_conflict_hint" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),named-diseq);delete clause#0 deleted;final-empty:false;assumptions:named-diseq;result:unsat
@@ -1357,7 +1355,7 @@ test "smt_adapter_get_proof_materializes_mixed_call_euf_conflict_hint" {
   let p = bool_const(manager, "p")
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1373,12 +1371,12 @@ test "smt_adapter_get_proof_materializes_mixed_call_euf_conflict_hint" {
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 theory euf redundant hint congruence((= a b),(distinct a b));delete clause#0 deleted;final-empty:false;assumptions:(and p (distinct a b));result:unsat
@@ -1394,7 +1392,7 @@ test "smt_adapter_get_proof_materializes_tracked_mixed_euf_conflict_hint" {
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let tracker = bool_const(manager, "named-mixed")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1416,12 +1414,12 @@ test "smt_adapter_get_proof_materializes_tracked_mixed_euf_conflict_hint" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 asserted input;add clause#2 asserted input;add clause#3 asserted input;add clause#4 theory euf redundant hint congruence((= a b),named-mixed);delete clause#4 deleted;final-empty:false;assumptions:named-mixed;result:unsat
@@ -1437,7 +1435,7 @@ test "smt_adapter_get_proof_materializes_tracked_negated_implies_mixed_euf_confl
   let a = u_const(manager, u, "a")
   let b = u_const(manager, u, "b")
   let tracker = bool_const(manager, "named-implies")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -1459,12 +1457,12 @@ test "smt_adapter_get_proof_materializes_tracked_negated_implies_mixed_euf_confl
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 asserted input;add clause#2 asserted input;add clause#3 asserted input;add clause#4 theory euf redundant hint congruence((= a b),named-implies);delete clause#4 deleted;final-empty:false;assumptions:named-implies;result:unsat
@@ -1476,7 +1474,7 @@ test "smt_adapter_get_proof_materializes_tracked_negated_implies_mixed_euf_confl
 test "smt_adapter_get_proof_carries_sat_clause_events" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = new_solver(
+  let solver = @smt_adapter.new_solver(
     manager,
     @solver.SolverFactoryConfig::new().with_produce_proofs(true),
   )
@@ -1488,12 +1486,12 @@ test "smt_adapter_get_proof_carries_sat_clause_events" {
   inspect(solver.check_sat().to_text(), content="unsat")
   inspect(
     match solver.get_proof() {
-      @util.Available(proof) =>
+      Available(proof) =>
         match proof.object() {
           Some(object) => object.root_text()
           None => "missing-proof-object"
         }
-      @util.Unavailable(reason) => reason.to_text()
+      Unavailable(reason) => reason.to_text()
     },
     content=(
       #|sat-events:add clause#0 asserted input;add clause#1 asserted input;add clause#2 redundant learned;final-empty:true;result:unsat
@@ -1505,7 +1503,7 @@ test "smt_adapter_get_proof_carries_sat_clause_events" {
 test "smt_adapter_injects_euf_theory_factory_outside_smt" {
   let manager = @ast.AstManager::new()
   let config = @solver.SolverFactoryConfig::new().with_logic("QF_UF")
-  inspect(configured_theory_names(manager, config), content="euf")
-  let concrete = new_concrete_solver(manager, config)
+  inspect(@smt_adapter.configured_theory_names(manager, config), content="euf")
+  let concrete = @smt_adapter.new_concrete_solver(manager, config)
   inspect(concrete.registered_theory_count(), content="1")
 }

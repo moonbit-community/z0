@@ -1,25 +1,25 @@
 ///|
 fn bool_param_to_text(value : @util.Availability[Bool]) -> String {
   match value {
-    @util.Available(v) => "bool:\{v}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(v) => "bool:\{v}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn int_param_to_text(value : @util.Availability[Int32]) -> String {
   match value {
-    @util.Available(v) => "int:\{v}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(v) => "int:\{v}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 test "params_return_descriptor_defaults" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_bool("produce_models", false, "solver", "enable model queries")
   descrs.add_int("max_conflicts", 0, "sat", "maximum conflicts before unknown")
-  let params = Params::new(descrs)
+  let params = @params.Params::new(descrs)
   inspect(
     bool_param_to_text(params.get_bool("produce_models")),
     content="bool:false",
@@ -29,9 +29,9 @@ test "params_return_descriptor_defaults" {
 
 ///|
 test "params_set_typed_values" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_bool("produce_models", false, "solver", "enable model queries")
-  let params = Params::new(descrs)
+  let params = @params.Params::new(descrs)
   inspect(
     bool_param_to_text(params.set_bool("produce_models", true)),
     content="bool:true",
@@ -44,7 +44,7 @@ test "params_set_typed_values" {
 
 ///|
 test "params_report_unknown_key" {
-  let params = Params::new(ParamDescrs::new())
+  let params = @params.Params::new(@params.ParamDescrs::new())
   inspect(
     bool_param_to_text(params.get_bool("missing")),
     content="unsupported(unknown-param:missing)",
@@ -53,7 +53,7 @@ test "params_report_unknown_key" {
 
 ///|
 test "param_descriptors_keep_stable_owner_metadata" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_string("logic", "ALL", "solver", "selected SMT logic")
   inspect(descrs.owner("logic"), content="solver")
   inspect(descrs.kind_text("logic"), content="string")
@@ -61,7 +61,7 @@ test "param_descriptors_keep_stable_owner_metadata" {
 
 ///|
 test "solver_model_proof_descriptors_have_stable_keys" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_solver_model_proof_defaults()
   inspect(
     descrs.keys_text(),
@@ -69,7 +69,7 @@ test "solver_model_proof_descriptors_have_stable_keys" {
   )
   inspect(descrs.owner("produce_models"), content="model")
   inspect(descrs.owner("produce_proofs"), content="proof")
-  let params = Params::new(descrs)
+  let params = @params.Params::new(descrs)
   inspect(
     bool_param_to_text(params.get_bool("produce_models")),
     content="bool:false",
@@ -78,7 +78,7 @@ test "solver_model_proof_descriptors_have_stable_keys" {
 
 ///|
 test "smt_setup_descriptors_have_stable_keys" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_smt_setup_defaults()
   inspect(descrs.keys_text(), content="smt.setup_mode,smt.auto_config")
   inspect(descrs.kind_text("smt.setup_mode"), content="string")
@@ -87,13 +87,13 @@ test "smt_setup_descriptors_have_stable_keys" {
 
 ///|
 test "param_descriptors_record_lifecycle_policy" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_bool_with_policy(
     "smt.auto_config",
     true,
     "smt",
     "enable SMT auto config",
-    ParamLifecycle::setup_only(),
+    @params.ParamLifecycle::setup_only(),
     10,
     true,
   )
@@ -102,7 +102,7 @@ test "param_descriptors_record_lifecycle_policy" {
     false,
     "model",
     "enable model queries",
-    ParamLifecycle::dynamic(),
+    @params.ParamLifecycle::dynamic(),
     30,
     false,
   )
@@ -116,13 +116,13 @@ test "param_descriptors_record_lifecycle_policy" {
 
 ///|
 test "params_reject_late_setup_and_pre_assertion_sets" {
-  let descrs = ParamDescrs::new()
+  let descrs = @params.ParamDescrs::new()
   descrs.add_bool_with_policy(
     "smt.auto_config",
     true,
     "smt",
     "enable SMT auto config",
-    ParamLifecycle::setup_only(),
+    @params.ParamLifecycle::setup_only(),
     10,
     true,
   )
@@ -131,7 +131,7 @@ test "params_reject_late_setup_and_pre_assertion_sets" {
     false,
     "proof",
     "enable proof query results",
-    ParamLifecycle::pre_assertion(),
+    @params.ParamLifecycle::pre_assertion(),
     20,
     true,
   )
@@ -140,17 +140,17 @@ test "params_reject_late_setup_and_pre_assertion_sets" {
     false,
     "model",
     "enable model query results",
-    ParamLifecycle::dynamic(),
+    @params.ParamLifecycle::dynamic(),
     30,
     false,
   )
-  let params = Params::new(descrs)
+  let params = @params.Params::new(descrs)
   inspect(
     bool_param_to_text(
       params.set_bool_at(
         "smt.auto_config",
         false,
-        ParamSetStage::post_assertion(),
+        @params.ParamSetStage::post_assertion(),
       ),
     ),
     content="unsupported(param-late-set:smt.auto_config:setup-only:post-assertion)",
@@ -160,7 +160,7 @@ test "params_reject_late_setup_and_pre_assertion_sets" {
       params.set_bool_at(
         "produce_proofs",
         true,
-        ParamSetStage::post_assertion(),
+        @params.ParamSetStage::post_assertion(),
       ),
     ),
     content="unsupported(param-late-set:produce_proofs:pre-assertion:post-assertion)",
@@ -170,7 +170,7 @@ test "params_reject_late_setup_and_pre_assertion_sets" {
       params.set_bool_at(
         "produce_models",
         true,
-        ParamSetStage::post_assertion(),
+        @params.ParamSetStage::post_assertion(),
       ),
     ),
     content="bool:true",

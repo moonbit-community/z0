@@ -1,6 +1,6 @@
 ///|
 test "pure_model_prints_bool_consts_in_decl_order" {
-  let model = Model::new()
+  let model = @model.Model::new()
   model.add_bool_const(@util.FuncDeclId::new(2), "q", false)
   model.add_bool_const(@util.FuncDeclId::new(1), "p", true)
   inspect(
@@ -28,7 +28,7 @@ fn model_value_sort_text(sort : @util.SortId?) -> String {
 
 ///|
 test "pure_model_evaluates_bool_const_interpretations" {
-  let model = Model::new()
+  let model = @model.Model::new()
   let p = @util.FuncDeclId::new(1)
   let q = @util.FuncDeclId::new(2)
   model.add_bool_const(p, "p", true)
@@ -38,7 +38,7 @@ test "pure_model_evaluates_bool_const_interpretations" {
 
 ///|
 test "pure_func_interp_formats_finite_entries_and_else_value" {
-  let interp = FuncInterp::new("f", ["U"], "U")
+  let interp = @model.FuncInterp::new("f", ["U"], "U")
   interp.add_entry(["@u2"], "@u3")
   interp.add_entry(["@u0"], "@u1")
   interp.set_else("@default")
@@ -57,7 +57,7 @@ test "pure_func_interp_formats_finite_entries_and_else_value" {
 
 ///|
 test "pure_func_interp_replaces_duplicate_entry_args" {
-  let interp = FuncInterp::new("f", ["U"], "U")
+  let interp = @model.FuncInterp::new("f", ["U"], "U")
   interp.add_entry(["@u0"], "@old")
   interp.add_entry(["@u0"], "@new")
   interp.set_else("@fallback")
@@ -74,9 +74,9 @@ test "pure_func_interp_replaces_duplicate_entry_args" {
 
 ///|
 test "pure_model_prints_function_interps_after_bool_consts" {
-  let model = Model::new()
+  let model = @model.Model::new()
   model.add_bool_const(@util.FuncDeclId::new(1), "p", true)
-  let interp = FuncInterp::new("f", ["U"], "U")
+  let interp = @model.FuncInterp::new("f", ["U"], "U")
   interp.add_entry(["@u0"], "@u1")
   interp.set_else("@default")
   model.add_func_interp(@util.FuncDeclId::new(2), interp)
@@ -97,12 +97,15 @@ test "pure_model_prints_function_interps_after_bool_consts" {
 
 ///|
 test "pure_value_factory_creates_bool_and_uf_values_deterministically" {
-  let factory = ValueFactory::new()
+  let factory = @model.ValueFactory::new()
   let sort_u = @util.SortId::new(3)
   let sort_v = @util.SortId::new(4)
-  inspect(ModelValue::bool(true).to_text(), content="true")
-  inspect(model_value_sort_text(ModelValue::bool(true).sort()), content="none")
-  inspect(ModelValue::bool(false).to_text(), content="false")
+  inspect(@model.ModelValue::bool(true).to_text(), content="true")
+  inspect(
+    model_value_sort_text(@model.ModelValue::bool(true).sort()),
+    content="none",
+  )
+  inspect(@model.ModelValue::bool(false).to_text(), content="false")
   let u0 = factory.fresh_uninterpreted(sort_u, "U")
   inspect(u0.to_text(), content="@U0")
   inspect(model_value_sort_text(u0.sort()), content="sort#3")
@@ -112,23 +115,23 @@ test "pure_value_factory_creates_bool_and_uf_values_deterministically" {
 
 ///|
 test "pure_model_value_printer_formats_smt2_values" {
-  let factory = ValueFactory::new()
+  let factory = @model.ValueFactory::new()
   let sort_u = @util.SortId::new(3)
-  inspect(ModelValue::bool(true).format_smt2(), content="true")
-  inspect(ModelValue::bool(false).format_smt2(), content="false")
-  inspect(ModelValue::int(42).format_smt2(), content="42")
+  inspect(@model.ModelValue::bool(true).format_smt2(), content="true")
+  inspect(@model.ModelValue::bool(false).format_smt2(), content="false")
+  inspect(@model.ModelValue::int(42).format_smt2(), content="42")
   inspect(factory.fresh_uninterpreted(sort_u, "U").format_smt2(), content="@U0")
 }
 
 ///|
 test "pure_model_prints_int_consts_without_universe" {
-  let model = Model::new()
+  let model = @model.Model::new()
   let int_sort = @util.SortId::new(7)
   model.add_value_const(
     @util.FuncDeclId::new(1),
     int_sort,
     "Int",
-    ModelValue::int(42),
+    @model.ModelValue::int(42),
     name="n",
   )
   inspect(
@@ -144,8 +147,8 @@ test "pure_model_prints_int_consts_without_universe" {
 
 ///|
 test "pure_model_tracks_uninterpreted_sort_universes_in_stable_order" {
-  let model = Model::new()
-  let factory = ValueFactory::new()
+  let model = @model.Model::new()
+  let factory = @model.ValueFactory::new()
   let sort_u = @util.SortId::new(3)
   let sort_v = @util.SortId::new(4)
   model.add_universe_value(
@@ -186,8 +189,8 @@ test "pure_model_tracks_uninterpreted_sort_universes_in_stable_order" {
 
 ///|
 test "pure_model_prints_universe_declarations_and_cardinality" {
-  let model = Model::new()
-  let factory = ValueFactory::new()
+  let model = @model.Model::new()
+  let factory = @model.ValueFactory::new()
   let sort_u = @util.SortId::new(3)
   model.add_universe_value(
     sort_u,
@@ -215,8 +218,8 @@ test "pure_model_prints_universe_declarations_and_cardinality" {
 
 ///|
 test "pure_model_prints_uninterpreted_const_interps" {
-  let model = Model::new()
-  let factory = ValueFactory::new()
+  let model = @model.Model::new()
+  let factory = @model.ValueFactory::new()
   let sort_u = @util.SortId::new(3)
   let value = factory.fresh_uninterpreted(sort_u, "U")
   model.add_value_const(@util.FuncDeclId::new(1), sort_u, "U", value, name="a")
@@ -238,7 +241,7 @@ test "pure_model_prints_uninterpreted_const_interps" {
 ///|
 test "pure_model_updates_uninterpreted_const_interpretation" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let sort_u = manager.declare_sort("U", 0)
   let a = manager.declare_const("a", sort_u)
   let a_expr = manager.mk_app(a, [])
@@ -255,7 +258,7 @@ test "pure_model_updates_uninterpreted_const_interpretation" {
 ///|
 test "pure_model_skips_hidden_aux_interpretations" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let sort_u = manager.declare_sort("U", 0)
   let x = manager.declare_const("x", sort_u)
   let aux = manager.declare_const("aux", sort_u)
@@ -266,7 +269,7 @@ test "pure_model_skips_hidden_aux_interpretations" {
   let aux_value = model.fresh_uninterpreted_value(sort_u, "U")
   model.add_value_const(x, sort_u, "U", x_value, name="x")
   model.add_value_const(aux, sort_u, "U", aux_value)
-  let interp = FuncInterp::new("", ["U"], "U")
+  let interp = @model.FuncInterp::new("", ["U"], "U")
   interp.add_entry([x_value.to_text()], aux_value.to_text())
   model.add_func_interp(aux_f, interp)
   let aux_f_x = manager.mk_app(aux_f, [x_expr])
@@ -295,7 +298,7 @@ test "pure_model_skips_hidden_aux_interpretations" {
 }
 
 ///|
-fn model_value_text(value : ModelValue?) -> String {
+fn model_value_text(value : @model.ModelValue?) -> String {
   match value {
     Some(value) => value.to_text()
     None => "missing"
@@ -313,7 +316,7 @@ fn test_int_sort(manager : @ast.AstManager) -> @util.SortId raise {
 ///|
 test "pure_model_eval_computes_ground_bool_exprs" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let p = manager.declare_const("p", manager.bool_sort())
   let q = manager.declare_const("q", manager.bool_sort())
   model.add_bool_const(p, "p", true)
@@ -331,7 +334,7 @@ test "pure_model_eval_computes_ground_bool_exprs" {
 ///|
 test "pure_model_eval_expands_bool_macros" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let p = manager.declare_const("p", manager.bool_sort())
   let p_expr = manager.mk_app(p, [])
   model.add_bool_const(p, "p", true)
@@ -347,7 +350,7 @@ test "pure_model_eval_expands_bool_macros" {
 ///|
 test "pure_model_eval_completion_assigns_fresh_uf_const_value" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let sort_u = manager.declare_sort("U", 0)
   let a = manager.declare_const("a", sort_u)
   let a_expr = manager.mk_app(a, [])
@@ -371,14 +374,14 @@ test "pure_model_eval_completion_assigns_fresh_uf_const_value" {
 ///|
 test "pure_model_eval_int_constants_equalities_and_distinct" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let int_sort = test_int_sort(manager)
   let x = manager.declare_const("x", int_sort)
   let y = manager.declare_const("y", int_sort)
   let x_expr = manager.mk_app(x, [])
   let y_expr = manager.mk_app(y, [])
-  model.add_value_const(x, int_sort, "Int", ModelValue::int(2), name="x")
-  model.add_value_const(y, int_sort, "Int", ModelValue::int(3), name="y")
+  model.add_value_const(x, int_sort, "Int", @model.ModelValue::int(2), name="x")
+  model.add_value_const(y, int_sort, "Int", @model.ModelValue::int(3), name="y")
   inspect(
     model_value_text(model.eval(manager, x_expr, completion=false)),
     content="2",
@@ -410,16 +413,16 @@ test "pure_model_eval_int_constants_equalities_and_distinct" {
 ///|
 test "pure_model_eval_int_comparison_function_interpretation" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let int_sort = test_int_sort(manager)
   let x = manager.declare_const("x", int_sort)
   let y = manager.declare_const("y", int_sort)
   let lt = manager.declare_fun("<", [int_sort, int_sort], manager.bool_sort())
   let x_expr = manager.mk_app(x, [])
   let y_expr = manager.mk_app(y, [])
-  model.add_value_const(x, int_sort, "Int", ModelValue::int(2), name="x")
-  model.add_value_const(y, int_sort, "Int", ModelValue::int(3), name="y")
-  let interp = FuncInterp::new("<", ["Int", "Int"], "Bool")
+  model.add_value_const(x, int_sort, "Int", @model.ModelValue::int(2), name="x")
+  model.add_value_const(y, int_sort, "Int", @model.ModelValue::int(3), name="y")
+  let interp = @model.FuncInterp::new("<", ["Int", "Int"], "Bool")
   interp.add_entry(["2", "3"], "true")
   interp.set_else("false")
   model.add_func_interp(lt, interp)
@@ -448,14 +451,14 @@ test "pure_model_eval_int_comparison_function_interpretation" {
 ///|
 test "pure_model_eval_ast_int_literals_and_comparisons" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let int_sort = test_int_sort(manager)
   let x = manager.declare_const("x", int_sort)
   let y = manager.declare_const("y", int_sort)
   let x_expr = manager.mk_app(x, [])
   let y_expr = manager.mk_app(y, [])
-  model.add_value_const(x, int_sort, "Int", ModelValue::int(2), name="x")
-  model.add_value_const(y, int_sort, "Int", ModelValue::int(3), name="y")
+  model.add_value_const(x, int_sort, "Int", @model.ModelValue::int(2), name="x")
+  model.add_value_const(y, int_sort, "Int", @model.ModelValue::int(3), name="y")
   inspect(
     model_value_text(
       model.eval(manager, manager.mk_lt(x_expr, y_expr), completion=false),
@@ -483,13 +486,13 @@ test "pure_model_eval_ast_int_literals_and_comparisons" {
 ///|
 test "pure_model_eval_int_function_results_inside_ast_comparison" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let int_sort = test_int_sort(manager)
   let x = manager.declare_const("x", int_sort)
   let f = manager.declare_fun("f", [int_sort], int_sort)
   let x_expr = manager.mk_app(x, [])
-  model.add_value_const(x, int_sort, "Int", ModelValue::int(2), name="x")
-  let interp = FuncInterp::new("f", ["Int"], "Int")
+  model.add_value_const(x, int_sort, "Int", @model.ModelValue::int(2), name="x")
+  let interp = @model.FuncInterp::new("f", ["Int"], "Int")
   interp.add_entry(["2"], "3")
   model.add_func_interp(f, interp)
   inspect(
@@ -507,12 +510,12 @@ test "pure_model_eval_int_function_results_inside_ast_comparison" {
 ///|
 test "pure_model_eval_uses_function_interpretations_and_else" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let sort_u = manager.declare_sort("U", 0)
   let a = manager.declare_const("a", sort_u)
   let b = manager.declare_const("b", sort_u)
   let f = manager.declare_fun("f", [sort_u], sort_u)
-  let interp = FuncInterp::new("f", ["U"], "U")
+  let interp = @model.FuncInterp::new("f", ["U"], "U")
   interp.add_entry(["@U0"], "@hit")
   interp.set_else("@fallback")
   model.add_func_interp(f, interp)
@@ -531,14 +534,14 @@ test "pure_model_eval_uses_function_interpretations_and_else" {
 ///|
 test "pure_model_eval_function_interp_preserves_range_sort" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let sort_u = manager.declare_sort("U", 0)
   let a = manager.declare_const("a", sort_u)
   let f = manager.declare_fun("f", [sort_u], sort_u)
   let a_expr = manager.mk_app(a, [])
   ignore(model.eval(manager, a_expr, completion=true))
   let result = model.fresh_uninterpreted_value(sort_u, "U")
-  let interp = FuncInterp::new("f", ["U"], "U")
+  let interp = @model.FuncInterp::new("f", ["U"], "U")
   interp.add_entry(["@U0"], result.to_text())
   model.add_func_interp(f, interp)
   let f_a = manager.mk_app(f, [a_expr])
@@ -554,7 +557,7 @@ test "pure_model_eval_function_interp_preserves_range_sort" {
 ///|
 test "pure_model_eval_completion_extends_partial_uf_function_interp" {
   let manager = @ast.AstManager::new()
-  let model = Model::new()
+  let model = @model.Model::new()
   let sort_u = manager.declare_sort("U", 0)
   let a = manager.declare_const("a", sort_u)
   let b = manager.declare_const("b", sort_u)
@@ -571,7 +574,7 @@ test "pure_model_eval_completion_extends_partial_uf_function_interp" {
     model_value_text(model.eval(manager, b_expr, completion=true)),
     content="@U1",
   )
-  let interp = FuncInterp::new("f", ["U"], "U")
+  let interp = @model.FuncInterp::new("f", ["U"], "U")
   interp.add_entry(["@U0"], "@U1")
   model.add_func_interp(f, interp)
   let f_c = manager.mk_app(f, [c_expr])

@@ -1,17 +1,15 @@
 ///|
 fn preprocess_seed_backend() -> @solver.SolverBackend {
   @solver.SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(_) {
       @solver.CheckSatAssumingResult::from_result(@solver.CheckSatResult::sat())
     },
-    model=fn() { @util.Available(@model.Model::new()) },
-    proof=fn() {
-      @util.Unavailable(@util.AvailabilityReason::Disabled("produce-proofs"))
-    },
+    model=fn() { Available(@model.Model::new()) },
+    proof=fn() { Unavailable(Disabled("produce-proofs")) },
     collect_statistics=fn() { @stats.Statistics::new() },
   )
 }
@@ -32,24 +30,22 @@ fn recording_preprocess_backend(
   @solver.SolverBackend::new(
     assert_expr=fn(expr) {
       asserted.push(manager.pretty(expr))
-      @util.Available(())
+      Available(())
     },
     assert_expr_tracked=fn(expr, _) {
       asserted.push(manager.pretty(expr))
-      @util.Available(())
+      Available(())
     },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(assumptions) {
       for assumption in assumptions.items() {
         assumptions_seen.push(manager.pretty(assumption))
       }
       @solver.CheckSatAssumingResult::from_result(@solver.CheckSatResult::sat())
     },
-    model=fn() { @util.Available(@model.Model::new()) },
-    proof=fn() {
-      @util.Unavailable(@util.AvailabilityReason::Disabled("produce-proofs"))
-    },
+    model=fn() { Available(@model.Model::new()) },
+    proof=fn() { Unavailable(Disabled("produce-proofs")) },
     collect_statistics=fn() { @stats.Statistics::new() },
   )
 }
@@ -74,10 +70,10 @@ fn unsat_assumption_preprocess_backend(
   assumptions_seen : Array[String],
 ) -> @solver.SolverBackend {
   @solver.SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(assumptions) {
       for assumption in assumptions.items() {
         assumptions_seen.push(manager.pretty(assumption))
@@ -87,10 +83,8 @@ fn unsat_assumption_preprocess_backend(
         @solver.UnsatAssumptionSet::from_exprs(assumptions.items()),
       )
     },
-    model=fn() { @util.Available(@model.Model::new()) },
-    proof=fn() {
-      @util.Unavailable(@util.AvailabilityReason::Disabled("produce-proofs"))
-    },
+    model=fn() { Available(@model.Model::new()) },
+    proof=fn() { Unavailable(Disabled("produce-proofs")) },
     collect_statistics=fn() { @stats.Statistics::new() },
   )
 }
@@ -120,19 +114,19 @@ fn unsat_assumptions_pretty(
   value : @util.Availability[@solver.UnsatAssumptionSet],
 ) -> String {
   match value {
-    @util.Available(assumptions) =>
+    Available(assumptions) =>
       [
         for assumption in assumptions.items() => manager.pretty(assumption)
       ].join(",")
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -141,15 +135,15 @@ fn[T] discard_available(
   value : @util.Availability[T],
 ) -> @util.Availability[Unit] {
   match value {
-    @util.Available(_) => @util.Available(())
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => Available(())
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
 ///|
 test "preprocess_wrapper_tracks_enabled_state_and_delegates_factory" {
   let base = preprocess_seed_factory()
-  let wrapper = SolverPreprocess::new(base)
+  let wrapper = @preprocess.SolverPreprocess::new(base)
   inspect(wrapper.status_text(), content="preprocess=on")
   let solver = wrapper.create(
     @ast.AstManager::new(),
@@ -162,7 +156,7 @@ test "preprocess_wrapper_tracks_enabled_state_and_delegates_factory" {
 test "preprocess_wrapper_rewrites_assertions_and_assumptions_when_enabled" {
   let asserted : Array[String] = []
   let assumptions_seen : Array[String] = []
-  let factory = SolverPreprocess::new(
+  let factory = @preprocess.SolverPreprocess::new(
     recording_preprocess_factory(asserted, assumptions_seen),
   ).as_factory()
   let manager = @ast.AstManager::new()
@@ -185,7 +179,7 @@ test "preprocess_wrapper_rewrites_assertions_and_assumptions_when_enabled" {
 test "preprocessing_disabled_factory_leaves_assertions_unrewritten" {
   let asserted : Array[String] = []
   let assumptions_seen : Array[String] = []
-  let factory = preprocessing_disabled_factory(
+  let factory = @preprocess.preprocessing_disabled_factory(
     recording_preprocess_factory(asserted, assumptions_seen),
   )
   let manager = @ast.AstManager::new()
@@ -203,7 +197,7 @@ test "preprocessing_disabled_factory_leaves_assertions_unrewritten" {
 ///|
 test "preprocess_wrapper_maps_unsat_assumptions_back_to_original_inputs" {
   let assumptions_seen : Array[String] = []
-  let factory = SolverPreprocess::new(
+  let factory = @preprocess.SolverPreprocess::new(
     unsat_assumption_preprocess_factory(assumptions_seen),
   ).as_factory()
   let manager = @ast.AstManager::new()
@@ -225,7 +219,9 @@ test "preprocess_wrapper_maps_unsat_assumptions_back_to_original_inputs" {
 
 ///|
 test "preprocess_wrapper_preserves_base_translate_capability" {
-  let factory = SolverPreprocess::new(@smt_adapter.default_factory()).as_factory()
+  let factory = @preprocess.SolverPreprocess::new(
+    @smt_adapter.default_factory(),
+  ).as_factory()
   let source = @ast.AstManager::new()
   let p = bool_const(source, "p")
   let solver = factory.create(
@@ -245,7 +241,7 @@ test "preprocess_wrapper_preserves_base_translate_capability" {
     content="available",
   )
   match translated {
-    @util.Available(translated_solver) => {
+    Available(translated_solver) => {
       inspect(translated_solver.get_scope_level(), content="1")
       inspect(translated_solver.check_sat().to_text(), content="unsat")
       inspect(
@@ -254,13 +250,15 @@ test "preprocess_wrapper_preserves_base_translate_capability" {
       )
       inspect(translated_solver.check_sat().to_text(), content="sat")
     }
-    @util.Unavailable(_) => fail("expected translated solver")
+    Unavailable(_) => fail("expected translated solver")
   }
 }
 
 ///|
 test "preprocessing_disabled_factory_keeps_base_solver_available" {
-  let factory = preprocessing_disabled_factory(preprocess_seed_factory())
+  let factory = @preprocess.preprocessing_disabled_factory(
+    preprocess_seed_factory(),
+  )
   let solver = factory.create(
     @ast.AstManager::new(),
     @solver.SolverFactoryConfig::new(),

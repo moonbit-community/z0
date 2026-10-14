@@ -7,8 +7,8 @@ fn bool_const(manager : @ast.AstManager, name : String) -> @util.ExprId raise {
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -16,7 +16,7 @@ fn unit_availability_text(value : @util.Availability[Unit]) -> String {
 test "frontend_assembly_default_solver_factory_solves_bool_sat" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = solver_factory().create(
+  let solver = @assembly.solver_factory().create(
     manager,
     @solver.SolverFactoryConfig::new().with_logic("QF_UF"),
   )

@@ -2,7 +2,7 @@
 test "fake_combo_harness_records_shared_lifecycle_callbacks" {
   let id = @ids.TheoryId::new(21)
   let family = @ast.FamilyId::new(31)
-  let harness = FakeComboHarness::new(id, family)
+  let harness = @fake_combo.FakeComboHarness::new(id, family)
   let plugin = harness.plugin()
   let view = @theory_core.TheoryContextView::new(scope_depth=1)
   let actions = @theory_core.TheoryActions::noop()
@@ -28,14 +28,14 @@ test "fake_combo_harness_records_shared_lifecycle_callbacks" {
 
 ///|
 test "fake_combo_plugin_exposes_params_stats_and_continue_check" {
-  let plugin = fake_combo_theory_plugin(
+  let plugin = @fake_combo.fake_combo_theory_plugin(
     @ids.TheoryId::new(22),
     @ast.FamilyId::new(32),
   )
   let view = @theory_core.TheoryContextView::new(scope_depth=0)
   let actions = @theory_core.TheoryActions::noop()
   match plugin.theory_check(view, actions) {
-    @theory_core.TheoryCheckContinue => ()
+    TheoryCheckContinue => ()
     _ => fail("expected fake_combo check to request another round")
   }
   inspect(

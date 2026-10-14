@@ -3,8 +3,8 @@ fn model_converter_availability_text(
   result : @util.Availability[@model.Model],
 ) -> String {
   match result {
-    @util.Available(model) => model.format()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(model) => model.format()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -13,8 +13,8 @@ fn string_array_availability_text(
   result : @util.Availability[Array[String]],
 ) -> String {
   match result {
-    @util.Available(values) => values.join(",")
-    @util.Unavailable(reason) => reason.to_text()
+    Available(values) => values.join(",")
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -23,15 +23,15 @@ fn proof_converter_availability_text(
   result : @util.Availability[@proof.ProofObject],
 ) -> String {
   match result {
-    @util.Available(proof) => proof.root_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(proof) => proof.root_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 test "model_converter_identity_and_generic_steps_are_explicit" {
   let model = @model.Model::new()
-  let generic = GenericModelConverter::new()
+  let generic = @converters.GenericModelConverter::new()
   generic.add("macro-value")
   generic.hide("aux!0")
   let converter = generic.as_model_converter()
@@ -44,7 +44,9 @@ test "model_converter_identity_and_generic_steps_are_explicit" {
 
 ///|
 test "model_converter_unsupported_is_typed" {
-  let converter = ModelConverter::unsupported("model-converter-seed")
+  let converter = @converters.ModelConverter::unsupported(
+    "model-converter-seed",
+  )
   inspect(
     model_converter_availability_text(
       converter.apply_model(@model.Model::new()),
@@ -63,10 +65,10 @@ test "model_converter_unsupported_is_typed" {
 
 ///|
 test "generic_model_converter_units_follow_concat_order_and_hide_aux" {
-  let outer = GenericModelConverter::new()
+  let outer = @converters.GenericModelConverter::new()
   outer.add_unit("p", true)
   outer.hide("aux!0")
-  let inner = GenericModelConverter::new()
+  let inner = @converters.GenericModelConverter::new()
   inner.add_unit("aux!0", true)
   inner.add_unit("q", false)
   let converter = outer.as_model_converter().concat(inner.as_model_converter())
@@ -80,9 +82,9 @@ test "generic_model_converter_units_follow_concat_order_and_hide_aux" {
 
 ///|
 test "generic_model_converter_initialize_values_follow_concat_order" {
-  let outer = GenericModelConverter::new()
+  let outer = @converters.GenericModelConverter::new()
   outer.add_initialize_value("p", "true")
-  let inner = GenericModelConverter::new()
+  let inner = @converters.GenericModelConverter::new()
   inner.add_initialize_value("q", "false")
   let converter = outer.as_model_converter().concat(inner.as_model_converter())
   inspect(
@@ -95,17 +97,19 @@ test "generic_model_converter_initialize_values_follow_concat_order" {
 
 ///|
 test "proof_converter_identity_labels_and_unsupported_are_explicit" {
-  let identity = ProofConverter::identity()
+  let identity = @converters.ProofConverter::identity()
   match identity.apply_labels(["a", "b"]) {
-    @util.Available(labels) => inspect(labels.join(","), content="a,b")
-    @util.Unavailable(reason) => inspect(reason.to_text(), content="a,b")
+    Available(labels) => inspect(labels.join(","), content="a,b")
+    Unavailable(reason) => inspect(reason.to_text(), content="a,b")
   }
   let proof = @proof.ProofObject::from_root_and_hints("false", [])
   inspect(
     proof_converter_availability_text(identity.apply_proof(proof)),
     content="false",
   )
-  let unsupported = ProofConverter::unsupported("proof-converter-seed")
+  let unsupported = @converters.ProofConverter::unsupported(
+    "proof-converter-seed",
+  )
   inspect(
     proof_converter_availability_text(unsupported.apply_proof(proof)),
     content="unsupported(proof-converter-seed)",
@@ -114,7 +118,7 @@ test "proof_converter_identity_labels_and_unsupported_are_explicit" {
 
 ///|
 test "generic_proof_converter_appends_labels_explicitly" {
-  let generic = GenericProofConverter::new()
+  let generic = @converters.GenericProofConverter::new()
   generic.add_label("tseitin-aux:tseitin!0")
   let converter = generic.as_proof_converter()
   inspect(
@@ -122,9 +126,9 @@ test "generic_proof_converter_appends_labels_explicitly" {
     content="identity>label:tseitin-aux:tseitin!0",
   )
   match converter.apply_labels(["named-input"]) {
-    @util.Available(labels) =>
+    Available(labels) =>
       inspect(labels.join(","), content="named-input,tseitin-aux:tseitin!0")
-    @util.Unavailable(reason) =>
+    Unavailable(reason) =>
       inspect(reason.to_text(), content="named-input,tseitin-aux:tseitin!0")
   }
 }

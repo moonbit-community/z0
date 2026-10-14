@@ -1,6 +1,6 @@
 ///|
 test "scope_push_pop_restores_items" {
-  let scoped : ScopedVector[String] = ScopedVector::new()
+  let scoped : @util.ScopedVector[String] = @util.ScopedVector::new()
   scoped.push_item("global")
   scoped.push_scope()
   scoped.push_item("local")
@@ -11,7 +11,7 @@ test "scope_push_pop_restores_items" {
 
 ///|
 test "scope_pop_too_many_reports_diagnostic" {
-  let scoped : ScopedVector[String] = ScopedVector::new()
+  let scoped : @util.ScopedVector[String] = @util.ScopedVector::new()
   try {
     scoped.pop_scope(1)
     inspect("missing diagnostic", content="diagnostic")

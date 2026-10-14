@@ -94,7 +94,7 @@ test "smt_context_extension_assumption_vars_are_external_to_sat" {
       }
       None => ()
     }
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   context.register_theory(plugin)
   ignore(context.check_sat())
@@ -124,7 +124,7 @@ test "smt_context_theory_lifecycle_order_is_observable" {
   })
   plugin.set_theory_check(fn(_, _) {
     log.push("check")
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   plugin.set_finalize_check(fn(_, _) { log.push("finalize") })
   plugin.set_on_check_done(fn(_, _) { log.push("done") })
@@ -175,7 +175,7 @@ fn model_lifecycle_plugin(
   plugin.set_finalize_model(fn(_, _) { log.push("finalize-model") })
   plugin.set_validate_model(fn(_, _, _) {
     log.push("validate-model")
-    @util.Available(())
+    Available(())
   })
   plugin
 }
@@ -255,7 +255,7 @@ fn fake_lifecycle_factory(
       plugin.set_configure(fn(_) { log.push("setup:\{name}") })
       plugin.set_internalize_term(fn(_, _, _, expr) {
         log.push("internalize:\{name}:\{expr.to_int()}")
-        @theory_core.TheoryHandled(
+        TheoryHandled(
           @theory_core.TheoryTermRef::new(
             @theory_ids.TheoryId::new(id),
             expr.to_int(),
@@ -270,11 +270,11 @@ fn fake_lifecycle_factory(
       })
       plugin.set_propagate(fn(_, _) {
         log.push("propagate:\{name}")
-        @theory_core.TheoryPropagateDone
+        TheoryPropagateDone
       })
       plugin.set_theory_check(fn(_, _) {
         log.push("check:\{name}")
-        @theory_core.TheoryCheckDone
+        TheoryCheckDone
       })
       plugin.set_finalize_check(fn(_, _) { log.push("finalize:\{name}") })
       plugin
@@ -324,9 +324,7 @@ test "smt_context_defers_giveup_while_theory_check_makes_progress" {
   )
   stuck.set_theory_check(fn(_, _) {
     log.push("stuck")
-    @theory_core.TheoryCheckGiveUp(
-      @util.ReasonUnknown::unsupported_fragment("stuck"),
-    )
+    TheoryCheckGiveUp(@util.ReasonUnknown::unsupported_fragment("stuck"))
   })
   stuck.set_finalize_check(fn(_, _) { log.push("finalize:stuck") })
   stuck.set_on_check_done(fn(_, _) { log.push("done:stuck") })
@@ -340,9 +338,9 @@ test "smt_context_defers_giveup_while_theory_check_makes_progress" {
     rounds += 1
     log.push("progress:\{rounds}")
     if rounds == 1 {
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   progress.set_finalize_check(fn(_, _) { log.push("finalize:progress") })
@@ -373,13 +371,13 @@ test "smt_context_propagate_giveup_runs_check_completion_callbacks" {
   plugin.set_can_propagate(fn(_) { true })
   plugin.set_propagate(fn(_, _) {
     log.push("propagate")
-    @theory_core.TheoryPropagateGiveUp(
+    TheoryPropagateGiveUp(
       @util.ReasonUnknown::unsupported_fragment("propagate-stuck"),
     )
   })
   plugin.set_theory_check(fn(_, _) {
     log.push("check")
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   plugin.set_finalize_check(fn(_, _) { log.push("finalize") })
   plugin.set_on_check_done(fn(_, _) { log.push("done") })
@@ -405,9 +403,7 @@ test "smt_context_validates_unsat_core_before_returning_unsat" {
     [@ast.FamilyId::new(42)],
   )
   plugin.set_validate_unsat_core(fn(_, _) {
-    @util.Unavailable(
-      @util.AvailabilityReason::unknown(@util.ReasonUnknown::InvalidCore),
-    )
+    Unavailable(@util.AvailabilityReason::unknown(InvalidCore))
   })
   context.register_theory(plugin)
   inspect(
@@ -428,11 +424,7 @@ test "smt_context_validates_model_before_returning_sat" {
     [@ast.FamilyId::new(43)],
   )
   plugin.set_validate_model(fn(_, _, _) {
-    @util.Unavailable(
-      @util.AvailabilityReason::unknown(
-        @util.ReasonUnknown::ModelValidationFailed,
-      ),
-    )
+    Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
   })
   context.register_theory(plugin)
   inspect(
@@ -453,7 +445,7 @@ test "smt_context_maps_model_validator_availability_state_to_validation_failure"
     "stale-model-validator",
     [@ast.FamilyId::new(46)],
   )
-  plugin.set_validate_model(fn(_, _, _) { @util.Unavailable(@util.Stale) })
+  plugin.set_validate_model(fn(_, _, _) { Unavailable(Stale) })
   context.register_theory(plugin)
   inspect(
     theory_lifecycle_result_text(context.check_sat()),
@@ -487,20 +479,11 @@ test "smt_context_rejects_euf_model_obligation_mismatch" {
       ) {
       (Some(lhs), Some(rhs)) =>
         if lhs == rhs {
-          @util.Available(())
+          Available(())
         } else {
-          @util.Unavailable(
-            @util.AvailabilityReason::unknown(
-              @util.ReasonUnknown::ModelValidationFailed,
-            ),
-          )
+          Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
         }
-      _ =>
-        @util.Unavailable(
-          @util.AvailabilityReason::unknown(
-            @util.ReasonUnknown::ModelValidationFailed,
-          ),
-        )
+      _ => Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
     }
   })
   context.register_theory(plugin)
@@ -565,7 +548,7 @@ test "smt_context_rejects_incomplete_theory_model_before_returning_sat" {
   let plugin = model_lifecycle_plugin(39, 49, "incomplete-model-life", log)
   plugin.set_model_incomplete_reason(fn() {
     log.push("model-incomplete")
-    Some(@util.ReasonUnknown::IncompleteTheory("fake-model"))
+    Some(IncompleteTheory("fake-model"))
   })
   context.register_theory(plugin)
   inspect(
@@ -608,11 +591,7 @@ test "smt_context_validates_assumption_model_before_returning_sat" {
     [@ast.FamilyId::new(44)],
   )
   plugin.set_validate_model(fn(_, _, _) {
-    @util.Unavailable(
-      @util.AvailabilityReason::unknown(
-        @util.ReasonUnknown::ModelValidationFailed,
-      ),
-    )
+    Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
   })
   context.register_theory(plugin)
   inspect(
@@ -631,11 +610,7 @@ test "smt_context_validates_empty_assumption_model_before_returning_sat" {
     [@ast.FamilyId::new(45)],
   )
   plugin.set_validate_model(fn(_, _, _) {
-    @util.Unavailable(
-      @util.AvailabilityReason::unknown(
-        @util.ReasonUnknown::ModelValidationFailed,
-      ),
-    )
+    Unavailable(@util.AvailabilityReason::unknown(ModelValidationFailed))
   })
   context.register_theory(plugin)
   inspect(

@@ -17,8 +17,8 @@ fn u_const(
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -27,22 +27,22 @@ fn[T] discard_available(
   value : @util.Availability[T],
 ) -> @util.Availability[Unit] {
   match value {
-    @util.Available(_) => @util.Available(())
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => Available(())
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
 ///|
 fn bool_availability_text(value : @util.Availability[Bool]) -> String {
   match value {
-    @util.Available(value) => "bool:\{value}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(value) => "bool:\{value}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn config_bool_param_text(
-  config : SolverFactoryConfig,
+  config : @solver.SolverFactoryConfig,
   name : String,
 ) -> String {
   bool_availability_text(config.params().get_bool(name))
@@ -51,8 +51,8 @@ fn config_bool_param_text(
 ///|
 fn model_availability_text(value : @util.Availability[@model.Model]) -> String {
   match value {
-    @util.Available(model) => model.format()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(model) => model.format()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -61,8 +61,8 @@ fn model_availability_status(
   value : @util.Availability[@model.Model],
 ) -> String {
   match value {
-    @util.Available(_) => "model"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "model"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -71,10 +71,9 @@ fn model_availability_reason_kind(
   value : @util.Availability[@model.Model],
 ) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(@util.UnknownReason(@util.InvalidModel)) =>
-      "invalid-model-tag"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(UnknownReason(InvalidModel)) => "invalid-model-tag"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -85,12 +84,12 @@ fn model_eval_availability_text(
   expr : @util.ExprId,
 ) -> String {
   match value {
-    @util.Available(model) =>
+    Available(model) =>
       match model.eval(manager, expr, completion=false) {
         Some(value) => value.to_text()
         None => "missing"
       }
-    @util.Unavailable(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -99,13 +98,16 @@ fn model_value_availability_text(
   value : @util.Availability[@model.ModelValue],
 ) -> String {
   match value {
-    @util.Available(value) => value.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(value) => value.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
-fn model_query_matrix_text(solver : Solver, expr : @util.ExprId) -> String {
+fn model_query_matrix_text(
+  solver : @solver.Solver,
+  expr : @util.ExprId,
+) -> String {
   "\{model_availability_status(solver.get_model())}|\{model_value_availability_text(solver.get_value(expr))}|\{model_value_availability_text(solver.eval(expr, completion=false))}"
 }
 
@@ -114,12 +116,10 @@ fn model_value_reason_kind(
   value : @util.Availability[@model.ModelValue],
 ) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(@util.UnknownReason(@util.InvalidModel)) =>
-      "invalid-model-tag"
-    @util.Unavailable(@util.UnknownReason(@util.ModelEvalFailed)) =>
-      "model-eval-failed-tag"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(UnknownReason(InvalidModel)) => "invalid-model-tag"
+    Unavailable(UnknownReason(ModelEvalFailed)) => "model-eval-failed-tag"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -128,26 +128,28 @@ fn proof_availability_text(
   value : @util.Availability[@proof.ProofRef],
 ) -> String {
   match value {
-    @util.Available(proof) => proof.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(proof) => proof.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
-fn core_availability_text(value : @util.Availability[UnsatCore]) -> String {
+fn core_availability_text(
+  value : @util.Availability[@solver.UnsatCore],
+) -> String {
   match value {
-    @util.Available(core) => core.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(core) => core.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn assumptions_availability_text(
-  value : @util.Availability[UnsatAssumptionSet],
+  value : @util.Availability[@solver.UnsatAssumptionSet],
 ) -> String {
   match value {
-    @util.Available(assumptions) => "assumptions:\{assumptions.to_text()}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(assumptions) => "assumptions:\{assumptions.to_text()}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -156,40 +158,41 @@ fn reason_unknown_availability_text(
   value : @util.Availability[@util.ReasonUnknown],
 ) -> String {
   match value {
-    @util.Available(reason) => reason.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(reason) => reason.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 fn tracked_id_availability_text(
-  value : @util.Availability[TrackedAssertionId],
+  value : @util.Availability[@solver.TrackedAssertionId],
 ) -> String {
   match value {
-    @util.Available(id) => "tracked:\{id.to_int()}"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(id) => "tracked:\{id.to_int()}"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
-fn accepting_backend(result : CheckSatResult) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+fn accepting_backend(result : @solver.CheckSatResult) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(assumptions) {
-      CheckSatAssumingResult::new(
+      @solver.CheckSatAssumingResult::new(
         result,
         match result {
-          CheckUnsat => UnsatAssumptionSet::from_exprs(assumptions.items())
-          _ => UnsatAssumptionSet::empty()
+          CheckUnsat =>
+            @solver.UnsatAssumptionSet::from_exprs(assumptions.items())
+          _ => @solver.UnsatAssumptionSet::empty()
         },
       )
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -201,18 +204,20 @@ fn accepting_backend(result : CheckSatResult) -> SolverBackend {
 
 ///|
 fn model_backend(
-  result : CheckSatResult,
+  result : @solver.CheckSatResult,
   model : @model.Model,
-) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
-    check_sat_assuming=fn(_) { CheckSatAssumingResult::from_result(result) },
-    model=fn() { @util.Available(model) },
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
+    check_sat_assuming=fn(_) {
+      @solver.CheckSatAssumingResult::from_result(result)
+    },
+    model=fn() { Available(model) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -223,16 +228,20 @@ fn model_backend(
 }
 
 ///|
-fn missing_model_backend(result : CheckSatResult) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
-    check_sat_assuming=fn(_) { CheckSatAssumingResult::from_result(result) },
-    model=fn() { @util.Unavailable(@util.AvailabilityReason::NoCurrentResult) },
+fn missing_model_backend(
+  result : @solver.CheckSatResult,
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
+    check_sat_assuming=fn(_) {
+      @solver.CheckSatAssumingResult::from_result(result)
+    },
+    model=fn() { Unavailable(NoCurrentResult) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -244,30 +253,31 @@ fn missing_model_backend(result : CheckSatResult) -> SolverBackend {
 
 ///|
 fn assumption_backend(
-  root_result : CheckSatResult,
-  assumption_result : CheckSatResult,
-) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+  root_result : @solver.CheckSatResult,
+  assumption_result : @solver.CheckSatResult,
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(assumptions) {
       if assumptions.length() == 0 {
-        CheckSatAssumingResult::from_result(root_result)
+        @solver.CheckSatAssumingResult::from_result(root_result)
       } else {
-        CheckSatAssumingResult::new(
+        @solver.CheckSatAssumingResult::new(
           assumption_result,
           match assumption_result {
-            CheckUnsat => UnsatAssumptionSet::from_exprs(assumptions.items())
-            _ => UnsatAssumptionSet::empty()
+            CheckUnsat =>
+              @solver.UnsatAssumptionSet::from_exprs(assumptions.items())
+            _ => @solver.UnsatAssumptionSet::empty()
           },
         )
       }
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -279,18 +289,18 @@ fn assumption_backend(
 
 ///|
 fn selective_assumption_backend(
-  root_result : CheckSatResult,
-  assumption_result : CheckSatResult,
+  root_result : @solver.CheckSatResult,
+  assumption_result : @solver.CheckSatResult,
   keep : @util.ExprId,
-) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(assumptions) {
       if assumptions.length() == 0 {
-        CheckSatAssumingResult::from_result(root_result)
+        @solver.CheckSatAssumingResult::from_result(root_result)
       } else {
         let retained : Array[@util.ExprId] = []
         for assumption in assumptions.items() {
@@ -298,18 +308,18 @@ fn selective_assumption_backend(
             retained.push(assumption)
           }
         }
-        CheckSatAssumingResult::new(
+        @solver.CheckSatAssumingResult::new(
           assumption_result,
           match assumption_result {
-            CheckUnsat => UnsatAssumptionSet::from_exprs(retained)
-            _ => UnsatAssumptionSet::empty()
+            CheckUnsat => @solver.UnsatAssumptionSet::from_exprs(retained)
+            _ => @solver.UnsatAssumptionSet::empty()
           },
         )
       }
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -321,26 +331,27 @@ fn selective_assumption_backend(
 
 ///|
 fn duplicate_assumption_backend(
-  result : CheckSatResult,
+  result : @solver.CheckSatResult,
   duplicated : @util.ExprId,
-) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(_) {
-      CheckSatAssumingResult::new(
+      @solver.CheckSatAssumingResult::new(
         result,
         match result {
-          CheckUnsat => UnsatAssumptionSet::from_exprs([duplicated, duplicated])
-          _ => UnsatAssumptionSet::empty()
+          CheckUnsat =>
+            @solver.UnsatAssumptionSet::from_exprs([duplicated, duplicated])
+          _ => @solver.UnsatAssumptionSet::empty()
         },
       )
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -352,24 +363,24 @@ fn duplicate_assumption_backend(
 
 ///|
 fn extension_core_backend(
-  result : CheckSatResult,
-  entry : UnsatCoreEntry,
-) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+  result : @solver.CheckSatResult,
+  entry : @solver.UnsatCoreEntry,
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(_) {
-      CheckSatAssumingResult::new_with_core(
+      @solver.CheckSatAssumingResult::new_with_core(
         result,
-        UnsatAssumptionSet::empty(),
-        UnsatCore::single(entry),
+        @solver.UnsatAssumptionSet::empty(),
+        @solver.UnsatCore::single(entry),
       )
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -381,24 +392,25 @@ fn extension_core_backend(
 
 ///|
 fn proof_backend(
-  result : CheckSatResult,
+  result : @solver.CheckSatResult,
   proof : @util.Availability[@proof.ProofRef],
-) -> SolverBackend {
-  SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+) -> @solver.SolverBackend {
+  @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(assumptions) {
-      CheckSatAssumingResult::new(
+      @solver.CheckSatAssumingResult::new(
         result,
         match result {
-          CheckUnsat => UnsatAssumptionSet::from_exprs(assumptions.items())
-          _ => UnsatAssumptionSet::empty()
+          CheckUnsat =>
+            @solver.UnsatAssumptionSet::from_exprs(assumptions.items())
+          _ => @solver.UnsatAssumptionSet::empty()
         },
       )
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() { proof },
     collect_statistics=fn() { @stats.Statistics::new() },
   )
@@ -409,10 +421,10 @@ test "solver_facade_tracks_assertion_stack_and_scopes" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let not_p = manager.mk_not(p)
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(unit_availability_text(solver.assert_expr(p)), content="available")
   inspect(unit_availability_text(solver.push(1)), content="available")
@@ -432,10 +444,10 @@ test "solver_facade_tracks_assertion_stack_and_scopes" {
 test "solver_facade_enforces_produce_flag_timing" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(
     bool_availability_text(solver.set_produce_proofs(true)),
@@ -454,7 +466,7 @@ test "solver_facade_enforces_produce_flag_timing" {
 
 ///|
 test "solver_factory_config_params_track_produce_flags" {
-  let config = SolverFactoryConfig::new()
+  let config = @solver.SolverFactoryConfig::new()
     .with_produce_models(true)
     .with_produce_proofs(true)
     .with_produce_unsat_cores(true)
@@ -472,12 +484,12 @@ test "solver_factory_config_params_track_produce_flags" {
 ///|
 test "solver_updt_params_applies_typed_produce_flags" {
   let manager = @ast.AstManager::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
-  let params = SolverFactoryConfig::new()
+  let params = @solver.SolverFactoryConfig::new()
     .with_produce_models(true)
     .with_produce_proofs(true)
     .with_produce_unsat_cores(true)
@@ -509,13 +521,13 @@ test "solver_updt_params_applies_typed_produce_flags" {
 test "solver_updt_params_rejects_late_pre_assertion_without_partial_update" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   ignore(solver.assert_expr(p))
-  let params = SolverFactoryConfig::new()
+  let params = @solver.SolverFactoryConfig::new()
     .with_produce_models(true)
     .with_produce_proofs(true)
     .params()
@@ -534,10 +546,10 @@ test "solver_facade_rejects_non_bool_assertion_without_mutating_stack" {
   let manager = @ast.AstManager::new()
   let u = manager.declare_sort("U", 0)
   let a = u_const(manager, u, "a")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(
     unit_availability_text(solver.assert_expr(a)),
@@ -550,10 +562,10 @@ test "solver_facade_rejects_non_bool_assertion_without_mutating_stack" {
 test "solver_model_availability_distinguishes_no_current_wrong_and_stale" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(
     bool_availability_text(solver.set_produce_models(true)),
@@ -568,10 +580,10 @@ test "solver_model_availability_distinguishes_no_current_wrong_and_stale" {
   ignore(solver.assert_expr(p))
   inspect(model_availability_text(solver.get_model()), content="stale")
 
-  let unsat_solver = Solver::new(
+  let unsat_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(unsat_solver.check_sat().to_text(), content="unsat")
   inspect(
@@ -583,21 +595,19 @@ test "solver_model_availability_distinguishes_no_current_wrong_and_stale" {
 ///|
 test "solver_model_availability_distinguishes_unknown_model_modes" {
   let manager = @ast.AstManager::new()
-  let with_model = Solver::new(
+  let with_model = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
     accepting_backend(
-      CheckSatResult::unknown_with_model(@util.ReasonUnknown::Other("maybe")),
+      @solver.CheckSatResult::unknown_with_model(Other("maybe")),
     ),
   )
   inspect(with_model.check_sat().to_text(), content="unknown: maybe")
   inspect(model_availability_text(with_model.get_model()), content="()")
-  let no_model = Solver::new(
+  let no_model = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    accepting_backend(
-      CheckSatResult::unknown_no_model(@util.ReasonUnknown::Other("maybe")),
-    ),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    accepting_backend(@solver.CheckSatResult::unknown_no_model(Other("maybe"))),
   )
   inspect(no_model.check_sat().to_text(), content="unknown: maybe")
   inspect(
@@ -610,11 +620,11 @@ test "solver_model_availability_distinguishes_unknown_model_modes" {
 test "solver_reason_unknown_tracks_only_current_unknown_result" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let unknown_solver = Solver::new(
+  let unknown_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
+    @solver.SolverFactoryConfig::new(),
     accepting_backend(
-      CheckSatResult::unknown_no_model(
+      @solver.CheckSatResult::unknown_no_model(
         @util.ReasonUnknown::unsupported_fragment("quantifier"),
       ),
     ),
@@ -637,10 +647,10 @@ test "solver_reason_unknown_tracks_only_current_unknown_result" {
     content="stale",
   )
 
-  let sat_solver = Solver::new(
+  let sat_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(sat_solver.check_sat().to_text(), content="sat")
   inspect(
@@ -648,10 +658,10 @@ test "solver_reason_unknown_tracks_only_current_unknown_result" {
     content="no-current-result",
   )
 
-  let unsat_solver = Solver::new(
+  let unsat_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(unsat_solver.check_sat().to_text(), content="unsat")
   inspect(
@@ -668,10 +678,10 @@ test "solver_model_query_availability_matrix_covers_value_and_eval" {
   let model = @model.Model::new()
   model.add_bool_const(p_decl, "p", true)
 
-  let disabled = Solver::new(
+  let disabled = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    model_backend(CheckSatResult::sat(), model),
+    @solver.SolverFactoryConfig::new(),
+    model_backend(@solver.CheckSatResult::sat(), model),
   )
   inspect(disabled.check_sat().to_text(), content="sat")
   inspect(
@@ -679,28 +689,28 @@ test "solver_model_query_availability_matrix_covers_value_and_eval" {
     content="disabled(produce-models)|disabled(produce-models)|disabled(produce-models)",
   )
 
-  let no_check = Solver::new(
+  let no_check = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::sat(), model),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::sat(), model),
   )
   inspect(
     model_query_matrix_text(no_check, p),
     content="no-current-result|no-current-result|no-current-result",
   )
 
-  let sat_solver = Solver::new(
+  let sat_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::sat(), model),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::sat(), model),
   )
   inspect(sat_solver.check_sat().to_text(), content="sat")
   inspect(model_query_matrix_text(sat_solver, p), content="model|true|true")
 
-  let unsat_solver = Solver::new(
+  let unsat_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::unsat(), model),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::unsat(), model),
   )
   inspect(unsat_solver.check_sat().to_text(), content="unsat")
   inspect(
@@ -708,11 +718,11 @@ test "solver_model_query_availability_matrix_covers_value_and_eval" {
     content="wrong-result(expected=sat, actual=unsat)|wrong-result(expected=sat, actual=unsat)|wrong-result(expected=sat, actual=unsat)",
   )
 
-  let unknown_with_model = Solver::new(
+  let unknown_with_model = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
     model_backend(
-      CheckSatResult::unknown_with_model(@util.ReasonUnknown::Other("maybe")),
+      @solver.CheckSatResult::unknown_with_model(Other("maybe")),
       model,
     ),
   )
@@ -722,11 +732,11 @@ test "solver_model_query_availability_matrix_covers_value_and_eval" {
     content="model|true|true",
   )
 
-  let unknown_no_model = Solver::new(
+  let unknown_no_model = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
     model_backend(
-      CheckSatResult::unknown_no_model(@util.ReasonUnknown::Other("maybe")),
+      @solver.CheckSatResult::unknown_no_model(Other("maybe")),
       model,
     ),
   )
@@ -736,10 +746,10 @@ test "solver_model_query_availability_matrix_covers_value_and_eval" {
     content="wrong-result(expected=sat, actual=unknown-no-model)|wrong-result(expected=sat, actual=unknown-no-model)|wrong-result(expected=sat, actual=unknown-no-model)",
   )
 
-  let stale_solver = Solver::new(
+  let stale_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::sat(), model),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::sat(), model),
   )
   inspect(stale_solver.check_sat().to_text(), content="sat")
   ignore(stale_solver.assert_expr(p))
@@ -753,10 +763,10 @@ test "solver_get_model_returns_backend_model_object" {
   let p = manager.mk_app(p_decl, [])
   let model = @model.Model::new()
   model.add_bool_const(p_decl, "p", true)
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::sat(), model),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::sat(), model),
   )
   inspect(solver.check_sat().to_text(), content="sat")
   inspect(
@@ -772,10 +782,10 @@ test "solver_eval_uses_backend_model_and_completion_flag" {
   let a_decl = manager.declare_const("a", sort_u)
   let a = manager.mk_app(a_decl, [])
   let model = @model.Model::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::sat(), model),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::sat(), model),
   )
   inspect(solver.check_sat().to_text(), content="sat")
   inspect(
@@ -793,10 +803,10 @@ test "solver_eval_uses_backend_model_and_completion_flag" {
 test "solver_model_queries_report_typed_invalid_model_when_backend_lacks_snapshot" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    missing_model_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    missing_model_backend(@solver.CheckSatResult::sat()),
   )
   inspect(solver.check_sat().to_text(), content="sat")
   inspect(
@@ -815,10 +825,10 @@ test "solver_eval_reports_typed_model_eval_failure_without_completion" {
   let sort_u = manager.declare_sort("U", 0)
   let a_decl = manager.declare_const("a", sort_u)
   let a = manager.mk_app(a_decl, [])
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_models(true),
-    model_backend(CheckSatResult::sat(), @model.Model::new()),
+    @solver.SolverFactoryConfig::new().with_produce_models(true),
+    model_backend(@solver.CheckSatResult::sat(), @model.Model::new()),
   )
   inspect(solver.check_sat().to_text(), content="sat")
   inspect(
@@ -830,10 +840,10 @@ test "solver_eval_reports_typed_model_eval_failure_without_completion" {
 ///|
 test "solver_proof_and_core_queries_never_fake_success" {
   let manager = @ast.AstManager::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(
     proof_availability_text(solver.get_proof()),
@@ -875,14 +885,14 @@ test "solver_proof_and_core_queries_never_fake_success" {
 test "solver_unsat_query_availability_matrix_records_result_kind" {
   let manager = @ast.AstManager::new()
 
-  let no_check = Solver::new(
+  let no_check = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new()
+    @solver.SolverFactoryConfig::new()
     .with_produce_proofs(true)
     .with_produce_unsat_cores(true)
     .with_produce_unsat_assumptions(true),
     proof_backend(
-      CheckSatResult::unsat(),
+      @solver.CheckSatResult::unsat(),
       @proof.ProofHandle::new(3, @proof.ProofKind::ast()).view(),
     ),
   )
@@ -899,14 +909,14 @@ test "solver_unsat_query_availability_matrix_records_result_kind" {
     content="no-current-result",
   )
 
-  let sat_solver = Solver::new(
+  let sat_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new()
+    @solver.SolverFactoryConfig::new()
     .with_produce_proofs(true)
     .with_produce_unsat_cores(true)
     .with_produce_unsat_assumptions(true),
     proof_backend(
-      CheckSatResult::sat(),
+      @solver.CheckSatResult::sat(),
       @proof.ProofHandle::new(4, @proof.ProofKind::ast()).view(),
     ),
   )
@@ -924,14 +934,14 @@ test "solver_unsat_query_availability_matrix_records_result_kind" {
     content="wrong-result(expected=unsat, actual=sat)",
   )
 
-  let unknown_solver = Solver::new(
+  let unknown_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new()
+    @solver.SolverFactoryConfig::new()
     .with_produce_proofs(true)
     .with_produce_unsat_cores(true)
     .with_produce_unsat_assumptions(true),
     proof_backend(
-      CheckSatResult::unknown_with_model(@util.ReasonUnknown::Other("maybe")),
+      @solver.CheckSatResult::unknown_with_model(Other("maybe")),
       @proof.ProofHandle::new(5, @proof.ProofKind::ast()).view(),
     ),
   )
@@ -953,11 +963,11 @@ test "solver_unsat_query_availability_matrix_records_result_kind" {
 ///|
 test "solver_get_proof_uses_backend_when_enabled_unsat" {
   let manager = @ast.AstManager::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_proofs(true),
+    @solver.SolverFactoryConfig::new().with_produce_proofs(true),
     proof_backend(
-      CheckSatResult::unsat(),
+      @solver.CheckSatResult::unsat(),
       @proof.ProofHandle::new(7, @proof.ProofKind::ast()).view(),
     ),
   )
@@ -972,14 +982,12 @@ test "solver_get_proof_uses_backend_when_enabled_unsat" {
 ///|
 test "solver_get_proof_propagates_invalid_backend_proof" {
   let manager = @ast.AstManager::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_proofs(true),
+    @solver.SolverFactoryConfig::new().with_produce_proofs(true),
     proof_backend(
-      CheckSatResult::unsat(),
-      @util.Unavailable(
-        @util.AvailabilityReason::unknown(@util.ReasonUnknown::InvalidProof),
-      ),
+      @solver.CheckSatResult::unsat(),
+      Unavailable(@util.AvailabilityReason::unknown(InvalidProof)),
     ),
   )
   inspect(solver.check_sat().to_text(), content="unsat")
@@ -992,10 +1000,10 @@ test "solver_get_proof_propagates_invalid_backend_proof" {
 ///|
 test "solver_unsat_query_mode_change_stales_current_empty_check" {
   let manager = @ast.AstManager::new()
-  let core_solver = Solver::new(
+  let core_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(core_solver.check_sat().to_text(), content="unsat")
   inspect(
@@ -1004,10 +1012,10 @@ test "solver_unsat_query_mode_change_stales_current_empty_check" {
   )
   inspect(core_availability_text(core_solver.get_unsat_core()), content="stale")
 
-  let assumption_solver = Solver::new(
+  let assumption_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(assumption_solver.check_sat().to_text(), content="unsat")
   inspect(
@@ -1021,11 +1029,11 @@ test "solver_unsat_query_mode_change_stales_current_empty_check" {
     content="stale",
   )
 
-  let proof_solver = Solver::new(
+  let proof_solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
+    @solver.SolverFactoryConfig::new(),
     proof_backend(
-      CheckSatResult::unsat(),
+      @solver.CheckSatResult::unsat(),
       @proof.ProofHandle::new(9, @proof.ProofKind::ast()).view(),
     ),
   )
@@ -1042,14 +1050,17 @@ test "solver_tracked_assertion_records_named_unsat_core" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_cores(true),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(
     tracked_id_availability_text(
-      solver.assert_expr_tracked(p, TrackedExpr::new(tracker, Some("named-p"))),
+      solver.assert_expr_tracked(
+        p,
+        @solver.TrackedExpr::new(tracker, Some("named-p")),
+      ),
     ),
     content="tracked:0",
   )
@@ -1063,28 +1074,37 @@ test "solver_tracked_assertion_rejects_duplicates_and_pop_releases_tracker" {
   let p = bool_const(manager, "p")
   let q = bool_const(manager, "q")
   let tracker = bool_const(manager, "named-t")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(unit_availability_text(solver.push(1)), content="available")
   inspect(
     tracked_id_availability_text(
-      solver.assert_expr_tracked(p, TrackedExpr::new(tracker, Some("named-t"))),
+      solver.assert_expr_tracked(
+        p,
+        @solver.TrackedExpr::new(tracker, Some("named-t")),
+      ),
     ),
     content="tracked:0",
   )
   inspect(
     tracked_id_availability_text(
-      solver.assert_expr_tracked(q, TrackedExpr::new(tracker, Some("named-t"))),
+      solver.assert_expr_tracked(
+        q,
+        @solver.TrackedExpr::new(tracker, Some("named-t")),
+      ),
     ),
     content="unsupported(duplicate-tracked-assertion:named-t)",
   )
   inspect(unit_availability_text(solver.pop(1)), content="available")
   inspect(
     tracked_id_availability_text(
-      solver.assert_expr_tracked(q, TrackedExpr::new(tracker, Some("named-t"))),
+      solver.assert_expr_tracked(
+        q,
+        @solver.TrackedExpr::new(tracker, Some("named-t")),
+      ),
     ),
     content="tracked:1",
   )
@@ -1098,16 +1118,16 @@ test "solver_tracked_assertion_requires_bool_const_tracker" {
   let tracker = bool_const(manager, "named-t")
   let f = manager.declare_fun("f", [manager.bool_sort()], manager.bool_sort())
   let u = manager.declare_sort("U", 0)
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(
     tracked_id_availability_text(
       solver.assert_expr_tracked(
         p,
-        TrackedExpr::new(manager.mk_not(tracker), Some("bad-not")),
+        @solver.TrackedExpr::new(manager.mk_not(tracker), Some("bad-not")),
       ),
     ),
     content="unsupported(invalid-tracker:(not named-t))",
@@ -1116,7 +1136,7 @@ test "solver_tracked_assertion_requires_bool_const_tracker" {
     tracked_id_availability_text(
       solver.assert_expr_tracked(
         p,
-        TrackedExpr::new(manager.mk_app(f, [q]), Some("bad-app")),
+        @solver.TrackedExpr::new(manager.mk_app(f, [q]), Some("bad-app")),
       ),
     ),
     content="unsupported(invalid-tracker:(f q))",
@@ -1125,7 +1145,7 @@ test "solver_tracked_assertion_requires_bool_const_tracker" {
     tracked_id_availability_text(
       solver.assert_expr_tracked(
         p,
-        TrackedExpr::new(u_const(manager, u, "a"), Some("bad-sort")),
+        @solver.TrackedExpr::new(u_const(manager, u, "a"), Some("bad-sort")),
       ),
     ),
     content="unsupported(invalid-tracker:a)",
@@ -1138,16 +1158,16 @@ test "solver_tracked_assertion_rejects_non_bool_formula_without_mutating_stack" 
   let u = manager.declare_sort("U", 0)
   let a = u_const(manager, u, "a")
   let tracker = bool_const(manager, "named-non-bool")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(
     tracked_id_availability_text(
       solver.assert_expr_tracked(
         a,
-        TrackedExpr::new(tracker, Some("named-non-bool")),
+        @solver.TrackedExpr::new(tracker, Some("named-non-bool")),
       ),
     ),
     content="unsupported(non-bool-assertion:a)",
@@ -1162,12 +1182,12 @@ test "solver_tracked_unsat_core_uses_backend_assumption_subset" {
   let q = bool_const(manager, "q")
   let tracker_p = bool_const(manager, "named-p")
   let tracker_q = bool_const(manager, "named-q")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_cores(true),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
     selective_assumption_backend(
-      CheckSatResult::sat(),
-      CheckSatResult::unsat(),
+      @solver.CheckSatResult::sat(),
+      @solver.CheckSatResult::unsat(),
       tracker_p,
     ),
   )
@@ -1175,7 +1195,7 @@ test "solver_tracked_unsat_core_uses_backend_assumption_subset" {
     tracked_id_availability_text(
       solver.assert_expr_tracked(
         p,
-        TrackedExpr::new(tracker_p, Some("named-p")),
+        @solver.TrackedExpr::new(tracker_p, Some("named-p")),
       ),
     ),
     content="tracked:0",
@@ -1184,7 +1204,7 @@ test "solver_tracked_unsat_core_uses_backend_assumption_subset" {
     tracked_id_availability_text(
       solver.assert_expr_tracked(
         q,
-        TrackedExpr::new(tracker_q, Some("named-q")),
+        @solver.TrackedExpr::new(tracker_q, Some("named-q")),
       ),
     ),
     content="tracked:1",
@@ -1198,14 +1218,17 @@ test "solver_tracked_unsat_core_deduplicates_backend_assumption_subset" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_cores(true),
-    duplicate_assumption_backend(CheckSatResult::unsat(), tracker),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
+    duplicate_assumption_backend(@solver.CheckSatResult::unsat(), tracker),
   )
   inspect(
     tracked_id_availability_text(
-      solver.assert_expr_tracked(p, TrackedExpr::new(tracker, Some("named-p"))),
+      solver.assert_expr_tracked(
+        p,
+        @solver.TrackedExpr::new(tracker, Some("named-p")),
+      ),
     ),
     content="tracked:0",
   )
@@ -1217,7 +1240,10 @@ test "solver_tracked_unsat_core_deduplicates_backend_assumption_subset" {
 test "solver_unsat_assumption_set_from_exprs_deduplicates_exact_entries" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  inspect(UnsatAssumptionSet::from_exprs([p, p]).to_text(), content="expr#0")
+  inspect(
+    @solver.UnsatAssumptionSet::from_exprs([p, p]).to_text(),
+    content="expr#0",
+  )
 }
 
 ///|
@@ -1225,14 +1251,17 @@ test "solver_tracked_assertion_records_unsat_assumption_when_enabled" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
   let tracker = bool_const(manager, "named-p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
-    accepting_backend(CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
+    accepting_backend(@solver.CheckSatResult::unsat()),
   )
   inspect(
     tracked_id_availability_text(
-      solver.assert_expr_tracked(p, TrackedExpr::new(tracker, Some("named-p"))),
+      solver.assert_expr_tracked(
+        p,
+        @solver.TrackedExpr::new(tracker, Some("named-p")),
+      ),
     ),
     content="tracked:0",
   )
@@ -1251,14 +1280,17 @@ test "solver_tracked_assertion_records_unsat_assumption_when_enabled" {
 test "solver_check_sat_assuming_records_original_unsat_assumptions" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let assumptions = AssumptionSet::new()
+  let assumptions = @solver.AssumptionSet::new()
   assumptions.add(p)
   assumptions.add(p)
   inspect(assumptions.length(), content="1")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
-    assumption_backend(CheckSatResult::sat(), CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_assumptions(true),
+    assumption_backend(
+      @solver.CheckSatResult::sat(),
+      @solver.CheckSatResult::unsat(),
+    ),
   )
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(
@@ -1276,12 +1308,15 @@ test "solver_check_sat_assuming_records_original_unsat_assumptions" {
 test "solver_unsat_core_maps_call_assumption_owner" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let assumptions = AssumptionSet::new()
+  let assumptions = @solver.AssumptionSet::new()
   assumptions.add(p)
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_cores(true),
-    assumption_backend(CheckSatResult::sat(), CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
+    assumption_backend(
+      @solver.CheckSatResult::sat(),
+      @solver.CheckSatResult::unsat(),
+    ),
   )
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(core_availability_text(solver.get_unsat_core()), content="expr#0")
@@ -1295,13 +1330,13 @@ test "solver_unsat_core_maps_call_assumption_owner" {
 test "solver_unsat_core_includes_backend_extension_core_entry" {
   let manager = @ast.AstManager::new()
   let owner = bool_const(manager, "fake-ext-core")
-  let assumptions = AssumptionSet::new()
-  let solver = Solver::new(
+  let assumptions = @solver.AssumptionSet::new()
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new().with_produce_unsat_cores(true),
+    @solver.SolverFactoryConfig::new().with_produce_unsat_cores(true),
     extension_core_backend(
-      CheckSatResult::unsat(),
-      UnsatCoreEntry::new(owner, Some("fake-ext-core")),
+      @solver.CheckSatResult::unsat(),
+      @solver.UnsatCoreEntry::new(owner, Some("fake-ext-core")),
     ),
   )
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
@@ -1319,12 +1354,15 @@ test "solver_unsat_core_includes_backend_extension_core_entry" {
 test "solver_check_sat_assuming_does_not_persist_call_assumptions" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let assumptions = AssumptionSet::new()
+  let assumptions = @solver.AssumptionSet::new()
   assumptions.add(p)
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    assumption_backend(CheckSatResult::sat(), CheckSatResult::unsat()),
+    @solver.SolverFactoryConfig::new(),
+    assumption_backend(
+      @solver.CheckSatResult::sat(),
+      @solver.CheckSatResult::unsat(),
+    ),
   )
   inspect(solver.check_sat_assuming(assumptions).to_text(), content="unsat")
   inspect(solver.get_num_assertions(), content="0")
@@ -1334,10 +1372,10 @@ test "solver_check_sat_assuming_does_not_persist_call_assumptions" {
 ///|
 test "solver_reserved_translate_path_is_explicitly_unsupported" {
   let manager = @ast.AstManager::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(
     unit_availability_text(discard_available(solver.translate(manager))),
@@ -1348,10 +1386,10 @@ test "solver_reserved_translate_path_is_explicitly_unsupported" {
 ///|
 test "solver_statistics_snapshot_is_available_without_check" {
   let manager = @ast.AstManager::new()
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
-    accepting_backend(CheckSatResult::sat()),
+    @solver.SolverFactoryConfig::new(),
+    accepting_backend(@solver.CheckSatResult::sat()),
   )
   inspect(solver.collect_statistics().keys_text(), content="")
   ignore(solver.check_sat())
@@ -1362,13 +1400,11 @@ test "solver_statistics_snapshot_is_available_without_check" {
 test "solver_statistics_incomplete_reasons_follow_current_non_stale_result" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = Solver::new(
+  let solver = @solver.Solver::new(
     manager,
-    SolverFactoryConfig::new(),
+    @solver.SolverFactoryConfig::new(),
     accepting_backend(
-      CheckSatResult::unknown_no_model(
-        @util.ReasonUnknown::ModelValidationFailed,
-      ),
+      @solver.CheckSatResult::unknown_no_model(ModelValidationFailed),
     ),
   )
   inspect(
@@ -1394,17 +1430,17 @@ test "solver_statistics_incomplete_reasons_follow_current_non_stale_result" {
 ///|
 test "solver_statistics_incomplete_reasons_include_backend_stats_manifest_gaps" {
   let manager = @ast.AstManager::new()
-  let backend = SolverBackend::new(
-    assert_expr=fn(_) { @util.Available(()) },
-    assert_expr_tracked=fn(_, _) { @util.Available(()) },
-    push=fn(_) { @util.Available(()) },
-    pop=fn(_) { @util.Available(()) },
+  let backend = @solver.SolverBackend::new(
+    assert_expr=fn(_) { Available(()) },
+    assert_expr_tracked=fn(_, _) { Available(()) },
+    push=fn(_) { Available(()) },
+    pop=fn(_) { Available(()) },
     check_sat_assuming=fn(_) {
-      CheckSatAssumingResult::from_result(CheckSatResult::sat())
+      @solver.CheckSatAssumingResult::from_result(@solver.CheckSatResult::sat())
     },
-    model=fn() { @util.Available(@model.Model::new()) },
+    model=fn() { Available(@model.Model::new()) },
     proof=fn() {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment("proof-query"),
         ),
@@ -1413,11 +1449,15 @@ test "solver_statistics_incomplete_reasons_include_backend_stats_manifest_gaps" 
     collect_statistics=fn() {
       let stats = @stats.Statistics::new()
       stats.inc_counter("backend.custom", 1)
-      stats.mark_incomplete(@util.ReasonUnknown::IncompleteTheory("stats"))
+      stats.mark_incomplete(IncompleteTheory("stats"))
       stats
     },
   )
-  let solver = Solver::new(manager, SolverFactoryConfig::new(), backend)
+  let solver = @solver.Solver::new(
+    manager,
+    @solver.SolverFactoryConfig::new(),
+    backend,
+  )
   inspect(solver.collect_statistics().keys_text(), content="backend.custom")
   inspect(
     solver.collect_statistics().incomplete_reasons_text(),
