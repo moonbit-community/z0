@@ -6,6 +6,11 @@ pub(all) enum SmtSetupMode {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend SmtSetupMode with Eq::{not_equal, equal}
+
+///|
 pub fn SmtSetupMode::basic() -> SmtSetupMode {
   CFG_BASIC
 }

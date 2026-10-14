@@ -7,6 +7,11 @@ pub(all) enum ResultKind {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ResultKind with Eq::{not_equal, equal}
+
+///|
 pub fn ResultKind::unknown_with_model() -> ResultKind {
   Unknown(true)
 }
@@ -45,6 +50,11 @@ pub(all) enum ReasonUnknown {
   ModelValidationFailed
   Other(String)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ReasonUnknown with Eq::{not_equal, equal}
 
 ///|
 pub fn ReasonUnknown::unsupported_fragment(fragment : String) -> ReasonUnknown {
@@ -88,6 +98,11 @@ pub(all) enum AvailabilityReason {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend AvailabilityReason with Eq::{not_equal, equal}
+
+///|
 pub fn AvailabilityReason::unsupported(
   reason : ReasonUnknown,
 ) -> AvailabilityReason {
@@ -128,3 +143,8 @@ pub(all) enum Availability[T] {
   Available(T)
   Unavailable(AvailabilityReason)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Availability with Eq::{not_equal, equal}

@@ -4,6 +4,21 @@ pub struct ClauseId {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ClauseId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ClauseId with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ClauseId with Hash::{hash, hash_combine}
+
+///|
 pub fn ClauseId::new(value : Int32) -> ClauseId {
   { value, }
 }
@@ -19,6 +34,11 @@ pub impl Show for ClauseId with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ClauseId with Show::{to_string, output}
+
+///|
 pub(all) enum ClauseStatus {
   Input
   Asserted
@@ -28,10 +48,20 @@ pub(all) enum ClauseStatus {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ClauseStatus with Eq::{not_equal, equal}
+
+///|
 pub struct ClauseTheoryProofHint {
   priv owner : String
   priv kind : String
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ClauseTheoryProofHint with Eq::{not_equal, equal}
 
 ///|
 pub fn ClauseTheoryProofHint::owner_text(
@@ -117,6 +147,11 @@ pub(all) struct ClauseEvent {
   clause_id : ClauseId
   status : ClauseStatus
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ClauseEvent with Eq::{not_equal, equal}
 
 ///|
 fn ClauseEvent::to_text(self : ClauseEvent) -> String {

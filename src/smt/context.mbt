@@ -1445,7 +1445,7 @@ pub fn SmtContext::check_sat(self : SmtContext) -> SmtContextResult {
       self.last_model = None
       self.cache_stale = false
       self.last_result = @util.ResultKind::unknown_no_model()
-      return SmtContextUnknown(err.to_string())
+      return SmtContextUnknown(Show::to_string(err))
     }
   }
   match self.first_unsupported_reason() {
@@ -1609,7 +1609,7 @@ fn SmtContext::add_bool_assumption_literal(
   let literal = self.internalizer.internalize_bool(expr) catch {
     err =>
       return Unavailable(
-        @util.AvailabilityReason::unknown(Other(err.to_string())),
+        @util.AvailabilityReason::unknown(Other(Show::to_string(err))),
       )
   }
   exprs.push(owner)
@@ -1763,7 +1763,7 @@ pub fn SmtContext::check_sat_assuming(
       self.last_model = None
       self.cache_stale = false
       self.last_result = @util.ResultKind::unknown_no_model()
-      return SmtAssumptionUnknown(err.to_string())
+      return SmtAssumptionUnknown(Show::to_string(err))
     }
   }
   match self.first_unsupported_reason() {

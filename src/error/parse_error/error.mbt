@@ -4,6 +4,11 @@ pub(all) suberror ParseError {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ParseError with Eq::{not_equal, equal}
+
+///|
 pub fn ParseError::prefix(_self : ParseError) -> String {
   "parse"
 }
@@ -20,3 +25,8 @@ pub fn ParseError::format(self : ParseError) -> String {
 pub impl Show for ParseError with fn output(self, logger) {
   logger.write_string(self.format())
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ParseError with Show::{to_string, output}

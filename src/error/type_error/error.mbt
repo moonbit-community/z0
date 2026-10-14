@@ -4,6 +4,11 @@ pub(all) suberror TypeError {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend TypeError with Eq::{not_equal, equal}
+
+///|
 pub fn TypeError::prefix(_self : TypeError) -> String {
   "type"
 }
@@ -20,3 +25,8 @@ pub fn TypeError::format(self : TypeError) -> String {
 pub impl Show for TypeError with fn output(self, logger) {
   logger.write_string(self.format())
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend TypeError with Show::{to_string, output}

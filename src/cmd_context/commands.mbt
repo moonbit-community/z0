@@ -5,6 +5,11 @@ pub struct ModelQueryTerm {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ModelQueryTerm with Eq::{not_equal, equal}
+
+///|
 pub fn ModelQueryTerm::new(
   display : String,
   expr : @util.ExprId,
@@ -50,6 +55,11 @@ pub(all) enum Command {
   Echo(String)
   Exit
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Command with Eq::{not_equal, equal}
 
 ///|
 fn sort_list_repr(sorts : Array[@util.SortId]) -> String {
@@ -106,3 +116,8 @@ pub impl Show for Command with fn output(self, logger) {
     Exit => logger.write_string("Exit")
   }
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Command with Show::{to_string, output}

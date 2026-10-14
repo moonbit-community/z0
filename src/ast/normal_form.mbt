@@ -5,6 +5,11 @@ pub(all) struct DefinedName {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend DefinedName with Eq::{not_equal, equal}
+
+///|
 pub struct DefinedNames {
   priv entries : @util.ScopedVector[DefinedName]
 }
@@ -57,6 +62,11 @@ pub(all) struct NnfResult {
   result_proof : String?
   aux_decl_visibility : String
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend NnfResult with Eq::{not_equal, equal}
 
 ///|
 pub fn NnfResult::identity(expr : @util.ExprId) -> NnfResult {

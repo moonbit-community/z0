@@ -4,6 +4,11 @@ pub struct SatCoreModel {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend SatCoreModel with Eq::{not_equal, equal}
+
+///|
 pub fn SatCoreModel::value(self : SatCoreModel, bool_var : BoolVar) -> Bool? {
   match self.assignments.get(bool_var.to_int()) {
     Some(value) => value
@@ -17,6 +22,11 @@ pub(all) enum SatCoreResult {
   SatCoreUnsat
   SatCoreUnknown(String)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SatCoreResult with Eq::{not_equal, equal}
 
 ///|
 priv struct SatConflictRecord {

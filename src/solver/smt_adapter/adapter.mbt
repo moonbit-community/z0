@@ -246,10 +246,10 @@ fn assert_tracked_bool_formula(
   expr : @util.ExprId,
 ) -> @util.Availability[Unit] {
   let implication = manager.mk_implies(tracker, expr) catch {
-    err => return unavailable_from_error(err.to_string())
+    err => return unavailable_from_error(Show::to_string(err))
   }
   concrete.assert_expr(implication) catch {
-    err => return unavailable_from_error(err.to_string())
+    err => return unavailable_from_error(Show::to_string(err))
   }
   Available(())
 }
@@ -498,7 +498,7 @@ fn backend_from_concrete(
   @solver.SolverBackend::new(
     assert_expr=fn(expr) {
       concrete.assert_expr(expr) catch {
-        err => return unavailable_from_error(err.to_string())
+        err => return unavailable_from_error(Show::to_string(err))
       }
       Available(())
     },
@@ -535,7 +535,7 @@ fn backend_from_concrete(
     },
     push=fn(count) {
       concrete.push(count) catch {
-        err => return unavailable_from_error(err.to_string())
+        err => return unavailable_from_error(Show::to_string(err))
       }
       if count > 0 {
         for _ in 0..<count {
@@ -546,7 +546,7 @@ fn backend_from_concrete(
     },
     pop=fn(count) {
       concrete.pop(count) catch {
-        err => return unavailable_from_error(err.to_string())
+        err => return unavailable_from_error(Show::to_string(err))
       }
       if count > 0 {
         let depth = tracked_euf_scopes.length()

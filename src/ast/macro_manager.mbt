@@ -6,6 +6,11 @@ pub(all) struct MacroExpansion {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend MacroExpansion with Eq::{not_equal, equal}
+
+///|
 pub fn MacroExpansion::result(self : MacroExpansion) -> @util.ExprId {
   self.result
 }

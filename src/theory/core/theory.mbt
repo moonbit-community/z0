@@ -6,10 +6,20 @@ pub(all) enum TheoryInternalizeResult {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend TheoryInternalizeResult with Eq::{not_equal, equal}
+
+///|
 pub(all) enum TheoryPropagateResult {
   TheoryPropagateDone
   TheoryPropagateGiveUp(@util.ReasonUnknown)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend TheoryPropagateResult with Eq::{not_equal, equal}
 
 ///|
 pub(all) enum TheoryCheckResult {
@@ -17,6 +27,11 @@ pub(all) enum TheoryCheckResult {
   TheoryCheckDone
   TheoryCheckGiveUp(@util.ReasonUnknown)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend TheoryCheckResult with Eq::{not_equal, equal}
 
 ///|
 pub struct TheoryPlugin {

@@ -7,6 +7,11 @@ pub(all) enum ArithCompareOp {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ArithCompareOp with Eq::{not_equal, equal}
+
+///|
 pub fn ArithCompareOp::symbol(self : ArithCompareOp) -> String {
   match self {
     Lt => "<"
@@ -33,8 +38,18 @@ pub(all) enum ExprKind {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ExprKind with Eq::{not_equal, equal}
+
+///|
 pub(all) struct Expr {
   id : @util.ExprId
   kind : ExprKind
   sort : @util.SortId
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Expr with Eq::{not_equal, equal}

@@ -4,6 +4,21 @@ pub struct JustificationId {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend JustificationId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend JustificationId with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend JustificationId with Hash::{hash, hash_combine}
+
+///|
 pub fn JustificationId::new(value : Int32) -> JustificationId {
   { value, }
 }
@@ -17,6 +32,11 @@ pub fn JustificationId::to_int(self : JustificationId) -> Int32 {
 pub impl Show for JustificationId with fn output(self, logger) {
   logger.write_string("just#\{self.value}")
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend JustificationId with Show::{to_string, output}
 
 ///|
 priv enum JustificationKind {

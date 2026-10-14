@@ -6,6 +6,11 @@ pub(all) enum ParamKind {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ParamKind with Eq::{not_equal, equal}
+
+///|
 fn ParamKind::to_text(self : ParamKind) -> String {
   match self {
     BoolParam => "bool"
@@ -22,12 +27,22 @@ pub(all) enum ParamValue {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ParamValue with Eq::{not_equal, equal}
+
+///|
 pub(all) enum ParamLifecycle {
   SetupOnly
   PreAssertion
   PerCheck
   Dynamic
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ParamLifecycle with Eq::{not_equal, equal}
 
 ///|
 pub fn ParamLifecycle::setup_only() -> ParamLifecycle {
@@ -66,6 +81,11 @@ pub(all) enum ParamSetStage {
   PostAssertionStage
   PerCheckStage
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ParamSetStage with Eq::{not_equal, equal}
 
 ///|
 pub fn ParamSetStage::setup() -> ParamSetStage {

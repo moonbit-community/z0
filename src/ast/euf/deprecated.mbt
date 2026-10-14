@@ -5,6 +5,11 @@ pub(all) enum EufStatus {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend EufStatus with Eq::{not_equal, equal}
+
+///|
 pub struct EufSolver {
   priv manager : @ast.AstManager
   priv graph : @egraph.EGraph

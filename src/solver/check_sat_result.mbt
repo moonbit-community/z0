@@ -6,6 +6,11 @@ pub(all) enum CheckSatResult {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend CheckSatResult with Eq::{not_equal, equal}
+
+///|
 pub fn CheckSatResult::sat() -> CheckSatResult {
   CheckSat
 }

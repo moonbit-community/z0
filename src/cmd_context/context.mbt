@@ -310,11 +310,11 @@ fn CommandContext::assert_named_expr(
     ) {
     Available(_) =>
       self.manager.commit_scope(1) catch {
-        err => raise TypeError(err.to_string(), None)
+        err => raise TypeError(Show::to_string(err), None)
       }
     Unavailable(reason) => {
       self.manager.pop_scope(1) catch {
-        err => raise TypeError(err.to_string(), None)
+        err => raise TypeError(Show::to_string(err), None)
       }
       raise TypeError(reason.to_text(), None)
     }

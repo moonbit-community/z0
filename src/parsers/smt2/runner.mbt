@@ -140,7 +140,7 @@ pub fn run_smt2_result_with_factory(
           }
           None => ()
         }
-        let message = err.to_string()
+        let message = Show::to_string(err)
         return output_or_error_result(
           context,
           message,

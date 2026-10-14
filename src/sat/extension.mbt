@@ -4,6 +4,21 @@ pub struct ExtConstraintId {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ExtConstraintId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ExtConstraintId with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ExtConstraintId with Hash::{hash, hash_combine}
+
+///|
 pub fn ExtConstraintId::new(value : Int32) -> ExtConstraintId {
   { value, }
 }
@@ -19,9 +34,35 @@ pub impl Show for ExtConstraintId with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ExtConstraintId with Show::{to_string, output}
+
+///|
 pub struct ExtJustificationId {
   priv value : Int32
 } derive(Eq, Compare, Hash)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ExtJustificationId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ExtJustificationId with Compare::{
+  op_lt,
+  op_le,
+  op_ge,
+  compare,
+  op_gt,
+}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ExtJustificationId with Hash::{hash, hash_combine}
 
 ///|
 pub fn ExtJustificationId::new(value : Int32) -> ExtJustificationId {
@@ -39,10 +80,20 @@ pub impl Show for ExtJustificationId with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ExtJustificationId with Show::{to_string, output}
+
+///|
 pub(all) enum WatchAction {
   KeepWatch
   DropWatch
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend WatchAction with Eq::{not_equal, equal}
 
 ///|
 pub(all) enum ExtensionAction {
@@ -53,9 +104,19 @@ pub(all) enum ExtensionAction {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ExtensionAction with Eq::{not_equal, equal}
+
+///|
 pub struct SatAssignmentView {
   priv assignments : Array[Bool?]
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SatAssignmentView with Eq::{not_equal, equal}
 
 ///|
 pub fn SatAssignmentView::value(
