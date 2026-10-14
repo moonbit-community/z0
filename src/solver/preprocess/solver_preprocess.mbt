@@ -42,7 +42,7 @@ fn preprocess_rewrite_expr(
     Available(expr)
   } else {
     Available(@rewriter.rewrite_bool(manager, expr)) catch {
-      err => Unavailable(preprocess_unsupported(err.to_string()))
+      err => Unavailable(preprocess_unsupported(Show::to_string(err)))
     }
   }
 }

@@ -7,6 +7,11 @@ pub(all) struct RewriteResult {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend RewriteResult with Eq::{not_equal, equal}
+
+///|
 pub fn RewriteResult::result(self : RewriteResult) -> @util.ExprId {
   self.result
 }

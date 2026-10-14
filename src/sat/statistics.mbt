@@ -11,6 +11,11 @@ pub(all) struct SatCoreSnapshot {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend SatCoreSnapshot with Eq::{not_equal, equal}
+
+///|
 pub fn SatCoreSnapshot::to_statistics(
   self : SatCoreSnapshot,
 ) -> @stats.Statistics {

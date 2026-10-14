@@ -38,7 +38,7 @@ pub fn Tactic::simplify() -> Tactic {
     let simplified = goal.simplified_copy()
     for formula in goal.formulas {
       let rewritten = @rewriter.rewrite_bool(goal.manager, formula) catch {
-        err => return simplify_unavailable(err.to_string())
+        err => return simplify_unavailable(Show::to_string(err))
       }
       match bool_value(goal.manager, rewritten) {
         Some(true) => ()

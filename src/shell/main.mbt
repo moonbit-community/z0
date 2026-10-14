@@ -84,7 +84,7 @@ fn run_action(action : ShellAction) -> ShellResult {
     RejectArgs => shell_result(usage() + "\n", "", 1)
     RunFile(path) => {
       let input = read_input_file(path) catch {
-        err => return shell_result(err.to_string() + "\n", "", 1)
+        err => return shell_result(Show::to_string(err) + "\n", "", 1)
       }
       let result = @smt2.run_smt2_result_with_factory(
         input,

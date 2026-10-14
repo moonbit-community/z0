@@ -2,6 +2,21 @@
 pub(all) struct Line(Int32) derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend Line with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Line with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Line with Hash::{hash, hash_combine}
+
+///|
 pub fn Line::new(value : Int32) -> Line {
   Line(value)
 }
@@ -15,6 +30,21 @@ pub fn Line::to_int(self : Line) -> Int32 {
 pub(all) struct Column(Int32) derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend Column with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Column with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Column with Hash::{hash, hash_combine}
+
+///|
 pub fn Column::new(value : Int32) -> Column {
   Column(value)
 }
@@ -26,6 +56,21 @@ pub fn Column::to_int(self : Column) -> Int32 {
 
 ///|
 pub(all) struct ByteOffset(Int32) derive(Eq, Compare, Hash)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ByteOffset with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ByteOffset with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ByteOffset with Hash::{hash, hash_combine}
 
 ///|
 pub fn ByteOffset::new(value : Int32) -> ByteOffset {
@@ -43,6 +88,11 @@ pub(all) struct SourcePos {
   column : Column
   offset : ByteOffset
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SourcePos with Eq::{not_equal, equal}
 
 ///|
 pub fn SourcePos::new(
@@ -79,6 +129,11 @@ pub(all) struct SourceSpan {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend SourceSpan with Eq::{not_equal, equal}
+
+///|
 pub fn SourceSpan::new(start~ : SourcePos, end~ : SourcePos) -> SourceSpan {
   { start, end, }
 }
@@ -92,3 +147,8 @@ pub fn SourceSpan::format(self : SourceSpan) -> String {
 pub impl Show for SourceSpan with fn output(self, logger) {
   logger.write_string(self.format())
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SourceSpan with Show::{to_string, output}

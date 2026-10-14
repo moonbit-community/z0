@@ -204,7 +204,7 @@ pub fn Tactic::tseitin_cnf() -> Tactic {
     let encoder = TseitinCnfEncoder::new(goal.manager)
     for formula in goal.formulas {
       let rewritten = @rewriter.rewrite_bool(goal.manager, formula) catch {
-        err => return tseitin_unavailable(err.to_string())
+        err => return tseitin_unavailable(Show::to_string(err))
       }
       match bool_value(goal.manager, rewritten) {
         Some(true) => ()

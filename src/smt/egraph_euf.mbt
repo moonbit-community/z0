@@ -6,11 +6,21 @@ enum EGraphAssertionRoute {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend EGraphAssertionRoute with Eq::{not_equal, equal}
+
+///|
 enum EGraphEufCheckResult {
   EGraphEufConsistent
   EGraphEufConflict
   EGraphEufUnknown(@util.ReasonUnknown)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend EGraphEufCheckResult with Eq::{not_equal, equal}
 
 ///|
 priv struct EGraphEufSearch {
@@ -129,7 +139,7 @@ fn smt_euf_assertion_route(
   polarity : Bool,
 ) -> EGraphAssertionRoute {
   let expanded = manager.expand_macros(expr) catch {
-    err => return EGraphAssertUnsupported(err.to_string())
+    err => return EGraphAssertUnsupported(Show::to_string(err))
   }
   let expr = expanded.result()
   match manager.get_expr(expr).kind {
@@ -308,7 +318,7 @@ fn smt_euf_check_assertions(
         search.assert_formula(assertion, true) catch {
           err =>
             return EGraphEufUnknown(
-              @util.ReasonUnknown::unsupported_fragment(err.to_string()),
+              @util.ReasonUnknown::unsupported_fragment(Show::to_string(err)),
             )
         }
         if search.has_conflict() {

@@ -14,6 +14,11 @@ pub(all) enum ArithLiteResult {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ArithLiteResult with Eq::{not_equal, equal}
+
+///|
 pub fn ArithLiteResult::to_text(self : ArithLiteResult) -> String {
   match self {
     ArithLiteSat => "sat"

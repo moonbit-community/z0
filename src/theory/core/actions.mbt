@@ -6,6 +6,11 @@ pub struct TheoryTermRef {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend TheoryTermRef with Eq::{not_equal, equal}
+
+///|
 pub fn TheoryTermRef::new(
   owner : @ids.TheoryId,
   value : Int32,
@@ -43,11 +48,21 @@ pub impl Show for TheoryTermRef with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend TheoryTermRef with Show::{to_string, output}
+
+///|
 pub struct EqFact {
   priv owner : @ids.TheoryId
   priv value : Int32
   priv scope_generation : Int32
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend EqFact with Eq::{not_equal, equal}
 
 ///|
 pub fn EqFact::new(
@@ -84,11 +99,21 @@ pub impl Show for EqFact with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend EqFact with Show::{to_string, output}
+
+///|
 pub struct DiseqFact {
   priv owner : @ids.TheoryId
   priv value : Int32
   priv scope_generation : Int32
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend DiseqFact with Eq::{not_equal, equal}
 
 ///|
 pub fn DiseqFact::new(
@@ -125,11 +150,21 @@ pub impl Show for DiseqFact with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend DiseqFact with Show::{to_string, output}
+
+///|
 pub struct AntecedentId {
   priv owner : @ids.TheoryId
   priv value : Int32
   priv scope_generation : Int32
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend AntecedentId with Eq::{not_equal, equal}
 
 ///|
 pub fn AntecedentId::new(
@@ -164,11 +199,21 @@ pub impl Show for AntecedentId with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend AntecedentId with Show::{to_string, output}
+
+///|
 pub struct ProofHintId {
   priv owner : @ids.TheoryId
   priv value : Int32
   priv scope_generation : Int32
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ProofHintId with Eq::{not_equal, equal}
 
 ///|
 pub fn ProofHintId::new(
@@ -201,6 +246,11 @@ pub fn ProofHintId::is_valid_at(
 pub impl Show for ProofHintId with fn output(self, logger) {
   logger.write_string("\{self.owner}:proof-hint#\{self.value}")
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ProofHintId with Show::{to_string, output}
 
 ///|
 pub struct TheoryContextView {

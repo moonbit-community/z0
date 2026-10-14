@@ -6,6 +6,11 @@ pub(all) enum SExpr {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend SExpr with Eq::{not_equal, equal}
+
+///|
 pub(all) enum ParseNext {
   Next(SExpr, SExprCursor)
   End(SExprCursor)
@@ -69,6 +74,11 @@ pub fn SExpr::repr(self : SExpr) -> String {
 pub impl Show for SExpr with fn output(self, logger) {
   logger.write_string(self.repr())
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SExpr with Show::{to_string, output}
 
 ///|
 fn span_join(

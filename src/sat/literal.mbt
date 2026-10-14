@@ -4,6 +4,21 @@ pub struct BoolVar {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend BoolVar with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend BoolVar with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend BoolVar with Hash::{hash, hash_combine}
+
+///|
 pub fn BoolVar::new(value : Int32) -> BoolVar {
   { value, }
 }
@@ -19,10 +34,20 @@ pub impl Show for BoolVar with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend BoolVar with Show::{to_string, output}
+
+///|
 pub struct Literal {
   priv bool_var : BoolVar
   priv positive : Bool
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Literal with Eq::{not_equal, equal}
 
 ///|
 pub fn Literal::new(bool_var : BoolVar, positive : Bool) -> Literal {
@@ -85,3 +110,8 @@ pub impl Show for Literal with fn output(self, logger) {
     logger.write_string("not \{self.bool_var}")
   }
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Literal with Show::{to_string, output}

@@ -4,6 +4,21 @@ pub struct FamilyId {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend FamilyId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend FamilyId with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend FamilyId with Hash::{hash, hash_combine}
+
+///|
 pub fn FamilyId::new(value : Int32) -> FamilyId {
   { value, }
 }
@@ -19,6 +34,11 @@ pub impl Show for FamilyId with fn output(self, logger) {
 }
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend FamilyId with Show::{to_string, output}
+
+///|
 pub(all) enum DeclPluginHook {
   PluginClone
   PluginInherit
@@ -32,6 +52,11 @@ pub(all) enum DeclPluginHook {
   IsConsideredUninterpreted
   Translate
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend DeclPluginHook with Eq::{not_equal, equal}
 
 ///|
 pub fn DeclPluginHook::name(self : DeclPluginHook) -> String {

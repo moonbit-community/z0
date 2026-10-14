@@ -6,10 +6,20 @@ pub(all) enum SolverResult {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend SolverResult with Eq::{not_equal, equal}
+
+///|
 pub struct SmtUnsatCoreEntry {
   priv expr : @util.ExprId
   priv name : String?
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SmtUnsatCoreEntry with Eq::{not_equal, equal}
 
 ///|
 pub fn SmtUnsatCoreEntry::new(
@@ -43,3 +53,8 @@ pub(all) enum SolverAssumptionResult {
   AssumptionUnsat(Array[@util.ExprId], Array[SmtUnsatCoreEntry])
   AssumptionUnknown(String)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend SolverAssumptionResult with Eq::{not_equal, equal}

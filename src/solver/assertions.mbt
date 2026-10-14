@@ -4,6 +4,27 @@ pub struct TrackedAssertionId {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend TrackedAssertionId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend TrackedAssertionId with Compare::{
+  op_lt,
+  op_le,
+  op_ge,
+  compare,
+  op_gt,
+}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend TrackedAssertionId with Hash::{hash, hash_combine}
+
+///|
 pub fn TrackedAssertionId::new(value : Int32) -> TrackedAssertionId {
   { value, }
 }

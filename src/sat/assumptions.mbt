@@ -4,6 +4,11 @@ pub(all) struct AssumptionCore {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend AssumptionCore with Eq::{not_equal, equal}
+
+///|
 pub fn AssumptionCore::text(self : AssumptionCore) -> String {
   "\{Clause::new(self.literals)}"
 }
@@ -19,3 +24,8 @@ pub(all) enum AssumptionCheckResult {
   AssumptionUnsat(AssumptionCore)
   AssumptionUnknown(String)
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend AssumptionCheckResult with Eq::{not_equal, equal}

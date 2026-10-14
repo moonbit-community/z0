@@ -15,6 +15,11 @@ pub struct Clause {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend Clause with Eq::{not_equal, equal}
+
+///|
 pub fn Clause::new(literals : Array[Literal]) -> Clause {
   let normalized : Array[Literal] = []
   let mut tautology = false
@@ -96,3 +101,8 @@ pub impl Show for Clause with fn output(self, logger) {
   }
   logger.write_string("]")
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Clause with Show::{to_string, output}

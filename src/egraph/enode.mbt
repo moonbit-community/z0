@@ -4,6 +4,21 @@ pub struct EnodeId {
 } derive(Eq, Compare, Hash)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend EnodeId with Eq::{not_equal, equal}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend EnodeId with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+#deprecated
+#doc(hidden)
+pub extend EnodeId with Hash::{hash, hash_combine}
+
+///|
 pub fn EnodeId::new(value : Int32) -> EnodeId {
   { value, }
 }
@@ -17,6 +32,11 @@ pub fn EnodeId::to_int(self : EnodeId) -> Int32 {
 pub impl Show for EnodeId with fn output(self, logger) {
   logger.write_string("enode#\{self.value}")
 }
+
+///|
+#deprecated
+#doc(hidden)
+pub extend EnodeId with Show::{to_string, output}
 
 ///|
 pub struct EnodeExpr {

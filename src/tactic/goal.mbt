@@ -7,6 +7,11 @@ pub(all) enum GoalPrecision {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend GoalPrecision with Eq::{not_equal, equal}
+
+///|
 pub fn GoalPrecision::to_text(self : GoalPrecision) -> String {
   match self {
     Precise => "precise"

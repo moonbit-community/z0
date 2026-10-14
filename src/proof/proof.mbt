@@ -4,6 +4,11 @@ pub struct ProofKind {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ProofKind with Eq::{not_equal, equal}
+
+///|
 pub fn ProofKind::ast() -> ProofKind {
   { name: "ast", }
 }
@@ -91,6 +96,11 @@ pub struct ProofObject {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend ProofObject with Eq::{not_equal, equal}
+
+///|
 pub fn ProofObject::from_ast_expr(
   manager : @ast.AstManager,
   expr : @util.ExprId,
@@ -121,6 +131,11 @@ pub struct ProofHint {
   priv owner : String
   priv kind : String
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend ProofHint with Eq::{not_equal, equal}
 
 ///|
 pub fn ProofHint::new(kind : String) -> ProofHint {

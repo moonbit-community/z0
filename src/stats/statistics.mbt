@@ -5,10 +5,20 @@ pub(all) enum StatValue {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend StatValue with Eq::{not_equal, equal}
+
+///|
 pub(all) enum StatMergePolicy {
   Sum
   Latest
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend StatMergePolicy with Eq::{not_equal, equal}
 
 ///|
 pub fn StatMergePolicy::sum() -> StatMergePolicy {
@@ -25,6 +35,11 @@ enum StatKind {
   CounterKind
   TimerMsKind
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend StatKind with Eq::{not_equal, equal}
 
 ///|
 fn StatKind::to_text(self : StatKind) -> String {

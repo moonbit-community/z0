@@ -8,10 +8,20 @@ pub(all) enum TokenKind {
 } derive(Eq)
 
 ///|
+#deprecated
+#doc(hidden)
+pub extend TokenKind with Eq::{not_equal, equal}
+
+///|
 pub(all) struct Token {
   kind : TokenKind
   span : @source.SourceSpan
 } derive(Eq)
+
+///|
+#deprecated
+#doc(hidden)
+pub extend Token with Eq::{not_equal, equal}
 
 ///|
 pub fn Token::lparen(span : @source.SourceSpan) -> Token {
