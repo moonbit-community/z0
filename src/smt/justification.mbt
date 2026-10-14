@@ -22,9 +22,7 @@ fn SmtJustificationStore::new() -> SmtJustificationStore {
 
 ///|
 fn SmtJustificationStore::push(self : SmtJustificationStore) -> Unit {
-  self.scopes.push(SmtJustificationScope::{
-    proof_hints_len: self.proof_hints.length(),
-  })
+  self.scopes.push({ proof_hints_len: self.proof_hints.length(), })
 }
 
 ///|
@@ -68,7 +66,7 @@ fn SmtJustificationStore::create_proof_hint(
     self.proof_hints.length(),
     scope_generation=scope_depth,
   )
-  self.proof_hints.push(SmtProofHintRecord::{ hint, kind, })
+  self.proof_hints.push({ hint, kind, })
   hint
 }
 

@@ -132,13 +132,13 @@ pub fn SmtInternalizer::to_bool_var(
   expr : @util.ExprId,
 ) -> @pure_sat.BoolVar raise @type_error.TypeError {
   if self.manager.expr_sort(expr) != self.manager.bool_sort() {
-    raise @type_error.TypeError("expected Bool expression", None)
+    raise TypeError("expected Bool expression", None)
   }
   match self.find_bool_var(expr) {
     Some(bool_var) => bool_var
     None => {
       let bool_var = self.sat_core.add_var()
-      self.bindings.push(BoolBinding::{ expr, bool_var, })
+      self.bindings.push({ expr, bool_var, })
       bool_var
     }
   }
@@ -174,7 +174,7 @@ pub fn SmtInternalizer::internalize_bool(
   expr : @util.ExprId,
 ) -> @pure_sat.Literal raise @type_error.TypeError {
   if self.manager.expr_sort(expr) != self.manager.bool_sort() {
-    raise @type_error.TypeError("expected Bool expression", None)
+    raise TypeError("expected Bool expression", None)
   }
   let node = self.manager.get_expr(expr)
   match node.kind {
@@ -183,12 +183,12 @@ pub fn SmtInternalizer::internalize_bool(
       self.add_clause([if value { literal } else { literal.negate() }])
       literal
     }
-    IntValue(_) => raise @type_error.TypeError("expected Bool expression", None)
+    IntValue(_) => raise TypeError("expected Bool expression", None)
     App(_, args) =>
       if args.is_empty() {
         @pure_sat.Literal::pos(self.to_bool_var(expr))
       } else {
-        raise @type_error.TypeError("non-nullary Bool application", None)
+        raise TypeError("non-nullary Bool application", None)
       }
     Not(inner) => self.internalize_bool(inner).negate()
     And(args) =>
@@ -240,7 +240,7 @@ pub fn SmtInternalizer::internalize_bool(
           self.add_clause([root, left.negate(), right.negate()])
         })
       } else {
-        raise @type_error.TypeError("non-Bool equality", None)
+        raise TypeError("non-Bool equality", None)
       }
     Distinct(args) =>
       match args.length() {
@@ -249,7 +249,7 @@ pub fn SmtInternalizer::internalize_bool(
         _ => self.internalize_bool(self.manager.mk_bool(false))
       }
     ArithCompare(_, _, _) =>
-      raise @type_error.TypeError("arith comparison requires theory", None)
+      raise TypeError("arith comparison requires theory", None)
     MacroRef(_) =>
       self.internalize_bool(self.manager.expand_macros(expr).result())
   }
@@ -306,11 +306,7 @@ fn SmtInternalizer::bool_model_entries(
           match model.value(binding.bool_var) {
             Some(value) => {
               let decl = self.manager.get_decl(decl_id)
-              entries.push(SmtBoolModelEntry::{
-                decl: decl_id,
-                name: decl.name,
-                value,
-              })
+              entries.push({ decl: decl_id, name: decl.name, value, })
             }
             None => ()
           }

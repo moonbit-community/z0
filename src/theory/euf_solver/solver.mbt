@@ -7,12 +7,12 @@ pub fn euf_theory_plugin(
     family,
   ])
   plugin.set_describe_params(fn() { @params.ParamDescrs::new() })
-  plugin.set_updt_params(fn(_) { @util.Available(()) })
+  plugin.set_updt_params(fn(_) { Available(()) })
   plugin.set_internalize_term(fn(view, actions, _, expr) {
     match actions.internalize_term_ref(expr) {
-      Some(term) => @theory_core.TheoryHandled(term)
+      Some(term) => TheoryHandled(term)
       None =>
-        @theory_core.TheoryHandled(
+        TheoryHandled(
           @theory_core.TheoryTermRef::new(
             id,
             expr.to_int(),

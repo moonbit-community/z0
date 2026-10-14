@@ -127,7 +127,7 @@ pub fn EGraphCongruence::assert_disequal(
 ) -> Unit {
   self.add_term(lhs)
   self.add_term(rhs)
-  self.disequalities.push(EGraphDisequality::{ lhs, rhs, })
+  self.disequalities.push({ lhs, rhs, })
   self.check_disequalities()
 }
 
@@ -182,7 +182,7 @@ pub fn EGraphCongruence::close(self : EGraphCongruence, graph : EGraph) -> Unit 
 
 ///|
 pub fn EGraphCongruence::push(self : EGraphCongruence) -> Unit {
-  self.scopes.push(EGraphCongruenceScope::{
+  self.scopes.push({
     parents: self.parents.copy(),
     ranks: self.ranks.copy(),
     terms_len: self.terms.length(),

@@ -18,7 +18,7 @@ fn solver_factory_param_descrs() -> @params.ParamDescrs {
 ///|
 pub fn SolverFactoryConfig::new() -> SolverFactoryConfig {
   let descrs = solver_factory_param_descrs()
-  SolverFactoryConfig::{
+  {
     logic: "ALL",
     produce_models: false,
     produce_proofs: false,

@@ -162,7 +162,7 @@ pub fn ParamDescrs::add_bool_with_policy(
   apply_order : Int32,
   requires_reset : Bool,
 ) -> Unit {
-  self.entries.push(ParamDescriptor::{
+  self.entries.push({
     name,
     kind: BoolParam,
     default: BoolValue(default),
@@ -204,7 +204,7 @@ pub fn ParamDescrs::add_int_with_policy(
   apply_order : Int32,
   requires_reset : Bool,
 ) -> Unit {
-  self.entries.push(ParamDescriptor::{
+  self.entries.push({
     name,
     kind: IntParam,
     default: IntValue(default),
@@ -246,7 +246,7 @@ pub fn ParamDescrs::add_string_with_policy(
   apply_order : Int32,
   requires_reset : Bool,
 ) -> Unit {
-  self.entries.push(ParamDescriptor::{
+  self.entries.push({
     name,
     kind: StringParam,
     default: StringValue(default),
@@ -380,7 +380,7 @@ fn[T] param_late_set(
   lifecycle : ParamLifecycle,
   stage : ParamSetStage,
 ) -> @util.Availability[T] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment(
         "param-late-set:\{name}:\{lifecycle.to_text()}:\{stage.to_text()}",
@@ -398,7 +398,7 @@ pub fn ParamDescrs::validate_set(
   match self.find(name) {
     Some(entry) =>
       if entry.lifecycle.allows_set(stage) {
-        @util.Available(())
+        Available(())
       } else {
         param_late_set(name, entry.lifecycle, stage)
       }
@@ -412,7 +412,7 @@ pub fn ParamDescrs::keys_text(self : ParamDescrs) -> String {
   for entry in self.entries {
     keys.push(entry.name)
   }
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   for i in 0..<keys.length() {
     if i > 0 {
       builder.write_char(',')

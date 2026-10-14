@@ -20,7 +20,7 @@ fn backend_translate_unsupported(
   _target : @ast.AstManager,
   _config : SolverFactoryConfig,
 ) -> @util.Availability[SolverBackend] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("translate"),
     ),
@@ -41,7 +41,7 @@ pub fn SolverBackend::new(
     SolverBackend,
   ] = backend_translate_unsupported,
 ) -> SolverBackend {
-  SolverBackend::{
+  {
     assert_expr_fn: assert_expr,
     assert_expr_tracked_fn: assert_expr_tracked,
     push_fn: push,
@@ -189,7 +189,7 @@ pub fn Solver::new(
   config : SolverFactoryConfig,
   backend : SolverBackend,
 ) -> Solver {
-  Solver::{
+  {
     manager,
     config,
     backend,
@@ -208,7 +208,7 @@ pub fn Solver::new(
 fn unavailable_unit(
   reason : @util.AvailabilityReason,
 ) -> @util.Availability[Unit] {
-  @util.Unavailable(reason)
+  Unavailable(reason)
 }
 
 ///|
@@ -247,9 +247,9 @@ fn Solver::validate_assertion_expr(
   expr : @util.ExprId,
 ) -> @util.Availability[Unit] {
   if self.manager.expr_sort(expr) == self.manager.bool_sort() {
-    @util.Available(())
+    Available(())
   } else {
-    @util.Unavailable(
+    Unavailable(
       unsupported_reason("non-bool-assertion:\{self.manager.pretty(expr)}"),
     )
   }
@@ -269,15 +269,15 @@ pub fn Solver::assert_expr(
   expr : @util.ExprId,
 ) -> @util.Availability[Unit] {
   match self.validate_assertion_expr(expr) {
-    @util.Unavailable(reason) => unavailable_unit(reason)
-    @util.Available(_) =>
+    Unavailable(reason) => unavailable_unit(reason)
+    Available(_) =>
       match (self.backend.assert_expr_fn)(expr) {
-        @util.Available(_) => {
+        Available(_) => {
           self.assertions.push_item(expr)
           self.mark_result_stale()
-          @util.Available(())
+          Available(())
         }
-        @util.Unavailable(reason) => unavailable_unit(reason)
+        Unavailable(reason) => unavailable_unit(reason)
       }
   }
 }
@@ -288,15 +288,15 @@ pub fn Solver::push(self : Solver, count : Int32) -> @util.Availability[Unit] {
     unavailable_unit(unsupported_reason("negative-push"))
   } else {
     match (self.backend.push_fn)(count) {
-      @util.Available(_) => {
+      Available(_) => {
         for _ in 0..<count {
           self.assertions.push_scope()
           self.tracked_assertions.push_scope()
         }
         self.mark_result_stale()
-        @util.Available(())
+        Available(())
       }
-      @util.Unavailable(reason) => unavailable_unit(reason)
+      Unavailable(reason) => unavailable_unit(reason)
     }
   }
 }
@@ -307,7 +307,7 @@ pub fn Solver::pop(self : Solver, count : Int32) -> @util.Availability[Unit] {
     unavailable_unit(unsupported_reason("invalid-pop"))
   } else {
     match (self.backend.pop_fn)(count) {
-      @util.Available(_) => {
+      Available(_) => {
         self.assertions.pop_scope(count) catch {
           _ => return unavailable_unit(unsupported_reason("invalid-pop"))
         }
@@ -315,9 +315,9 @@ pub fn Solver::pop(self : Solver, count : Int32) -> @util.Availability[Unit] {
           _ => return unavailable_unit(unsupported_reason("invalid-pop"))
         }
         self.mark_result_stale()
-        @util.Available(())
+        Available(())
       }
-      @util.Unavailable(reason) => unavailable_unit(reason)
+      Unavailable(reason) => unavailable_unit(reason)
     }
   }
 }
@@ -345,7 +345,7 @@ fn Solver::tracker_is_bool_const(self : Solver, tracker : @util.ExprId) -> Bool 
     return false
   }
   match self.manager.get_expr(tracker).kind {
-    @ast.App(decl_id, args) =>
+    App(decl_id, args) =>
       if !args.is_empty() {
         false
       } else {
@@ -365,9 +365,9 @@ fn Solver::validate_tracked_expr(
 ) -> @util.Availability[Unit] {
   let tracker = tracked.tracker()
   if self.tracker_is_bool_const(tracker) {
-    @util.Available(())
+    Available(())
   } else {
-    @util.Unavailable(
+    Unavailable(
       unsupported_reason("invalid-tracker:\{self.manager.pretty(tracker)}"),
     )
   }
@@ -542,14 +542,14 @@ fn Solver::set_pre_assertion_flag(
   setter : (SolverFactoryConfig, Bool) -> SolverFactoryConfig,
 ) -> @util.Availability[Bool] {
   if self.has_assertions() {
-    @util.Unavailable(unsupported_reason("late-option:\{name}"))
+    Unavailable(unsupported_reason("late-option:\{name}"))
   } else {
     let changed = getter(self.config) != value
     self.config = setter(self.config, value)
     if changed {
       self.mark_result_stale()
     }
-    @util.Available(value)
+    Available(value)
   }
 }
 
@@ -559,7 +559,7 @@ pub fn Solver::set_produce_models(
   value : Bool,
 ) -> @util.Availability[Bool] {
   self.config = self.config.with_produce_models(value)
-  @util.Available(value)
+  Available(value)
 }
 
 ///|
@@ -606,12 +606,12 @@ fn Solver::current_result_availability(
   self : Solver,
 ) -> @util.Availability[CheckSatResult] {
   match self.current_result {
-    None => @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
+    None => Unavailable(NoCurrentResult)
     Some(result) =>
       if self.stale_result {
-        @util.Unavailable(@util.AvailabilityReason::Stale)
+        Unavailable(Stale)
       } else {
-        @util.Available(result)
+        Available(result)
       }
   }
 }
@@ -626,22 +626,20 @@ fn wrong_result(
 
 ///|
 fn invalid_model_reason() -> @util.AvailabilityReason {
-  @util.AvailabilityReason::unknown(@util.ReasonUnknown::InvalidModel)
+  @util.AvailabilityReason::unknown(InvalidModel)
 }
 
 ///|
 pub fn Solver::model_available(self : Solver) -> @util.Availability[Unit] {
   if !self.config.produce_models() {
-    @util.Unavailable(@util.AvailabilityReason::Disabled("produce-models"))
+    Unavailable(Disabled("produce-models"))
   } else {
     match self.current_result_availability() {
-      @util.Unavailable(reason) => @util.Unavailable(reason)
-      @util.Available(result) =>
+      Unavailable(reason) => Unavailable(reason)
+      Available(result) =>
         match result.result_kind() {
-          @util.ResultKind::Sat | @util.ResultKind::Unknown(true) =>
-            @util.Available(())
-          actual =>
-            @util.Unavailable(wrong_result(@util.ResultKind::Sat, actual))
+          Sat | Unknown(true) => Available(())
+          actual => Unavailable(wrong_result(Sat, actual))
         }
     }
   }
@@ -650,22 +648,21 @@ pub fn Solver::model_available(self : Solver) -> @util.Availability[Unit] {
 ///|
 pub fn Solver::get_model(self : Solver) -> @util.Availability[@model.Model] {
   match self.model_available() {
-    @util.Available(_) =>
+    Available(_) =>
       match (self.backend.model_fn)() {
-        @util.Available(model) => @util.Available(model)
-        @util.Unavailable(@util.AvailabilityReason::NoCurrentResult) =>
-          @util.Unavailable(invalid_model_reason())
-        @util.Unavailable(reason) => @util.Unavailable(reason)
+        Available(model) => Available(model)
+        Unavailable(NoCurrentResult) => Unavailable(invalid_model_reason())
+        Unavailable(reason) => Unavailable(reason)
       }
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
 ///|
 pub fn Solver::get_model_text(self : Solver) -> @util.Availability[String] {
   match self.get_model() {
-    @util.Available(model) => @util.Available(model.format())
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(model) => Available(model.format())
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
@@ -676,17 +673,12 @@ pub fn Solver::eval(
   completion~ : Bool,
 ) -> @util.Availability[@model.ModelValue] {
   match self.get_model() {
-    @util.Available(model) =>
+    Available(model) =>
       match model.eval(self.manager, expr, completion~) {
-        Some(value) => @util.Available(value)
-        None =>
-          @util.Unavailable(
-            @util.AvailabilityReason::unknown(
-              @util.ReasonUnknown::ModelEvalFailed,
-            ),
-          )
+        Some(value) => Available(value)
+        None => Unavailable(@util.AvailabilityReason::unknown(ModelEvalFailed))
       }
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
@@ -703,11 +695,11 @@ pub fn Solver::reason_unknown(
   self : Solver,
 ) -> @util.Availability[@util.ReasonUnknown] {
   match self.current_result_availability() {
-    @util.Unavailable(reason) => @util.Unavailable(reason)
-    @util.Available(result) =>
+    Unavailable(reason) => Unavailable(reason)
+    Available(result) =>
       match result.reason_unknown() {
-        Some(reason) => @util.Available(reason)
-        None => @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
+        Some(reason) => Available(reason)
+        None => Unavailable(NoCurrentResult)
       }
   }
 }
@@ -719,15 +711,14 @@ fn Solver::unsat_query_available(
   disabled_name : String,
 ) -> @util.Availability[Unit] {
   if !enabled {
-    @util.Unavailable(@util.AvailabilityReason::Disabled(disabled_name))
+    Unavailable(Disabled(disabled_name))
   } else {
     match self.current_result_availability() {
-      @util.Unavailable(reason) => @util.Unavailable(reason)
-      @util.Available(result) =>
+      Unavailable(reason) => Unavailable(reason)
+      Available(result) =>
         match result.result_kind() {
-          @util.ResultKind::Unsat => @util.Available(())
-          actual =>
-            @util.Unavailable(wrong_result(@util.ResultKind::Unsat, actual))
+          Unsat => Available(())
+          actual => Unavailable(wrong_result(Unsat, actual))
         }
     }
   }
@@ -737,8 +728,8 @@ fn Solver::unsat_query_available(
 pub fn Solver::get_proof(self : Solver) -> @util.Availability[@proof.ProofRef] {
   match
     self.unsat_query_available(self.config.produce_proofs(), "produce-proofs") {
-    @util.Available(_) => (self.backend.proof_fn)()
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => (self.backend.proof_fn)()
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
@@ -749,8 +740,8 @@ pub fn Solver::get_unsat_core(self : Solver) -> @util.Availability[UnsatCore] {
       self.config.produce_unsat_cores(),
       "produce-unsat-cores",
     ) {
-    @util.Available(_) => @util.Available(self.last_unsat_core)
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => Available(self.last_unsat_core)
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
@@ -763,8 +754,8 @@ pub fn Solver::get_unsat_assumptions(
       self.config.produce_unsat_assumptions(),
       "produce-unsat-assumptions",
     ) {
-    @util.Available(_) => @util.Available(self.last_unsat_assumptions)
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => Available(self.last_unsat_assumptions)
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
@@ -775,32 +766,29 @@ pub fn Solver::assert_expr_tracked(
   tracked : TrackedExpr,
 ) -> @util.Availability[TrackedAssertionId] {
   match self.validate_assertion_expr(expr) {
-    @util.Unavailable(reason) => @util.Unavailable(reason)
-    @util.Available(_) =>
+    Unavailable(reason) => Unavailable(reason)
+    Available(_) =>
       match self.validate_tracked_expr(tracked) {
-        @util.Unavailable(reason) => @util.Unavailable(reason)
-        @util.Available(_) =>
+        Unavailable(reason) => Unavailable(reason)
+        Available(_) =>
           if self.duplicate_tracked_assertion(tracked) {
-            @util.Unavailable(
+            Unavailable(
               unsupported_reason(
                 "duplicate-tracked-assertion:\{tracked_name(tracked)}",
               ),
             )
           } else {
             match (self.backend.assert_expr_tracked_fn)(expr, tracked) {
-              @util.Available(_) => {
+              Available(_) => {
                 let id = TrackedAssertionId::new(self.next_tracked_assertion_id)
                 self.next_tracked_assertion_id += 1
                 let assertion_index = self.assertions.length()
                 self.assertions.push_item(expr)
-                self.tracked_assertions.push_item(TrackedAssertionRecord::{
-                  assertion_index,
-                  tracked,
-                })
+                self.tracked_assertions.push_item({ assertion_index, tracked, })
                 self.mark_result_stale()
-                @util.Available(id)
+                Available(id)
               }
-              @util.Unavailable(reason) => @util.Unavailable(reason)
+              Unavailable(reason) => Unavailable(reason)
             }
           }
       }
@@ -855,23 +843,23 @@ fn solver_param_flags(
   params : @params.Params,
 ) -> @util.Availability[SolverParamFlags] {
   let produce_models = match params.get_bool("produce_models") {
-    @util.Available(value) => value
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => value
+    Unavailable(reason) => return Unavailable(reason)
   }
   let produce_proofs = match params.get_bool("produce_proofs") {
-    @util.Available(value) => value
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => value
+    Unavailable(reason) => return Unavailable(reason)
   }
   let produce_unsat_cores = match params.get_bool("produce_unsat_cores") {
-    @util.Available(value) => value
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => value
+    Unavailable(reason) => return Unavailable(reason)
   }
   let produce_unsat_assumptions = match
     params.get_bool("produce_unsat_assumptions") {
-    @util.Available(value) => value
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => value
+    Unavailable(reason) => return Unavailable(reason)
   }
-  @util.Available(SolverParamFlags::{
+  Available({
     produce_models,
     produce_proofs,
     produce_unsat_cores,
@@ -889,7 +877,7 @@ fn Solver::validate_pre_assertion_param_update(
   if self.has_assertions() && desired != current {
     unavailable_unit(unsupported_reason("late-option:\{name}"))
   } else {
-    @util.Available(())
+    Available(())
   }
 }
 
@@ -904,8 +892,8 @@ fn Solver::validate_param_update(
       flags.produce_proofs,
       self.config.produce_proofs(),
     ) {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(_) => ()
+    Unavailable(reason) => return Unavailable(reason)
   }
   match
     self.validate_pre_assertion_param_update(
@@ -913,8 +901,8 @@ fn Solver::validate_param_update(
       flags.produce_unsat_cores,
       self.config.produce_unsat_cores(),
     ) {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(_) => ()
+    Unavailable(reason) => return Unavailable(reason)
   }
   self.validate_pre_assertion_param_update(
     "produce_unsat_assumptions",
@@ -944,12 +932,12 @@ pub fn Solver::updt_params(
   params : @params.Params,
 ) -> @util.Availability[Unit] {
   let flags = match solver_param_flags(params) {
-    @util.Available(flags) => flags
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(flags) => flags
+    Unavailable(reason) => return Unavailable(reason)
   }
   match self.validate_param_update(flags) {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(_) => ()
+    Unavailable(reason) => return Unavailable(reason)
   }
   let stale = self.pre_assertion_param_update_changes(flags)
   self.config = self.config.with_produce_models(flags.produce_models)
@@ -961,7 +949,7 @@ pub fn Solver::updt_params(
   if stale {
     self.mark_result_stale()
   }
-  @util.Available(())
+  Available(())
 }
 
 ///|
@@ -971,8 +959,8 @@ pub fn Solver::translate(
 ) -> @util.Availability[Solver] {
   let translated_backend = match
     (self.backend.translate_fn)(target, self.config) {
-    @util.Available(backend) => backend
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(backend) => backend
+    Unavailable(reason) => return Unavailable(reason)
   }
   let translator = @ast.AstTranslator::new(self.manager, target)
   let translated = Solver::new(target, self.config, translated_backend)
@@ -984,17 +972,15 @@ pub fn Solver::translate(
     while scope_index < assertion_scopes.length() &&
           assertion_scopes[scope_index] == assertion_index {
       match translated.push(1) {
-        @util.Available(_) => scope_index += 1
-        @util.Unavailable(reason) => return @util.Unavailable(reason)
+        Available(_) => scope_index += 1
+        Unavailable(reason) => return Unavailable(reason)
       }
     }
     let translated_expr = translator.translate_expr(
       assertion_items[assertion_index],
     ) catch {
       err =>
-        return @util.Unavailable(
-          unsupported_reason("translate:\{err.to_string()}"),
-        )
+        return Unavailable(unsupported_reason("translate:\{err.to_string()}"))
     }
     match tracked_record_for_assertion_index(tracked_records, assertion_index) {
       Some(record) => {
@@ -1002,7 +988,7 @@ pub fn Solver::translate(
           record.tracked.tracker(),
         ) catch {
           err =>
-            return @util.Unavailable(
+            return Unavailable(
               unsupported_reason("translate:\{err.to_string()}"),
             )
         }
@@ -1017,27 +1003,27 @@ pub fn Solver::translate(
         )
         match
           translated.assert_expr_tracked(translated_expr, translated_tracked) {
-          @util.Available(_) => ()
-          @util.Unavailable(reason) => return @util.Unavailable(reason)
+          Available(_) => ()
+          Unavailable(reason) => return Unavailable(reason)
         }
       }
       None =>
         match translated.assert_expr(translated_expr) {
-          @util.Available(_) => ()
-          @util.Unavailable(reason) => return @util.Unavailable(reason)
+          Available(_) => ()
+          Unavailable(reason) => return Unavailable(reason)
         }
     }
   }
   while scope_index < assertion_scopes.length() {
     if assertion_scopes[scope_index] != assertion_items.length() {
-      return @util.Unavailable(unsupported_reason("translate:invalid-scope"))
+      return Unavailable(unsupported_reason("translate:invalid-scope"))
     }
     match translated.push(1) {
-      @util.Available(_) => scope_index += 1
-      @util.Unavailable(reason) => return @util.Unavailable(reason)
+      Available(_) => scope_index += 1
+      Unavailable(reason) => return Unavailable(reason)
     }
   }
-  @util.Available(translated)
+  Available(translated)
 }
 
 ///|
@@ -1047,12 +1033,12 @@ pub fn Solver::collect_statistics(self : Solver) -> StatisticsSnapshot {
   snapshot.merge((self.backend.collect_statistics_fn)())
   let reasons = snapshot.incomplete_reasons(solver_statistics_manifest())
   match self.current_result_availability() {
-    @util.Available(result) =>
+    Available(result) =>
       match result.reason_unknown() {
         Some(reason) => reasons.push(reason)
         None => ()
       }
-    @util.Unavailable(_) => ()
+    Unavailable(_) => ()
   }
   StatisticsSnapshot::new(snapshot, reasons)
 }

@@ -82,7 +82,7 @@ pub fn SmtContext::new(manager : @ast.AstManager) -> SmtContext {
     qhead: 0,
     last_model: None,
     cache_stale: false,
-    last_result: @util.ResultKind::NoResult,
+    last_result: NoResult,
     last_proof_assumption_scope: None,
     extension_unknown: None,
   }
@@ -92,7 +92,7 @@ pub fn SmtContext::new(manager : @ast.AstManager) -> SmtContext {
 
 ///|
 fn SmtContext::mark_caches_stale(self : SmtContext) -> Unit {
-  self.last_result = @util.ResultKind::NoResult
+  self.last_result = NoResult
   self.last_proof_assumption_scope = None
   match self.last_model {
     Some(_) => self.cache_stale = true
@@ -295,7 +295,7 @@ pub fn SmtContext::record_unsupported_term(
   expr : @util.ExprId,
   reason : @util.ReasonUnknown,
 ) -> Unit {
-  self.unsupported_terms.push_item(TheoryUnsupportedTerm::{ expr, reason, })
+  self.unsupported_terms.push_item({ expr, reason, })
   self.mark_caches_stale()
 }
 
@@ -309,20 +309,19 @@ pub fn SmtContext::internalize_theory_term(
   for theory in self.theories {
     let actions = self.theory_actions_for(theory)
     match theory.internalize_term(view, actions, family, expr) {
-      @theory_core.TheoryHandled(term) =>
-        return @theory_core.TheoryHandled(term)
-      @theory_core.TheoryUnsupported(reason) => {
+      TheoryHandled(term) => return TheoryHandled(term)
+      TheoryUnsupported(reason) => {
         self.record_unsupported_term(expr, reason)
-        return @theory_core.TheoryUnsupported(reason)
+        return TheoryUnsupported(reason)
       }
-      @theory_core.TheoryNotOwned => ()
+      TheoryNotOwned => ()
     }
   }
   let reason = @util.ReasonUnknown::unsupported_fragment(
     "unowned-theory-term:\{family}",
   )
   self.record_unsupported_term(expr, reason)
-  @theory_core.TheoryNotOwned
+  TheoryNotOwned
 }
 
 ///|
@@ -378,10 +377,7 @@ fn SmtContext::enqueue_theory_propagation(
   antecedent : @theory_core.AntecedentId,
 ) -> Unit {
   let justification = self.record_extension_justification(antecedent)
-  self.extension_propagations.push(SmtTheoryPropagation::{
-    literal,
-    justification,
-  })
+  self.extension_propagations.push({ literal, justification, })
 }
 
 ///|
@@ -434,7 +430,7 @@ fn SmtContext::add_extension_assumption(
   name : String?,
 ) -> Unit {
   if !self.extension_assumption_contains(literal) {
-    self.extension_assumptions.push_item(SmtExtensionAssumption::{
+    self.extension_assumptions.push_item({
       literal,
       entry: SmtUnsatCoreEntry::new(expr, name),
     })
@@ -603,7 +599,7 @@ fn SmtContext::euf_asserted_equality_edges(
   let edges : Array[EufEqualityEdge] = []
   for assertion in self.assertions.items() {
     match self.manager.get_expr(assertion).kind {
-      Eq(lhs, rhs) => edges.push(EufEqualityEdge::{ lhs, rhs, assertion, })
+      Eq(lhs, rhs) => edges.push({ lhs, rhs, assertion, })
       _ => ()
     }
   }
@@ -869,9 +865,8 @@ fn SmtContext::describe_extension_justification(
   justification : @pure_sat.ExtJustificationId,
 ) -> @pure_sat.ClauseStatus {
   match self.extension_antecedent(justification) {
-    Some(antecedent) =>
-      @pure_sat.Theory(self.theory_name(antecedent.owner()), true, None)
-    None => @pure_sat.Redundant
+    Some(antecedent) => Theory(self.theory_name(antecedent.owner()), true, None)
+    None => Redundant
   }
 }
 
@@ -902,33 +897,30 @@ fn SmtContext::next_extension_action(
   match self.extension_unknown {
     Some(reason) => {
       self.extension_unknown = None
-      @pure_sat.ExtensionUnknown(reason)
+      ExtensionUnknown(reason)
     }
     None =>
       if !self.extension_conflicts.is_empty() {
-        @pure_sat.ExtensionConflict(self.extension_conflicts.remove(0))
+        ExtensionConflict(self.extension_conflicts.remove(0))
       } else if !self.extension_propagations.is_empty() {
         let propagation = self.extension_propagations.remove(0)
-        @pure_sat.ExtensionAssign(
-          propagation.literal,
-          propagation.justification,
-        )
+        ExtensionAssign(propagation.literal, propagation.justification)
       } else {
-        @pure_sat.ExtensionNoAction
+        ExtensionNoAction
       }
   }
 }
 
 ///|
 fn SmtContext::sat_extension(self : SmtContext) -> @pure_sat.SatExtension {
-  @pure_sat.SatExtension::{
-    init_search: fn() { @pure_sat.ExtensionNoAction },
+  {
+    init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { self.extension_tracking_assumptions() },
     add_assumptions: fn(_) { () },
     should_research: fn(_) { false },
     can_propagate: fn() { self.has_extension_action() },
     unit_propagate: fn() { self.next_extension_action() },
-    propagated: fn(_, _) { @pure_sat.KeepWatch },
+    propagated: fn(_, _) { KeepWatch },
     asserted: fn(literal) { self.dispatch_theory_asserted(literal) },
     is_external: fn(bool_var) {
       self.extension_assumption_var_contains(bool_var)
@@ -943,7 +935,7 @@ fn SmtContext::sat_extension(self : SmtContext) -> @pure_sat.SatExtension {
     check: fn(_) { self.next_extension_action() },
     reason_unknown: fn() { self.extension_unknown },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },
@@ -1218,7 +1210,7 @@ fn SmtContext::proof_hint_checkers(
       @proof.ProofHintChecker::new(owner, fn(hint) {
         if proof_hint_list_contains(expected_hints, hint) &&
           proof_hint_kind_supported(hint.kind_text()) {
-          @util.Available(())
+          Available(())
         } else {
           invalid_proof()
         }
@@ -1230,9 +1222,7 @@ fn SmtContext::proof_hint_checkers(
 
 ///|
 fn invalid_proof() -> @util.Availability[Unit] {
-  @util.Unavailable(
-    @util.AvailabilityReason::unknown(@util.ReasonUnknown::InvalidProof),
-  )
+  Unavailable(@util.AvailabilityReason::unknown(InvalidProof))
 }
 
 ///|
@@ -1240,7 +1230,7 @@ fn SmtContext::check_proof_object(
   self : SmtContext,
   proof : @proof.ProofObject,
 ) -> @util.Availability[Unit] {
-  if self.last_result != @util.ResultKind::Unsat {
+  if self.last_result != Unsat {
     return invalid_proof()
   }
   if self.last_proof_assumption_scope is None &&
@@ -1284,9 +1274,8 @@ fn SmtContext::run_theory_lifecycle(self : SmtContext) -> @util.ReasonUnknown? {
     if propagate_reason is None && theory.can_propagate(view) {
       let actions = self.theory_actions_for(theory)
       match theory.propagate(view, actions) {
-        @theory_core.TheoryPropagateDone => ()
-        @theory_core.TheoryPropagateGiveUp(reason) =>
-          propagate_reason = Some(reason)
+        TheoryPropagateDone => ()
+        TheoryPropagateGiveUp(reason) => propagate_reason = Some(reason)
       }
     }
   }
@@ -1319,9 +1308,9 @@ fn SmtContext::run_theory_check_rounds(
     for theory in self.theories {
       let actions = self.theory_actions_for(theory)
       match theory.theory_check(view, actions) {
-        @theory_core.TheoryCheckContinue => progress = true
-        @theory_core.TheoryCheckDone => ()
-        @theory_core.TheoryCheckGiveUp(reason) =>
+        TheoryCheckContinue => progress = true
+        TheoryCheckDone => ()
+        TheoryCheckGiveUp(reason) =>
           match deferred {
             Some(_) => ()
             None => deferred = Some(reason)
@@ -1330,7 +1319,7 @@ fn SmtContext::run_theory_check_rounds(
     }
     rounds += 1
     if progress && rounds > self.theories.length() + 8 {
-      return Some(@util.ReasonUnknown::Other("theory-check-progress-limit"))
+      return Some(Other("theory-check-progress-limit"))
     }
   }
   deferred
@@ -1341,16 +1330,15 @@ fn reason_from_availability_reason(
   reason : @util.AvailabilityReason,
 ) -> @util.ReasonUnknown {
   match reason {
-    @util.UnknownReason(reason) => reason
-    @util.Unsupported(reason) => reason
-    @util.Disabled(feature) =>
-      @util.ReasonUnknown::unsupported_fragment(feature)
-    @util.NoCurrentResult => @util.ReasonUnknown::Other("no-current-result")
-    @util.WrongResult(expected, actual) =>
-      @util.ReasonUnknown::Other(
+    UnknownReason(reason) => reason
+    Unsupported(reason) => reason
+    Disabled(feature) => @util.ReasonUnknown::unsupported_fragment(feature)
+    NoCurrentResult => Other("no-current-result")
+    WrongResult(expected, actual) =>
+      Other(
         "wrong-result(expected=\{expected.to_text()}, actual=\{actual.to_text()})",
       )
-    @util.Stale => @util.ReasonUnknown::Other("stale")
+    Stale => Other("stale")
   }
 }
 
@@ -1360,8 +1348,8 @@ fn SmtContext::validate_unsat_core(self : SmtContext) -> @util.ReasonUnknown? {
   for theory in self.theories {
     let actions = self.theory_actions_for(theory)
     match theory.validate_unsat_core(view, actions) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
+      Available(_) => ()
+      Unavailable(reason) =>
         return Some(reason_from_availability_reason(reason))
     }
   }
@@ -1386,12 +1374,10 @@ fn model_validation_reason_from_availability_reason(
   reason : @util.AvailabilityReason,
 ) -> @util.ReasonUnknown {
   match reason {
-    @util.UnknownReason(reason) => reason
-    @util.Unsupported(reason) => reason
-    @util.Disabled(_)
-    | @util.NoCurrentResult
-    | @util.WrongResult(_, _)
-    | @util.Stale => @util.ReasonUnknown::ModelValidationFailed
+    UnknownReason(reason) => reason
+    Unsupported(reason) => reason
+    Disabled(_) | NoCurrentResult | WrongResult(_, _) | Stale =>
+      ModelValidationFailed
   }
 }
 
@@ -1405,8 +1391,8 @@ fn SmtContext::validate_model(
   for theory in self.theories {
     let actions = self.theory_actions_for(theory)
     match theory.validate_model(view, actions, model_view) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
+      Available(_) => ()
+      Unavailable(reason) =>
         return Some(model_validation_reason_from_availability_reason(reason))
     }
   }
@@ -1423,7 +1409,7 @@ fn SmtContext::model_incomplete_reason(
       None => ()
     }
     if theory.has_unhandled() {
-      return Some(@util.ReasonUnknown::IncompleteTheory(theory.name()))
+      return Some(IncompleteTheory(theory.name()))
     }
   }
   None
@@ -1489,7 +1475,7 @@ pub fn SmtContext::check_sat(self : SmtContext) -> SmtContextResult {
           SmtContextUnknown(reason.to_text())
         }
         None => {
-          self.last_result = @util.ResultKind::Unsat
+          self.last_result = Unsat
           SmtContextUnsat
         }
       }
@@ -1511,7 +1497,7 @@ pub fn SmtContext::check_sat(self : SmtContext) -> SmtContextResult {
     None => ()
   }
   match self.sat_core.check() {
-    @pure_sat.SatCoreSat(core_model) =>
+    SatCoreSat(core_model) =>
       match self.internalizer.build_model(core_model, self.theories) {
         SmtModelBuildUnknown(reason) => {
           self.last_model = None
@@ -1530,12 +1516,12 @@ pub fn SmtContext::check_sat(self : SmtContext) -> SmtContextResult {
             None => {
               self.last_model = Some(model)
               self.cache_stale = false
-              self.last_result = @util.ResultKind::Sat
+              self.last_result = Sat
               SmtContextSat(model)
             }
           }
       }
-    @pure_sat.SatCoreUnsat => {
+    SatCoreUnsat => {
       self.last_model = None
       self.cache_stale = false
       match self.validate_unsat_core() {
@@ -1544,12 +1530,12 @@ pub fn SmtContext::check_sat(self : SmtContext) -> SmtContextResult {
           SmtContextUnknown(reason.to_text())
         }
         None => {
-          self.last_result = @util.ResultKind::Unsat
+          self.last_result = Unsat
           SmtContextUnsat
         }
       }
     }
-    @pure_sat.SatCoreUnknown(reason) => {
+    SatCoreUnknown(reason) => {
       self.last_model = None
       self.cache_stale = false
       self.last_result = @util.ResultKind::unknown_no_model()
@@ -1622,15 +1608,13 @@ fn SmtContext::add_bool_assumption_literal(
 ) -> @util.Availability[Unit] {
   let literal = self.internalizer.internalize_bool(expr) catch {
     err =>
-      return @util.Unavailable(
-        @util.AvailabilityReason::unknown(
-          @util.ReasonUnknown::Other(err.to_string()),
-        ),
+      return Unavailable(
+        @util.AvailabilityReason::unknown(Other(err.to_string())),
       )
   }
   exprs.push(owner)
   literals.push(literal)
-  @util.Available(())
+  Available(())
 }
 
 ///|
@@ -1648,8 +1632,8 @@ fn SmtContext::internalize_assumption_literals(
         for part in bool_parts {
           match
             self.add_bool_assumption_literal(exprs, literals, part, assumption) {
-            @util.Available(_) => ()
-            @util.Unavailable(reason) => return @util.Unavailable(reason)
+            Available(_) => ()
+            Unavailable(reason) => return Unavailable(reason)
           }
         }
         for part in euf_parts {
@@ -1666,25 +1650,18 @@ fn SmtContext::internalize_assumption_literals(
           self.add_bool_assumption_literal(
             exprs, literals, assumption, assumption,
           ) {
-          @util.Available(_) => ()
-          @util.Unavailable(reason) => return @util.Unavailable(reason)
+          Available(_) => ()
+          Unavailable(reason) => return Unavailable(reason)
         }
       EGraphAssertEuf => {
         euf_assumptions.push(assumption)
         euf_owners.push(assumption)
       }
       EGraphAssertUnsupported(reason) =>
-        return @util.Unavailable(
-          @util.AvailabilityReason::unknown(@util.ReasonUnknown::Other(reason)),
-        )
+        return Unavailable(@util.AvailabilityReason::unknown(Other(reason)))
     }
   }
-  @util.Available(SmtAssumptionLiterals::{
-    exprs,
-    literals,
-    euf_assumptions,
-    euf_owners,
-  })
+  Available({ exprs, literals, euf_assumptions, euf_owners, })
 }
 
 ///|
@@ -1711,10 +1688,10 @@ fn SmtContext::euf_assumptions_conflict(
       self.egraph,
       self.assumptions_with_euf(euf_assumptions),
     ) {
-    EGraphEufConsistent => @util.Available(false)
-    EGraphEufConflict => @util.Available(true)
+    EGraphEufConsistent => Available(false)
+    EGraphEufConflict => Available(true)
     EGraphEufUnknown(reason) =>
-      @util.Unavailable(@util.AvailabilityReason::unknown(reason))
+      Unavailable(@util.AvailabilityReason::unknown(reason))
   }
 }
 
@@ -1738,24 +1715,24 @@ fn SmtContext::euf_assumption_core(
   euf_assumptions : Array[@util.ExprId],
 ) -> @util.Availability[Array[@util.ExprId]?] {
   if euf_assumptions.length() == 0 {
-    return @util.Available(None)
+    return Available(None)
   }
   match self.euf_assumptions_conflict(euf_assumptions) {
-    @util.Available(false) => return @util.Available(None)
-    @util.Available(true) => ()
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(false) => return Available(None)
+    Available(true) => ()
+    Unavailable(reason) => return Unavailable(reason)
   }
   let mut core = euf_assumptions.copy()
   let mut index = 0
   while index < core.length() {
     let trial = euf_assumption_trial(core, index)
     match self.euf_assumptions_conflict(trial) {
-      @util.Available(true) => core = trial
-      @util.Available(false) => index += 1
-      @util.Unavailable(reason) => return @util.Unavailable(reason)
+      Available(true) => core = trial
+      Available(false) => index += 1
+      Unavailable(reason) => return Unavailable(reason)
     }
   }
-  @util.Available(Some(core))
+  Available(Some(core))
 }
 
 ///|
@@ -1816,7 +1793,7 @@ pub fn SmtContext::check_sat_assuming(
           SmtAssumptionUnknown(reason.to_text())
         }
         None => {
-          self.last_result = @util.ResultKind::Unsat
+          self.last_result = Unsat
           SmtAssumptionUnsat([], [])
         }
       }
@@ -1839,7 +1816,7 @@ pub fn SmtContext::check_sat_assuming(
   }
   if assumptions.is_empty() && self.extension_tracking_assumptions().is_empty() {
     match self.sat_core.check() {
-      @pure_sat.SatCoreSat(core_model) =>
+      SatCoreSat(core_model) =>
         return match self.internalizer.build_model(core_model, self.theories) {
           SmtModelBuildUnknown(reason) => {
             self.last_model = None
@@ -1858,12 +1835,12 @@ pub fn SmtContext::check_sat_assuming(
               None => {
                 self.last_model = Some(model)
                 self.cache_stale = false
-                self.last_result = @util.ResultKind::Sat
+                self.last_result = Sat
                 SmtAssumptionSat
               }
             }
         }
-      @pure_sat.SatCoreUnsat => {
+      SatCoreUnsat => {
         self.last_model = None
         self.cache_stale = false
         return match self.validate_unsat_core() {
@@ -1872,12 +1849,12 @@ pub fn SmtContext::check_sat_assuming(
             SmtAssumptionUnknown(reason.to_text())
           }
           None => {
-            self.last_result = @util.ResultKind::Unsat
+            self.last_result = Unsat
             SmtAssumptionUnsat([], [])
           }
         }
       }
-      @pure_sat.SatCoreUnknown(reason) => {
+      SatCoreUnknown(reason) => {
         self.last_model = None
         self.cache_stale = false
         self.last_result = @util.ResultKind::unknown_no_model()
@@ -1887,8 +1864,8 @@ pub fn SmtContext::check_sat_assuming(
   }
   self.push_assumption_scope()
   let mapping = match self.internalize_assumption_literals(assumptions) {
-    @util.Available(mapping) => mapping
-    @util.Unavailable(reason) => {
+    Available(mapping) => mapping
+    Unavailable(reason) => {
       self.pop_assumption_scope()
       self.last_model = None
       self.cache_stale = false
@@ -1897,7 +1874,7 @@ pub fn SmtContext::check_sat_assuming(
     }
   }
   match self.euf_assumption_core(mapping.euf_assumptions) {
-    @util.Available(Some(core)) => {
+    Available(Some(core)) => {
       let unsat_assumptions = map_euf_assumption_core(
         mapping.euf_assumptions,
         mapping.euf_owners,
@@ -1915,7 +1892,7 @@ pub fn SmtContext::check_sat_assuming(
           SmtAssumptionUnknown(reason.to_text())
         }
         None => {
-          self.last_result = @util.ResultKind::Unsat
+          self.last_result = Unsat
           self.last_proof_assumption_scope = self.proof_assumption_scope_text(
             unsat_assumptions,
             [],
@@ -1924,8 +1901,8 @@ pub fn SmtContext::check_sat_assuming(
         }
       }
     }
-    @util.Available(None) => ()
-    @util.Unavailable(reason) => {
+    Available(None) => ()
+    Unavailable(reason) => {
       self.pop_assumption_scope()
       self.last_model = None
       self.cache_stale = false
@@ -1934,7 +1911,7 @@ pub fn SmtContext::check_sat_assuming(
     }
   }
   match self.sat_core.check_with_assumptions(mapping.literals) {
-    @pure_sat.AssumptionSat(core_model) => {
+    AssumptionSat(core_model) => {
       let build_result = self.internalizer.build_model(
         core_model,
         self.theories,
@@ -1958,13 +1935,13 @@ pub fn SmtContext::check_sat_assuming(
             None => {
               self.last_model = Some(model)
               self.cache_stale = false
-              self.last_result = @util.ResultKind::Sat
+              self.last_result = Sat
               SmtAssumptionSat
             }
           }
       }
     }
-    @pure_sat.AssumptionUnsat(core) => {
+    AssumptionUnsat(core) => {
       let unsat_assumptions = self.map_assumption_core(
         mapping.exprs,
         mapping.literals,
@@ -1980,7 +1957,7 @@ pub fn SmtContext::check_sat_assuming(
           SmtAssumptionUnknown(reason.to_text())
         }
         None => {
-          self.last_result = @util.ResultKind::Unsat
+          self.last_result = Unsat
           self.last_proof_assumption_scope = self.proof_assumption_scope_text(
             unsat_assumptions, extension_entries,
           )
@@ -1988,7 +1965,7 @@ pub fn SmtContext::check_sat_assuming(
         }
       }
     }
-    @pure_sat.AssumptionUnknown(reason) => {
+    AssumptionUnknown(reason) => {
       self.pop_assumption_scope()
       self.last_model = None
       self.cache_stale = false

@@ -29,7 +29,7 @@ fn AstManager::init_builtin_sorts(self : AstManager) -> Unit {
     kind: BoolSort,
     family: self.bool_family(),
   })
-  sorts.push_item(Sort::{
+  sorts.push_item({
     id: @util.SortId::new(1),
     name: "Int",
     kind: IntSort,
@@ -93,9 +93,9 @@ pub fn AstManager::ensure_family_supported(
 ) -> @util.Availability[Unit] {
   let descriptor = self.family_descriptor(id)
   if descriptor.is_supported() {
-    @util.Available(())
+    Available(())
   } else {
-    @util.Unavailable(
+    Unavailable(
       @util.AvailabilityReason::unsupported(
         @util.ReasonUnknown::unsupported_fragment(descriptor.name()),
       ),
@@ -206,7 +206,7 @@ pub fn AstManager::declare_sort(
         raise @type_error.TypeError("sort already declared: \{name}", None)
       None => {
         let id = @util.SortId::new(self.sorts.length())
-        self.sorts.push_item(Sort::{
+        self.sorts.push_item({
           id,
           name,
           kind: UninterpretedSort(name),
@@ -261,10 +261,10 @@ pub fn AstManager::declare_fun(
   range : @util.SortId,
 ) -> @util.FuncDeclId raise @type_error.TypeError {
   if !self.name_is_free(name) {
-    raise @type_error.TypeError("declaration already exists: \{name}", None)
+    raise TypeError("declaration already exists: \{name}", None)
   } else {
     let id = @util.FuncDeclId::new(self.decls.length())
-    self.decls.push_item(FuncDecl::{
+    self.decls.push_item({
       id,
       name,
       domain: domain.copy(),
@@ -282,7 +282,7 @@ pub fn AstManager::define_bool_macro(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if self.expr_sort(expr) != self.bool_sort() {
-    raise @type_error.TypeError("expected Bool macro body", None)
+    raise TypeError("expected Bool macro body", None)
   } else {
     self.define_macro(name, expr)
   }
@@ -295,7 +295,7 @@ pub fn AstManager::define_macro(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if !self.name_is_free(name) {
-    raise @type_error.TypeError("declaration already exists: \{name}", None)
+    raise TypeError("declaration already exists: \{name}", None)
   } else {
     self.macros.insert(name, expr)
   }
@@ -386,7 +386,7 @@ fn AstManager::intern(
     }
   }
   let id = @util.ExprId::new(self.exprs.length())
-  self.exprs.push(Expr::{ id, kind, sort, })
+  self.exprs.push({ id, kind, sort, })
   id
 }
 
@@ -406,7 +406,7 @@ fn AstManager::expect_bool(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if self.expr_sort(expr) != self.bool_sort() {
-    raise @type_error.TypeError("expected Bool argument", None)
+    raise TypeError("expected Bool argument", None)
   }
 }
 
@@ -426,7 +426,7 @@ fn AstManager::expect_int(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if self.expr_sort(expr) != self.int_sort() {
-    raise @type_error.TypeError("expected Int argument", None)
+    raise TypeError("expected Int argument", None)
   }
 }
 
@@ -438,11 +438,11 @@ pub fn AstManager::mk_app(
 ) -> @util.ExprId raise @type_error.TypeError {
   let decl = self.get_decl(decl_id)
   if decl.domain.length() != args.length() {
-    raise @type_error.TypeError("wrong number of arguments", None)
+    raise TypeError("wrong number of arguments", None)
   } else {
     for i in 0..<args.length() {
       if self.expr_sort(args[i]) != decl.domain[i] {
-        raise @type_error.TypeError("argument sort mismatch", None)
+        raise TypeError("argument sort mismatch", None)
       }
     }
     self.intern(App(decl_id, args.copy()), decl.range)
@@ -504,7 +504,7 @@ pub fn AstManager::mk_macro_ref(
 ) -> @util.ExprId raise @type_error.TypeError {
   match self.lookup_macro(name) {
     Some(body) => self.intern(MacroRef(name), self.expr_sort(body))
-    None => raise @type_error.TypeError("unknown macro: \{name}", None)
+    None => raise TypeError("unknown macro: \{name}", None)
   }
 }
 
@@ -564,7 +564,7 @@ pub fn AstManager::mk_eq(
   rhs : @util.ExprId,
 ) -> @util.ExprId raise @type_error.TypeError {
   if self.expr_sort(lhs) != self.expr_sort(rhs) {
-    raise @type_error.TypeError("equality arguments have different sorts", None)
+    raise TypeError("equality arguments have different sorts", None)
   } else {
     self.intern(Eq(lhs, rhs), self.bool_sort())
   }
@@ -576,15 +576,12 @@ pub fn AstManager::mk_distinct(
   args : Array[@util.ExprId],
 ) -> @util.ExprId raise @type_error.TypeError {
   if args.length() < 2 {
-    raise @type_error.TypeError("distinct expects at least two arguments", None)
+    raise TypeError("distinct expects at least two arguments", None)
   } else {
     let sort = self.expr_sort(args[0])
     for arg in args {
       if self.expr_sort(arg) != sort {
-        raise @type_error.TypeError(
-          "distinct arguments have different sorts",
-          None,
-        )
+        raise TypeError("distinct arguments have different sorts", None)
       }
     }
     self.intern(Distinct(args.copy()), self.bool_sort())

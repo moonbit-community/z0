@@ -12,9 +12,7 @@ pub fn ProofObjectChecker::new(
 
 ///|
 fn invalid_proof() -> @util.Availability[Unit] {
-  @util.Unavailable(
-    @util.AvailabilityReason::unknown(@util.ReasonUnknown::InvalidProof),
-  )
+  Unavailable(@util.AvailabilityReason::unknown(InvalidProof))
 }
 
 ///|
@@ -38,8 +36,8 @@ fn ProofObjectChecker::check_hint(
   match self.find_checker(hint.owner_text()) {
     Some(checker) =>
       match checker.check_hint(hint) {
-        @util.Available(_) => @util.Available(())
-        @util.Unavailable(_) => invalid_proof()
+        Available(_) => Available(())
+        Unavailable(_) => invalid_proof()
       }
     None => invalid_proof()
   }
@@ -52,9 +50,9 @@ pub fn ProofObjectChecker::check(
 ) -> @util.Availability[Unit] {
   for hint in proof.hints() {
     match self.check_hint(hint) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) => return @util.Unavailable(reason)
+      Available(_) => ()
+      Unavailable(reason) => return Unavailable(reason)
     }
   }
-  @util.Available(())
+  Available(())
 }

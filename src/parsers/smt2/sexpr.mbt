@@ -18,12 +18,12 @@ pub struct SExprCursor {
 
 ///|
 pub fn SExprCursor::new(input : String) -> SExprCursor {
-  SExprCursor::{ scanner: Scanner::new(input), }
+  { scanner: Scanner::new(input), }
 }
 
 ///|
 fn quote_string(value : String) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('"')
   for c in value {
     if c == '"' {
@@ -51,7 +51,7 @@ pub fn SExpr::repr(self : SExpr) -> String {
     Atom(symbol, _) => "Atom(\{quote_string(symbol)})"
     StringLit(value, _) => "StringLit(\{quote_string(value)})"
     List(items, _) => {
-      let builder = StringBuilder::new()
+      let builder = StringBuilder()
       builder.write_string("List([")
       for i in 0..<items.length() {
         if i > 0 {
@@ -86,9 +86,8 @@ fn parse_expr_from_token(
   match token.kind {
     Symbol(symbol) => (Atom(symbol, token.span), cursor)
     StringToken(value) => (StringLit(value, token.span), cursor)
-    RParen => raise @parse_error.ParseError("extra ')'", Some(token.span))
-    Eof =>
-      raise @parse_error.ParseError("unexpected end of input", Some(token.span))
+    RParen => raise ParseError("extra ')'", Some(token.span))
+    Eof => raise ParseError("unexpected end of input", Some(token.span))
     LParen => parse_list(cursor, token.span)
   }
 }
@@ -103,7 +102,7 @@ fn parse_list(
   while true {
     let token = current.scanner.next_token()
     match token.kind {
-      Eof => raise @parse_error.ParseError("unclosed list", Some(start_span))
+      Eof => raise ParseError("unclosed list", Some(start_span))
       RParen => return (List(items, span_join(start_span, token.span)), current)
       _ => {
         let (expr, next) = parse_expr_from_token(current, token)
@@ -123,7 +122,7 @@ pub fn parse_next(
   let token = cursor.scanner.next_token()
   match token.kind {
     Eof => End(cursor)
-    RParen => raise @parse_error.ParseError("extra ')'", Some(token.span))
+    RParen => raise ParseError("extra ')'", Some(token.span))
     _ => {
       let (expr, next) = parse_expr_from_token(cursor, token)
       Next(expr, next)

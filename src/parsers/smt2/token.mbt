@@ -15,25 +15,25 @@ pub(all) struct Token {
 
 ///|
 pub fn Token::lparen(span : @source.SourceSpan) -> Token {
-  Token::{ kind: LParen, span, }
+  { kind: LParen, span, }
 }
 
 ///|
 pub fn Token::rparen(span : @source.SourceSpan) -> Token {
-  Token::{ kind: RParen, span, }
+  { kind: RParen, span, }
 }
 
 ///|
 pub fn Token::symbol(value : String, span : @source.SourceSpan) -> Token {
-  Token::{ kind: Symbol(value), span, }
+  { kind: Symbol(value), span, }
 }
 
 ///|
 pub fn Token::string_lit(value : String, span : @source.SourceSpan) -> Token {
-  Token::{ kind: StringToken(value), span, }
+  { kind: StringToken(value), span, }
 }
 
 ///|
 pub fn Token::eof(span : @source.SourceSpan) -> Token {
-  Token::{ kind: Eof, span, }
+  { kind: Eof, span, }
 }

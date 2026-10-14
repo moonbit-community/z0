@@ -284,7 +284,7 @@ pub struct TheoryActions {
 
 ///|
 pub fn TheoryActions::noop() -> TheoryActions {
-  TheoryActions::{
+  {
     scope_depth_fn: fn() { 0 },
     internalize_bool_fn: fn(_) { None },
     internalize_term_ref_fn: fn(_) { None },
@@ -360,7 +360,7 @@ pub fn TheoryActions::new_with_context(
   materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal],
   create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId,
 ) -> TheoryActions {
-  TheoryActions::{
+  {
     scope_depth_fn: scope_depth,
     internalize_bool_fn: internalize_bool,
     internalize_term_ref_fn: fn(_) { None },

@@ -121,7 +121,7 @@ fn smt_model_collect_euf_value_terms(
             if args.is_empty() &&
               decl.family == manager.uf_family() &&
               decl.range != manager.bool_sort() {
-              terms.push(SmtEufValueTerm::{
+              terms.push({
                 enode: handle.enode(),
                 expr: handle.expr(),
                 decl: decl_id,
@@ -154,7 +154,7 @@ fn smt_model_collect_euf_func_terms(
             if !args.is_empty() &&
               decl.family == manager.uf_family() &&
               decl.range != manager.bool_sort() {
-              terms.push(SmtEufFuncTerm::{
+              terms.push({
                 enode: handle.enode(),
                 decl: decl_id,
                 name: decl.name,
@@ -234,7 +234,7 @@ fn smt_model_record_class_value(
       return
     }
   }
-  values.push(SmtEufClassValue::{ root, value, })
+  values.push({ root, value, })
 }
 
 ///|
@@ -353,21 +353,19 @@ fn smt_model_notify_theory_value_hooks(
               match value_expr {
                 Some(existing) =>
                   if existing != expr {
-                    return SmtTheoryValueFailed(
-                      @util.ReasonUnknown::InvalidModel,
-                    )
+                    return SmtTheoryValueFailed(InvalidModel)
                   }
                 None => value_expr = Some(expr)
               }
             } else {
-              return SmtTheoryValueFailed(@util.ReasonUnknown::InvalidModel)
+              return SmtTheoryValueFailed(InvalidModel)
             }
-          None => return SmtTheoryValueFailed(@util.ReasonUnknown::InvalidModel)
+          None => return SmtTheoryValueFailed(InvalidModel)
         }
       }
     }
     if !owner_found {
-      return SmtTheoryValueFailed(@util.ReasonUnknown::InvalidModel)
+      return SmtTheoryValueFailed(InvalidModel)
     }
   }
   SmtTheoryValueReady(value_expr)
@@ -435,15 +433,14 @@ fn smt_model_add_func_entry(
   value : String,
 ) -> Unit {
   match smt_model_find_func_model_index(functions, term.decl) {
-    Some(index) =>
-      functions[index].entries.push(SmtEufFuncEntry::{ args, value, })
+    Some(index) => functions[index].entries.push({ args, value, })
     None =>
-      functions.push(SmtEufFuncModel::{
+      functions.push({
         decl: term.decl,
         name: term.name,
         domain: term.domain,
         range: term.range,
-        entries: [SmtEufFuncEntry::{ args, value, }],
+        entries: [{ args, value, }],
       })
   }
 }
@@ -554,7 +551,7 @@ fn SmtModelBuilder::resolve_euf_value_pending(
 ) -> @util.ReasonUnknown? {
   match pending[index].state {
     SmtEufValuePendingDone => None
-    SmtEufValuePendingResolving => Some(@util.ReasonUnknown::InvalidModel)
+    SmtEufValuePendingResolving => Some(InvalidModel)
     SmtEufValuePendingOpen => {
       pending[index].state = SmtEufValuePendingResolving
       let item = pending[index]
@@ -577,9 +574,9 @@ fn SmtModelBuilder::resolve_euf_value_pending(
             match self.model.eval(manager, item.value_expr, completion=true) {
               Some(expr_value) =>
                 if !smt_model_value_matches(expr_value, value) {
-                  return Some(@util.ReasonUnknown::InvalidModel)
+                  return Some(InvalidModel)
                 }
-              None => return Some(@util.ReasonUnknown::InvalidModel)
+              None => return Some(InvalidModel)
             }
           }
           self.add_euf_value_term(item.term, value)
@@ -606,7 +603,7 @@ fn SmtModelBuilder::resolve_euf_value_pending(
               pending[index].state = SmtEufValuePendingDone
               None
             }
-            None => Some(@util.ReasonUnknown::InvalidModel)
+            None => Some(InvalidModel)
           }
       }
     }
@@ -635,7 +632,7 @@ fn SmtModelBuilder::mk_euf_value_deps(
       Some(expr) => expr
       None => term.expr
     }
-    pending.push(SmtEufValuePending::{
+    pending.push({
       term,
       root,
       value_expr: selected_value_expr,

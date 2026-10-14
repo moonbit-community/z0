@@ -1,23 +1,21 @@
 ///|
 fn[T] unavailable_from_error(message : String) -> @util.Availability[T] {
-  @util.Unavailable(
-    @util.AvailabilityReason::unknown(@util.ReasonUnknown::Other(message)),
-  )
+  Unavailable(@util.AvailabilityReason::unknown(Other(message)))
 }
 
 ///|
 fn reason_unknown_from_smt_text(reason : String) -> @util.ReasonUnknown {
   match reason {
-    "timeout" => @util.ReasonUnknown::Timeout
-    "memout" => @util.ReasonUnknown::Memout
-    "max-conflicts" => @util.ReasonUnknown::MaxConflictsReached
-    "resource-limit-exceeded" => @util.ReasonUnknown::ResourceLimitExceeded
-    "invalid-core" => @util.ReasonUnknown::InvalidCore
-    "invalid-proof" => @util.ReasonUnknown::InvalidProof
-    "invalid-model" => @util.ReasonUnknown::InvalidModel
-    "model-eval-failed" => @util.ReasonUnknown::ModelEvalFailed
-    "model-validation-failed" => @util.ReasonUnknown::ModelValidationFailed
-    _ => @util.ReasonUnknown::Other(reason)
+    "timeout" => Timeout
+    "memout" => Memout
+    "max-conflicts" => MaxConflictsReached
+    "resource-limit-exceeded" => ResourceLimitExceeded
+    "invalid-core" => InvalidCore
+    "invalid-proof" => InvalidProof
+    "invalid-model" => InvalidModel
+    "model-eval-failed" => ModelEvalFailed
+    "model-validation-failed" => ModelValidationFailed
+    _ => Other(reason)
   }
 }
 
@@ -253,7 +251,7 @@ fn assert_tracked_bool_formula(
   concrete.assert_expr(implication) catch {
     err => return unavailable_from_error(err.to_string())
   }
-  @util.Available(())
+  Available(())
 }
 
 ///|
@@ -303,7 +301,7 @@ fn record_tracked_euf_proof_owner(
   match tracked_euf_active_formula(records, expr) {
     Some(tracker) =>
       if !tracked_euf_record_contains(result, expr, tracker) {
-        result.push(TrackedEufRecord::{ formula: expr, tracker, })
+        result.push({ formula: expr, tracker, })
       }
     None => ()
   }
@@ -383,9 +381,9 @@ fn check_sat_assuming_concrete(
     assumptions, tracked_euf_records,
   )
   match concrete.check_sat_assuming(concrete_assumptions.items()) {
-    @smt.AssumptionSat =>
+    AssumptionSat =>
       @solver.CheckSatAssumingResult::from_result(@solver.CheckSatResult::sat())
-    @smt.AssumptionUnsat(core, entries) => {
+    AssumptionUnsat(core, entries) => {
       for expr in core {
         record_tracked_euf_proof_owner(
           tracked_euf_proof_records, tracked_euf_records, expr,
@@ -397,7 +395,7 @@ fn check_sat_assuming_concrete(
         solver_core_from_smt_entries(entries),
       )
     }
-    @smt.AssumptionUnknown(reason) =>
+    AssumptionUnknown(reason) =>
       @solver.CheckSatAssumingResult::from_result(
         @solver.CheckSatResult::unknown_no_model(
           reason_unknown_from_smt_text(reason),
@@ -502,15 +500,12 @@ fn backend_from_concrete(
       concrete.assert_expr(expr) catch {
         err => return unavailable_from_error(err.to_string())
       }
-      @util.Available(())
+      Available(())
     },
     assert_expr_tracked=fn(expr, tracked) {
       if tracked_euf_formula(manager, expr, true) {
-        tracked_euf_records.push(TrackedEufRecord::{
-          formula: expr,
-          tracker: tracked.tracker(),
-        })
-        return @util.Available(())
+        tracked_euf_records.push({ formula: expr, tracker: tracked.tracker(), })
+        return Available(())
       }
       match tracked_mixed_conjunction_parts(manager, expr) {
         Some((bool_parts, euf_parts)) => {
@@ -522,17 +517,17 @@ fn backend_from_concrete(
                 tracked.tracker(),
                 part,
               ) {
-              @util.Available(_) => ()
-              @util.Unavailable(reason) => return @util.Unavailable(reason)
+              Available(_) => ()
+              Unavailable(reason) => return Unavailable(reason)
             }
           }
           for part in euf_parts {
-            tracked_euf_records.push(TrackedEufRecord::{
+            tracked_euf_records.push({
               formula: part,
               tracker: tracked.tracker(),
             })
           }
-          return @util.Available(())
+          return Available(())
         }
         None => ()
       }
@@ -547,7 +542,7 @@ fn backend_from_concrete(
           tracked_euf_scopes.push(tracked_euf_records.length())
         }
       }
-      @util.Available(())
+      Available(())
     },
     pop=fn(count) {
       concrete.pop(count) catch {
@@ -562,7 +557,7 @@ fn backend_from_concrete(
           tracked_euf_scopes.truncate(target_depth)
         }
       }
-      @util.Available(())
+      Available(())
     },
     check_sat_assuming=fn(assumptions) {
       check_sat_assuming_concrete(
@@ -571,13 +566,13 @@ fn backend_from_concrete(
     },
     model=fn() {
       match concrete.get_model() {
-        Some(model) => @util.Available(model)
-        None => @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
+        Some(model) => Available(model)
+        None => Unavailable(NoCurrentResult)
       }
     },
     proof=fn() {
       match concrete.checked_proof_object() {
-        @util.Available(proof) =>
+        Available(proof) =>
           @proof.ProofHandle::from_object(
             0,
             @proof.ProofKind::ast(),
@@ -585,12 +580,12 @@ fn backend_from_concrete(
               manager, proof, tracked_euf_proof_records,
             ),
           ).view()
-        @util.Unavailable(reason) => @util.Unavailable(reason)
+        Unavailable(reason) => Unavailable(reason)
       }
     },
     collect_statistics=fn() { @stats.Statistics::new() },
     translate=fn(target, translated_config) {
-      @util.Available(
+      Available(
         backend_from_concrete(
           target,
           translated_config,

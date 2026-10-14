@@ -55,12 +55,7 @@ fn ArithLiteProblem::ensure_index(
   if index >= 0 {
     index
   } else {
-    self.vars.push(ArithLiteVarState::{
-      name,
-      lower: None,
-      upper: None,
-      value: None,
-    })
+    self.vars.push({ name, lower: None, upper: None, value: None, })
     self.vars.length() - 1
   }
 }
@@ -72,7 +67,7 @@ pub fn ArithLiteProblem::assert_eq_const(
   value : Int32,
 ) -> Unit {
   let index = self.ensure_index(name)
-  self.vars[index] = ArithLiteVarState::{
+  self.vars[index] = {
     name,
     lower: Some(value),
     upper: Some(value),
@@ -92,12 +87,7 @@ pub fn ArithLiteProblem::assert_ge_const(
     Some(bound) => Some(if value > bound { value } else { bound })
     None => Some(value)
   }
-  self.vars[index] = ArithLiteVarState::{
-    name,
-    lower,
-    upper: old.upper,
-    value: old.value,
-  }
+  self.vars[index] = { name, lower, upper: old.upper, value: old.value, }
 }
 
 ///|
@@ -112,12 +102,7 @@ pub fn ArithLiteProblem::assert_le_const(
     Some(bound) => Some(if value < bound { value } else { bound })
     None => Some(value)
   }
-  self.vars[index] = ArithLiteVarState::{
-    name,
-    lower: old.lower,
-    upper,
-    value: old.value,
-  }
+  self.vars[index] = { name, lower: old.lower, upper, value: old.value, }
 }
 
 ///|
@@ -180,9 +165,9 @@ pub fn arith_lite_theory_plugin(
     [family],
   )
   plugin.set_describe_params(fn() { arith_lite_param_descrs() })
-  plugin.set_updt_params(fn(_) { @util.Available(()) })
+  plugin.set_updt_params(fn(_) { Available(()) })
   plugin.set_internalize_term(fn(view, _, _, expr) {
-    @theory_core.TheoryHandled(
+    TheoryHandled(
       @theory_core.TheoryTermRef::new(
         id,
         expr.to_int(),
@@ -194,7 +179,7 @@ pub fn arith_lite_theory_plugin(
     plugin.internalize_term(view, actions, family, expr)
   })
   plugin.set_internalize_equality(fn(view, _, lhs, rhs) {
-    @theory_core.TheoryHandled(
+    TheoryHandled(
       @theory_core.TheoryTermRef::new(
         id,
         lhs.to_int() * 65536 + rhs.to_int(),
@@ -202,7 +187,7 @@ pub fn arith_lite_theory_plugin(
       ),
     )
   })
-  plugin.set_theory_check(fn(_, _) { @theory_core.TheoryCheckDone })
+  plugin.set_theory_check(fn(_, _) { TheoryCheckDone })
   plugin.set_mk_value(fn(_, _, term) { Some(@util.ExprId::new(term.to_int())) })
   plugin.set_collect_statistics(fn() {
     let statistics = @stats.Statistics::new()

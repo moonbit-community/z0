@@ -127,7 +127,7 @@ fn ClauseEvent::to_text(self : ClauseEvent) -> String {
 fn ClauseEvent::theory_proof_hint(self : ClauseEvent) -> ClauseTheoryProofHint? {
   match self {
     { action: "add", status: Theory(owner, _, Some(kind)), .. } =>
-      Some(ClauseTheoryProofHint::{ owner, kind, })
+      Some({ owner, kind, })
     _ => None
   }
 }
@@ -158,8 +158,8 @@ fn ClauseDb::add_clause_with_status(
   status : ClauseStatus,
 ) -> ClauseId {
   let clause_id = ClauseId::new(self.records.length())
-  self.records.push(ClauseRecord::{ clause, status, deleted: false, })
-  self.events.push(ClauseEvent::{ action: "add", clause_id, status, })
+  self.records.push({ clause, status, deleted: false, })
+  self.events.push({ action: "add", clause_id, status, })
   clause_id
 }
 
@@ -181,11 +181,7 @@ pub fn ClauseDb::delete_clause(self : ClauseDb, clause_id : ClauseId) -> Unit {
   let index = clause_id.to_int()
   if index >= 0 && index < self.records.length() && !self.records[index].deleted {
     self.records[index].deleted = true
-    self.events.push(ClauseEvent::{
-      action: "delete",
-      clause_id,
-      status: Deleted,
-    })
+    self.events.push({ action: "delete", clause_id, status: Deleted, })
   }
 }
 

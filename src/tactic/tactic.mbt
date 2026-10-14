@@ -46,10 +46,10 @@ pub fn Tactic::new(
       stats
     },
     describe_params_fn: fn() { @params.ParamDescrs::new() },
-    updt_params_fn: fn(_) { @util.Available(()) },
-    set_logic_fn: fn(_) { @util.Available(()) },
-    translate_fn: fn(self, _) { @util.Available(self) },
-    cleanup_fn: fn() { @util.Available(()) },
+    updt_params_fn: fn(_) { Available(()) },
+    set_logic_fn: fn(_) { Available(()) },
+    translate_fn: fn(self, _) { Available(self) },
+    cleanup_fn: fn() { Available(()) },
   }
 }
 
@@ -68,15 +68,13 @@ pub fn Tactic::apply(
 
 ///|
 pub fn Tactic::skip() -> Tactic {
-  Tactic::new("skip", fn(goal) {
-    @util.Available(TacticResult::from_goals([goal]))
-  })
+  Tactic::new("skip", fn(goal) { Available(TacticResult::from_goals([goal])) })
 }
 
 ///|
 pub fn Tactic::fail(feature : String) -> Tactic {
   Tactic::new("fail:\{feature}", fn(_) {
-    @util.Unavailable(
+    Unavailable(
       @util.AvailabilityReason::unsupported(
         @util.ReasonUnknown::unsupported_fragment(feature),
       ),

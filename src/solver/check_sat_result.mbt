@@ -32,8 +32,8 @@ pub fn CheckSatResult::unknown_with_model(
 ///|
 pub fn CheckSatResult::result_kind(self : CheckSatResult) -> @util.ResultKind {
   match self {
-    CheckSat => @util.ResultKind::Sat
-    CheckUnsat => @util.ResultKind::Unsat
+    CheckSat => Sat
+    CheckUnsat => Unsat
     CheckUnknown(_, true) => @util.ResultKind::unknown_with_model()
     CheckUnknown(_, false) => @util.ResultKind::unknown_no_model()
   }

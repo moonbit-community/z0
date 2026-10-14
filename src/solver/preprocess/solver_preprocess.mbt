@@ -39,10 +39,10 @@ fn preprocess_rewrite_expr(
   expr : @util.ExprId,
 ) -> @util.Availability[@util.ExprId] {
   if !enabled {
-    @util.Available(expr)
+    Available(expr)
   } else {
-    @util.Available(@rewriter.rewrite_bool(manager, expr)) catch {
-      err => @util.Unavailable(preprocess_unsupported(err.to_string()))
+    Available(@rewriter.rewrite_bool(manager, expr)) catch {
+      err => Unavailable(preprocess_unsupported(err.to_string()))
     }
   }
 }
@@ -56,11 +56,11 @@ fn preprocess_rewrite_assumptions(
   let rewritten = @solver.AssumptionSet::new()
   for assumption in assumptions.items() {
     match preprocess_rewrite_expr(manager, enabled, assumption) {
-      @util.Available(expr) => rewritten.add(expr)
-      @util.Unavailable(reason) => return @util.Unavailable(reason)
+      Available(expr) => rewritten.add(expr)
+      Unavailable(reason) => return Unavailable(reason)
     }
   }
-  @util.Available(rewritten)
+  Available(rewritten)
 }
 
 ///|
@@ -124,47 +124,47 @@ fn preprocess_backend(
   @solver.SolverBackend::new(
     assert_expr=fn(expr) {
       match preprocess_rewrite_expr(manager, enabled, expr) {
-        @util.Available(rewritten) => base.assert_expr(rewritten)
-        @util.Unavailable(reason) => @util.Unavailable(reason)
+        Available(rewritten) => base.assert_expr(rewritten)
+        Unavailable(reason) => Unavailable(reason)
       }
     },
     assert_expr_tracked=fn(expr, tracked) {
       match preprocess_rewrite_expr(manager, enabled, expr) {
-        @util.Available(rewritten) =>
+        Available(rewritten) =>
           match base.assert_expr_tracked(rewritten, tracked) {
-            @util.Available(_) => @util.Available(())
-            @util.Unavailable(reason) => @util.Unavailable(reason)
+            Available(_) => Available(())
+            Unavailable(reason) => Unavailable(reason)
           }
-        @util.Unavailable(reason) => @util.Unavailable(reason)
+        Unavailable(reason) => Unavailable(reason)
       }
     },
     push=fn(count) { base.push(count) },
     pop=fn(count) { base.pop(count) },
     check_sat_assuming=fn(assumptions) {
       match preprocess_rewrite_assumptions(manager, enabled, assumptions) {
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::unknown_no_model(
               @util.ReasonUnknown::unsupported_fragment(reason.to_text()),
             ),
           )
-        @util.Available(rewritten) => {
+        Available(rewritten) => {
           let result = base.check_sat_assuming(rewritten)
           match result {
-            @solver.CheckUnsat => {
+            CheckUnsat => {
               let base_unsat = base.get_unsat_assumptions()
               let mapped = match base_unsat {
-                @util.Available(unsat) =>
+                Available(unsat) =>
                   preprocess_map_unsat_assumptions(
                     assumptions, rewritten, unsat,
                   )
-                @util.Unavailable(_) => @solver.UnsatAssumptionSet::empty()
+                Unavailable(_) => @solver.UnsatAssumptionSet::empty()
               }
               let base_core = match base.get_unsat_core() {
                 _ if preprocess_assumptions_changed(assumptions, rewritten) =>
                   @solver.UnsatCore::empty()
-                @util.Available(core) => core
-                @util.Unavailable(_) => @solver.UnsatCore::empty()
+                Available(core) => core
+                Unavailable(_) => @solver.UnsatCore::empty()
               }
               @solver.CheckSatAssumingResult::new_with_core(
                 result, mapped, base_core,
@@ -179,7 +179,7 @@ fn preprocess_backend(
     proof=fn() { base.get_proof() },
     collect_statistics=fn() { @stats.Statistics::new() },
     translate=fn(target, config) {
-      @util.Available(
+      Available(
         preprocess_backend(
           target,
           base_factory,

@@ -25,7 +25,7 @@ pub fn EufProofHints::add_congruence(
     self.records.length(),
     scope_generation=0,
   )
-  self.records.push(EufProofHintRecord::{ hint, kind: "congruence(\{detail})", })
+  self.records.push({ hint, kind: "congruence(\{detail})", })
   hint
 }
 

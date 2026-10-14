@@ -27,19 +27,19 @@ pub fn AstManager::pretty(self : AstManager, expr_id : @util.ExprId) -> String {
       if args.is_empty() {
         decl.name
       } else {
-        let builder = StringBuilder::new()
+        let builder = StringBuilder()
         write_expr_list(self, builder, decl.name, args)
         builder.to_string()
       }
     }
     Not(inner) => "(not \{self.pretty(inner)})"
     And(args) => {
-      let builder = StringBuilder::new()
+      let builder = StringBuilder()
       write_expr_list(self, builder, "and", args)
       builder.to_string()
     }
     Or(args) => {
-      let builder = StringBuilder::new()
+      let builder = StringBuilder()
       write_expr_list(self, builder, "or", args)
       builder.to_string()
     }
@@ -47,7 +47,7 @@ pub fn AstManager::pretty(self : AstManager, expr_id : @util.ExprId) -> String {
     Xor(lhs, rhs) => "(xor \{self.pretty(lhs)} \{self.pretty(rhs)})"
     Eq(lhs, rhs) => "(= \{self.pretty(lhs)} \{self.pretty(rhs)})"
     Distinct(args) => {
-      let builder = StringBuilder::new()
+      let builder = StringBuilder()
       write_expr_list(self, builder, "distinct", args)
       builder.to_string()
     }

@@ -8,7 +8,7 @@ pub struct Solver {
 
 ///|
 pub fn Solver::new(manager : @ast.AstManager) -> Solver {
-  Solver::{
+  {
     manager,
     context: SmtContext::new(manager),
     assertions: @util.ScopedVector::new(),
@@ -37,7 +37,7 @@ pub fn Solver::assert_expr(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if self.manager.expr_sort(expr) != self.manager.bool_sort() {
-    raise @type_error.TypeError("expected Bool assertion", None)
+    raise TypeError("expected Bool assertion", None)
   } else {
     self.assertions.push_item(expr)
     self.context.assert_expr(expr)
@@ -51,7 +51,7 @@ pub fn Solver::push(
   count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   if count < 0 {
-    raise @solver_error.SolverError("cannot push a negative number of scopes")
+    raise SolverError("cannot push a negative number of scopes")
   } else {
     for _ in 0..<count {
       self.assertions.push_scope()
@@ -126,8 +126,8 @@ pub fn Solver::checked_proof_object(
 ) -> @util.Availability[@proof.ProofObject] {
   let proof = self.proof_object()
   match self.context.check_proof_object(proof) {
-    @util.Available(_) => @util.Available(proof)
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => Available(proof)
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 

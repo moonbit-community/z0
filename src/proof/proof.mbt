@@ -71,20 +71,14 @@ pub fn ProofHandle::mark_stale(self : ProofHandle) -> Unit {
 ///|
 pub fn ProofHandle::view(self : ProofHandle) -> @util.Availability[ProofRef] {
   match self.disabled {
-    Some(feature) =>
-      @util.Unavailable(@util.AvailabilityReason::Disabled(feature))
+    Some(feature) => Unavailable(Disabled(feature))
     None =>
       if self.stale {
-        @util.Unavailable(@util.AvailabilityReason::Stale)
+        Unavailable(Stale)
       } else {
         match self.kind {
-          Some(kind) =>
-            @util.Available(ProofRef::{
-              id: self.id,
-              kind,
-              object: self.object,
-            })
-          None => @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
+          Some(kind) => Available({ id: self.id, kind, object: self.object, })
+          None => Unavailable(NoCurrentResult)
         }
       }
   }
@@ -196,10 +190,10 @@ pub fn ProofChecker::check(
 
 ///|
 pub fn ProofChecker::unsupported(name : String) -> ProofChecker {
-  ProofChecker::{
+  {
     name,
     check_fn: fn(_) {
-      @util.Unavailable(
+      Unavailable(
         @util.AvailabilityReason::unsupported(
           @util.ReasonUnknown::unsupported_fragment(name),
         ),
@@ -211,20 +205,13 @@ pub fn ProofChecker::unsupported(name : String) -> ProofChecker {
 ///|
 pub fn ProofChecker::from_params(params : @params.Params) -> ProofChecker {
   match params.get_bool("produce_proofs") {
-    @util.Available(true) => ProofChecker::unsupported("proof-checker-seed")
-    @util.Available(false) =>
-      ProofChecker::{
+    Available(true) => ProofChecker::unsupported("proof-checker-seed")
+    Available(false) =>
+      {
         name: "proof-disabled",
-        check_fn: fn(_) {
-          @util.Unavailable(
-            @util.AvailabilityReason::Disabled("produce-proofs"),
-          )
-        },
+        check_fn: fn(_) { Unavailable(Disabled("produce-proofs")) },
       }
-    @util.Unavailable(reason) =>
-      ProofChecker::{
-        name: "proof-unavailable",
-        check_fn: fn(_) { @util.Unavailable(reason) },
-      }
+    Unavailable(reason) =>
+      { name: "proof-unavailable", check_fn: fn(_) { Unavailable(reason) }, }
   }
 }

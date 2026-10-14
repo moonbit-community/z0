@@ -43,7 +43,7 @@ pub fn MacroManager::insert(
   name : String,
   expr : @util.ExprId,
 ) -> Unit {
-  self.entries.push(BoolMacro::{ name, expr, })
+  self.entries.push({ name, expr, })
 }
 
 ///|
@@ -74,9 +74,9 @@ pub fn MacroManager::pop(
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
-    raise @solver_error.SolverError("cannot pop a negative number of scopes")
+    raise SolverError("cannot pop a negative number of scopes")
   } else if count > depth {
-    raise @solver_error.SolverError(
+    raise SolverError(
       "cannot pop \{count} scope(s); only \{depth} scope(s) are active",
     )
   } else if count > 0 {
@@ -93,9 +93,9 @@ fn MacroManager::commit(
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
-    raise @solver_error.SolverError("cannot commit a negative number of scopes")
+    raise SolverError("cannot commit a negative number of scopes")
   } else if count > depth {
-    raise @solver_error.SolverError(
+    raise SolverError(
       "cannot commit \{count} scope(s); only \{depth} scope(s) are active",
     )
   } else if count > 0 {
@@ -149,7 +149,7 @@ pub fn MacroManager::expand_macros(
     BoolValue(_) | IntValue(_) => expr_id
     MacroRef(name) =>
       match self.lookup(name) {
-        None => raise @type_error.TypeError("unknown macro: \{name}", None)
+        None => raise TypeError("unknown macro: \{name}", None)
         Some(body) => self.expand_macros(manager, body).result
       }
     App(decl, args) => manager.mk_app(decl, self.expand_args(manager, args))

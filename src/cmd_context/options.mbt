@@ -21,7 +21,7 @@ pub struct Options {
 
 ///|
 pub fn Options::new() -> Options {
-  Options::{
+  {
     produce_models: false,
     produce_proofs: false,
     produce_unsat_cores: false,
@@ -69,7 +69,7 @@ fn parse_nonnegative_int_option(value : String) -> Int32? {
 
 ///|
 fn smt2_quote_option_string(value : String) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('"')
   for c in value {
     if c == '"' {
