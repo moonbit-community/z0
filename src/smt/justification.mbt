@@ -6,7 +6,7 @@ priv struct SmtProofHintRecord {
 
 ///|
 priv struct SmtJustificationScope {
-  proof_hints_len : Int
+  proof_hints_len : Int32
 }
 
 ///|
@@ -17,7 +17,7 @@ priv struct SmtJustificationStore {
 
 ///|
 fn SmtJustificationStore::new() -> SmtJustificationStore {
-  { proof_hints: [], scopes: [] }
+  { proof_hints: [], scopes: [], }
 }
 
 ///|
@@ -41,7 +41,7 @@ fn SmtJustificationStore::pop_one(self : SmtJustificationStore) -> Unit {
 ///|
 fn SmtJustificationStore::pop(
   self : SmtJustificationStore,
-  count : Int,
+  count : Int32,
 ) -> Unit {
   if count <= 0 {
     return
@@ -61,14 +61,14 @@ fn SmtJustificationStore::create_proof_hint(
   self : SmtJustificationStore,
   owner : @theory_ids.TheoryId,
   kind : String,
-  scope_depth : Int,
+  scope_depth : Int32,
 ) -> @theory_core.ProofHintId {
   let hint = @theory_core.ProofHintId::new(
     owner,
     self.proof_hints.length(),
     scope_generation=scope_depth,
   )
-  self.proof_hints.push(SmtProofHintRecord::{ hint, kind })
+  self.proof_hints.push(SmtProofHintRecord::{ hint, kind, })
   hint
 }
 

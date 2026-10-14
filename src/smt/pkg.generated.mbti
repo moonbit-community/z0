@@ -168,4 +168,3 @@ pub fn TheoryRegistry::selected_factories(Self, SmtSetupMode) -> Array[@core.The
 // Type aliases
 
 // Traits
-

@@ -36,4 +36,3 @@ pub fn new_solver_with_theory_factories(@ast.AstManager, @solver.SolverFactoryCo
 // Type aliases
 
 // Traits
-

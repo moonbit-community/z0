@@ -5,16 +5,16 @@ pub struct TacticResult {
 
 ///|
 pub fn TacticResult::from_goals(goals : Array[Goal]) -> TacticResult {
-  { goals: goals.copy() }
+  { goals: goals.copy(), }
 }
 
 ///|
-pub fn TacticResult::goal_count(self : TacticResult) -> Int {
+pub fn TacticResult::goal_count(self : TacticResult) -> Int32 {
   self.goals.length()
 }
 
 ///|
-pub fn TacticResult::goal(self : TacticResult, index : Int) -> Goal? {
+pub fn TacticResult::goal(self : TacticResult, index : Int32) -> Goal? {
   self.goals.get(index)
 }
 

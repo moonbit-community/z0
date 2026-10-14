@@ -4,8 +4,8 @@ pub struct SolverBackend {
   priv assert_expr_tracked_fn : (@util.ExprId, TrackedExpr) -> @util.Availability[
     Unit,
   ]
-  priv push_fn : (Int) -> @util.Availability[Unit]
-  priv pop_fn : (Int) -> @util.Availability[Unit]
+  priv push_fn : (Int32) -> @util.Availability[Unit]
+  priv pop_fn : (Int32) -> @util.Availability[Unit]
   priv check_sat_assuming_fn : (AssumptionSet) -> CheckSatAssumingResult
   priv model_fn : () -> @util.Availability[@model.Model]
   priv proof_fn : () -> @util.Availability[@proof.ProofRef]
@@ -31,13 +31,13 @@ fn backend_translate_unsupported(
 pub fn SolverBackend::new(
   assert_expr~ : (@util.ExprId) -> @util.Availability[Unit],
   assert_expr_tracked~ : (@util.ExprId, TrackedExpr) -> @util.Availability[Unit],
-  push~ : (Int) -> @util.Availability[Unit],
-  pop~ : (Int) -> @util.Availability[Unit],
+  push~ : (Int32) -> @util.Availability[Unit],
+  pop~ : (Int32) -> @util.Availability[Unit],
   check_sat_assuming~ : (AssumptionSet) -> CheckSatAssumingResult,
   model~ : () -> @util.Availability[@model.Model],
   proof~ : () -> @util.Availability[@proof.ProofRef],
   collect_statistics~ : () -> @stats.Statistics,
-  translate? : (@ast.AstManager, SolverFactoryConfig) -> @util.Availability[
+  translate~ : (@ast.AstManager, SolverFactoryConfig) -> @util.Availability[
     SolverBackend,
   ] = backend_translate_unsupported,
 ) -> SolverBackend {
@@ -56,7 +56,7 @@ pub fn SolverBackend::new(
 
 ///|
 priv struct TrackedAssertionRecord {
-  assertion_index : Int
+  assertion_index : Int32
   tracked : TrackedExpr
 }
 
@@ -71,7 +71,7 @@ pub fn StatisticsSnapshot::new(
   stats : @stats.Statistics,
   incomplete_reasons : Array[@util.ReasonUnknown],
 ) -> StatisticsSnapshot {
-  { stats, incomplete_reasons: incomplete_reasons.copy() }
+  { stats, incomplete_reasons: incomplete_reasons.copy(), }
 }
 
 ///|
@@ -178,7 +178,7 @@ pub struct Solver {
   priv statistics : @stats.Statistics
   priv mut current_result : CheckSatResult?
   priv mut stale_result : Bool
-  priv mut next_tracked_assertion_id : Int
+  priv mut next_tracked_assertion_id : Int32
   priv mut last_unsat_core : UnsatCore
   priv mut last_unsat_assumptions : UnsatAssumptionSet
 }
@@ -231,7 +231,7 @@ fn tracked_name(tracked : TrackedExpr) -> String {
 ///|
 fn tracked_record_for_assertion_index(
   records : Array[TrackedAssertionRecord],
-  assertion_index : Int,
+  assertion_index : Int32,
 ) -> TrackedAssertionRecord? {
   for record in records {
     if record.assertion_index == assertion_index {
@@ -283,7 +283,7 @@ pub fn Solver::assert_expr(
 }
 
 ///|
-pub fn Solver::push(self : Solver, count : Int) -> @util.Availability[Unit] {
+pub fn Solver::push(self : Solver, count : Int32) -> @util.Availability[Unit] {
   if count < 0 {
     unavailable_unit(unsupported_reason("negative-push"))
   } else {
@@ -302,7 +302,7 @@ pub fn Solver::push(self : Solver, count : Int) -> @util.Availability[Unit] {
 }
 
 ///|
-pub fn Solver::pop(self : Solver, count : Int) -> @util.Availability[Unit] {
+pub fn Solver::pop(self : Solver, count : Int32) -> @util.Availability[Unit] {
   if count < 0 || count > self.assertions.scope_depth() {
     unavailable_unit(unsupported_reason("invalid-pop"))
   } else {
@@ -514,17 +514,17 @@ pub fn Solver::check_sat(self : Solver) -> CheckSatResult {
 }
 
 ///|
-pub fn Solver::get_scope_level(self : Solver) -> Int {
+pub fn Solver::get_scope_level(self : Solver) -> Int32 {
   self.assertions.scope_depth()
 }
 
 ///|
-pub fn Solver::get_num_assertions(self : Solver) -> Int {
+pub fn Solver::get_num_assertions(self : Solver) -> Int32 {
   self.assertions.length()
 }
 
 ///|
-pub fn Solver::get_assertion(self : Solver, index : Int) -> @util.ExprId? {
+pub fn Solver::get_assertion(self : Solver, index : Int32) -> @util.ExprId? {
   self.assertions.items().get(index)
 }
 

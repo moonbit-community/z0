@@ -1,12 +1,12 @@
 ///|
 pub struct ScopedVector[T] {
   items : Array[T]
-  scopes : Array[Int]
+  scopes : Array[Int32]
 }
 
 ///|
 pub fn[T] ScopedVector::new() -> ScopedVector[T] {
-  ScopedVector::{ items: [], scopes: [] }
+  ScopedVector::{ items: [], scopes: [], }
 }
 
 ///|
@@ -20,12 +20,12 @@ pub fn[T] ScopedVector::items(self : ScopedVector[T]) -> Array[T] {
 }
 
 ///|
-pub fn[T] ScopedVector::length(self : ScopedVector[T]) -> Int {
+pub fn[T] ScopedVector::length(self : ScopedVector[T]) -> Int32 {
   self.items.length()
 }
 
 ///|
-pub fn[T] ScopedVector::scope_depth(self : ScopedVector[T]) -> Int {
+pub fn[T] ScopedVector::scope_depth(self : ScopedVector[T]) -> Int32 {
   self.scopes.length()
 }
 
@@ -37,7 +37,7 @@ pub fn[T] ScopedVector::push_scope(self : ScopedVector[T]) -> Unit {
 ///|
 pub fn[T] ScopedVector::pop_scope(
   self : ScopedVector[T],
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
@@ -59,7 +59,7 @@ pub fn[T] ScopedVector::pop_scope(
 ///|
 pub fn[T] ScopedVector::commit_scope(
   self : ScopedVector[T],
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {

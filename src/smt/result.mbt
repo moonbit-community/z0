@@ -16,7 +16,7 @@ pub fn SmtUnsatCoreEntry::new(
   expr : @util.ExprId,
   name : String?,
 ) -> SmtUnsatCoreEntry {
-  { expr, name }
+  { expr, name, }
 }
 
 ///|

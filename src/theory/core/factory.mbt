@@ -15,7 +15,7 @@ pub fn TheoryFactoryDescriptor::new(
   logics~ : Array[String],
   auto_config~ : Bool,
 ) -> TheoryFactoryDescriptor {
-  { id, name, families: families.copy(), logics: logics.copy(), auto_config }
+  { id, name, families: families.copy(), logics: logics.copy(), auto_config, }
 }
 
 ///|
@@ -81,7 +81,7 @@ pub fn TheoryFactory::new(
   descriptor : TheoryFactoryDescriptor,
   create : () -> TheoryPlugin,
 ) -> TheoryFactory {
-  { descriptor, create_fn: create }
+  { descriptor, create_fn: create, }
 }
 
 ///|

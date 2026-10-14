@@ -82,4 +82,3 @@ pub(all) enum TokenKind {
 // Type aliases
 
 // Traits
-

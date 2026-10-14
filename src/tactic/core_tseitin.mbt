@@ -3,7 +3,7 @@ priv struct TseitinCnfEncoder {
   manager : @ast.AstManager
   clauses : Array[@util.ExprId]
   aux_names : Array[String]
-  mut next_id : Int
+  mut next_id : Int32
 }
 
 ///|
@@ -17,7 +17,7 @@ fn tseitin_unavailable(message : String) -> @util.Availability[TacticResult] {
 
 ///|
 fn TseitinCnfEncoder::new(manager : @ast.AstManager) -> TseitinCnfEncoder {
-  { manager, clauses: [], aux_names: [], next_id: 0 }
+  { manager, clauses: [], aux_names: [], next_id: 0, }
 }
 
 ///|

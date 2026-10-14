@@ -29,12 +29,12 @@ pub fn MacroExpansion::dependency_text(self : MacroExpansion) -> String {
 ///|
 pub struct MacroManager {
   priv entries : Array[BoolMacro]
-  priv scopes : Array[Int]
+  priv scopes : Array[Int32]
 }
 
 ///|
 pub fn MacroManager::new() -> MacroManager {
-  { entries: [], scopes: [] }
+  { entries: [], scopes: [], }
 }
 
 ///|
@@ -43,7 +43,7 @@ pub fn MacroManager::insert(
   name : String,
   expr : @util.ExprId,
 ) -> Unit {
-  self.entries.push(BoolMacro::{ name, expr })
+  self.entries.push(BoolMacro::{ name, expr, })
 }
 
 ///|
@@ -70,7 +70,7 @@ pub fn MacroManager::push(self : MacroManager) -> Unit {
 ///|
 pub fn MacroManager::pop(
   self : MacroManager,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
@@ -89,7 +89,7 @@ pub fn MacroManager::pop(
 ///|
 fn MacroManager::commit(
   self : MacroManager,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
@@ -179,5 +179,5 @@ pub fn MacroManager::expand_macros(
         self.expand_macros(manager, rhs).result,
       )
   }
-  { result, proof: None, dependency: None }
+  { result, proof: None, dependency: None, }
 }

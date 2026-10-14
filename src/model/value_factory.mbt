@@ -2,7 +2,7 @@
 pub struct ModelValue {
   priv sort : @util.SortId?
   priv text : String
-  priv int_value : Int?
+  priv int_value : Int32?
   priv universe_member : Bool
 }
 
@@ -21,7 +21,7 @@ pub fn ModelValue::bool(value : Bool) -> ModelValue {
 }
 
 ///|
-pub fn ModelValue::int(value : Int) -> ModelValue {
+pub fn ModelValue::int(value : Int32) -> ModelValue {
   {
     sort: None,
     text: value.to_string(),
@@ -32,12 +32,12 @@ pub fn ModelValue::int(value : Int) -> ModelValue {
 
 ///|
 fn ModelValue::uninterpreted(sort : @util.SortId, text : String) -> ModelValue {
-  { sort: Some(sort), text, int_value: None, universe_member: true }
+  { sort: Some(sort), text, int_value: None, universe_member: true, }
 }
 
 ///|
 fn ModelValue::raw(text : String) -> ModelValue {
-  { sort: None, text, int_value: None, universe_member: false }
+  { sort: None, text, int_value: None, universe_member: false, }
 }
 
 ///|
@@ -56,7 +56,7 @@ fn ModelValue::is_universe_member(self : ModelValue) -> Bool {
 }
 
 ///|
-fn parse_model_int_text(text : String) -> Int? {
+fn parse_model_int_text(text : String) -> Int32? {
   if text.is_empty() {
     return None
   }
@@ -81,7 +81,7 @@ fn parse_model_int_text(text : String) -> Int? {
 }
 
 ///|
-fn ModelValue::as_int(self : ModelValue) -> Int? {
+fn ModelValue::as_int(self : ModelValue) -> Int32? {
   match self.int_value {
     Some(value) => Some(value)
     None => parse_model_int_text(self.text)
@@ -91,7 +91,7 @@ fn ModelValue::as_int(self : ModelValue) -> Int? {
 ///|
 struct SortValueCounter {
   sort : @util.SortId
-  next : Int
+  next : Int32
 }
 
 ///|
@@ -101,7 +101,7 @@ pub struct ValueFactory {
 
 ///|
 pub fn ValueFactory::new() -> ValueFactory {
-  { counters: [] }
+  { counters: [], }
 }
 
 ///|
@@ -112,10 +112,10 @@ pub fn ValueFactory::fresh_uninterpreted(
 ) -> ModelValue {
   for i, counter in self.counters {
     if counter.sort == sort {
-      self.counters[i] = { sort, next: counter.next + 1 }
+      self.counters[i] = { sort, next: counter.next + 1, }
       return ModelValue::uninterpreted(sort, "@\{sort_name}\{counter.next}")
     }
   }
-  self.counters.push({ sort, next: 1 })
+  self.counters.push({ sort, next: 1, })
   ModelValue::uninterpreted(sort, "@\{sort_name}0")
 }

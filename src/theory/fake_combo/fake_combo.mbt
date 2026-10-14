@@ -81,7 +81,7 @@ pub fn FakeComboHarness::new(
   })
   plugin.set_init_model(fn(_, _) { log.push("init-model") })
   plugin.set_finalize_model(fn(_, _) { log.push("finalize-model") })
-  { plugin, log }
+  { plugin, log, }
 }
 
 ///|

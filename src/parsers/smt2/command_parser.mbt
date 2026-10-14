@@ -1,5 +1,5 @@
 ///|
-fn parse_nonnegative_int(text : String) -> Int? {
+fn parse_nonnegative_int(text : String) -> Int32? {
   if text.is_empty() {
     None
   } else {
@@ -87,7 +87,7 @@ fn parse_sort_list(
 fn parse_count(
   items : Array[SExpr],
   command : String,
-) -> Int raise @parse_error.ParseError {
+) -> Int32 raise @parse_error.ParseError {
   if items.length() == 1 {
     1
   } else if items.length() == 2 {

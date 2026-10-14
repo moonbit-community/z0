@@ -5,7 +5,7 @@ pub struct ProofKind {
 
 ///|
 pub fn ProofKind::ast() -> ProofKind {
-  { name: "ast" }
+  { name: "ast", }
 }
 
 ///|
@@ -15,7 +15,7 @@ pub fn ProofKind::to_text(self : ProofKind) -> String {
 
 ///|
 pub struct ProofRef {
-  priv id : Int
+  priv id : Int32
   priv kind : ProofKind
   priv object : ProofObject?
 }
@@ -32,7 +32,7 @@ pub fn ProofRef::object(self : ProofRef) -> ProofObject? {
 
 ///|
 pub struct ProofHandle {
-  priv id : Int
+  priv id : Int32
   priv kind : ProofKind?
   priv object : ProofObject?
   priv disabled : String?
@@ -40,27 +40,27 @@ pub struct ProofHandle {
 }
 
 ///|
-pub fn ProofHandle::new(id : Int, kind : ProofKind) -> ProofHandle {
-  { id, kind: Some(kind), object: None, disabled: None, stale: false }
+pub fn ProofHandle::new(id : Int32, kind : ProofKind) -> ProofHandle {
+  { id, kind: Some(kind), object: None, disabled: None, stale: false, }
 }
 
 ///|
 pub fn ProofHandle::from_object(
-  id : Int,
+  id : Int32,
   kind : ProofKind,
   object : ProofObject,
 ) -> ProofHandle {
-  { id, kind: Some(kind), object: Some(object), disabled: None, stale: false }
+  { id, kind: Some(kind), object: Some(object), disabled: None, stale: false, }
 }
 
 ///|
 pub fn ProofHandle::disabled(feature : String) -> ProofHandle {
-  { id: -1, kind: None, object: None, disabled: Some(feature), stale: false }
+  { id: -1, kind: None, object: None, disabled: Some(feature), stale: false, }
 }
 
 ///|
 pub fn ProofHandle::no_current_result() -> ProofHandle {
-  { id: -1, kind: None, object: None, disabled: None, stale: false }
+  { id: -1, kind: None, object: None, disabled: None, stale: false, }
 }
 
 ///|
@@ -79,7 +79,11 @@ pub fn ProofHandle::view(self : ProofHandle) -> @util.Availability[ProofRef] {
       } else {
         match self.kind {
           Some(kind) =>
-            @util.Available(ProofRef::{ id: self.id, kind, object: self.object })
+            @util.Available(ProofRef::{
+              id: self.id,
+              kind,
+              object: self.object,
+            })
           None => @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
         }
       }
@@ -97,7 +101,7 @@ pub fn ProofObject::from_ast_expr(
   manager : @ast.AstManager,
   expr : @util.ExprId,
 ) -> ProofObject {
-  { root_text: manager.pretty(expr), hints: [] }
+  { root_text: manager.pretty(expr), hints: [], }
 }
 
 ///|
@@ -105,7 +109,7 @@ pub fn ProofObject::from_root_and_hints(
   root_text : String,
   hints : Array[ProofHint],
 ) -> ProofObject {
-  { root_text, hints: hints.copy() }
+  { root_text, hints: hints.copy(), }
 }
 
 ///|
@@ -126,12 +130,12 @@ pub struct ProofHint {
 
 ///|
 pub fn ProofHint::new(kind : String) -> ProofHint {
-  { owner: "", kind }
+  { owner: "", kind, }
 }
 
 ///|
 pub fn ProofHint::with_owner(owner : String, kind : String) -> ProofHint {
-  { owner, kind }
+  { owner, kind, }
 }
 
 ///|
@@ -155,7 +159,7 @@ pub fn ProofHintChecker::new(
   name : String,
   check_hint : (ProofHint) -> @util.Availability[Unit],
 ) -> ProofHintChecker {
-  { name, check_hint_fn: check_hint }
+  { name, check_hint_fn: check_hint, }
 }
 
 ///|

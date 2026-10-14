@@ -1,9 +1,9 @@
 ///|
 priv struct EGraphCongruenceScope {
   parents : Array[EnodeId]
-  ranks : Array[Int]
-  terms_len : Int
-  disequalities_len : Int
+  ranks : Array[Int32]
+  terms_len : Int32
+  disequalities_len : Int32
   conflict : Bool
 }
 
@@ -16,7 +16,7 @@ priv struct EGraphDisequality {
 ///|
 pub struct EGraphCongruence {
   priv parents : Array[EnodeId]
-  priv ranks : Array[Int]
+  priv ranks : Array[Int32]
   priv terms : Array[EnodeId]
   priv disequalities : Array[EGraphDisequality]
   priv scopes : Array[EGraphCongruenceScope]
@@ -127,7 +127,7 @@ pub fn EGraphCongruence::assert_disequal(
 ) -> Unit {
   self.add_term(lhs)
   self.add_term(rhs)
-  self.disequalities.push(EGraphDisequality::{ lhs, rhs })
+  self.disequalities.push(EGraphDisequality::{ lhs, rhs, })
   self.check_disequalities()
 }
 
@@ -192,7 +192,7 @@ pub fn EGraphCongruence::push(self : EGraphCongruence) -> Unit {
 }
 
 ///|
-pub fn EGraphCongruence::pop(self : EGraphCongruence, count : Int) -> Unit {
+pub fn EGraphCongruence::pop(self : EGraphCongruence, count : Int32) -> Unit {
   if count <= 0 {
     return
   }

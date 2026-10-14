@@ -1,17 +1,17 @@
 ///|
 pub struct TheoryTermRef {
   priv owner : @ids.TheoryId
-  priv value : Int
-  priv scope_generation : Int
+  priv value : Int32
+  priv scope_generation : Int32
 } derive(Eq)
 
 ///|
 pub fn TheoryTermRef::new(
   owner : @ids.TheoryId,
-  value : Int,
-  scope_generation~ : Int,
+  value : Int32,
+  scope_generation~ : Int32,
 ) -> TheoryTermRef {
-  { owner, value, scope_generation }
+  { owner, value, scope_generation, }
 }
 
 ///|
@@ -20,19 +20,19 @@ pub fn TheoryTermRef::owner(self : TheoryTermRef) -> @ids.TheoryId {
 }
 
 ///|
-pub fn TheoryTermRef::to_int(self : TheoryTermRef) -> Int {
+pub fn TheoryTermRef::to_int(self : TheoryTermRef) -> Int32 {
   self.value
 }
 
 ///|
-pub fn TheoryTermRef::scope_generation(self : TheoryTermRef) -> Int {
+pub fn TheoryTermRef::scope_generation(self : TheoryTermRef) -> Int32 {
   self.scope_generation
 }
 
 ///|
 pub fn TheoryTermRef::is_valid_at(
   self : TheoryTermRef,
-  scope_depth : Int,
+  scope_depth : Int32,
 ) -> Bool {
   scope_depth >= self.scope_generation
 }
@@ -45,17 +45,17 @@ pub impl Show for TheoryTermRef with fn output(self, logger) {
 ///|
 pub struct EqFact {
   priv owner : @ids.TheoryId
-  priv value : Int
-  priv scope_generation : Int
+  priv value : Int32
+  priv scope_generation : Int32
 } derive(Eq)
 
 ///|
 pub fn EqFact::new(
   owner : @ids.TheoryId,
-  value : Int,
-  scope_generation~ : Int,
+  value : Int32,
+  scope_generation~ : Int32,
 ) -> EqFact {
-  { owner, value, scope_generation }
+  { owner, value, scope_generation, }
 }
 
 ///|
@@ -64,17 +64,17 @@ pub fn EqFact::owner(self : EqFact) -> @ids.TheoryId {
 }
 
 ///|
-pub fn EqFact::to_int(self : EqFact) -> Int {
+pub fn EqFact::to_int(self : EqFact) -> Int32 {
   self.value
 }
 
 ///|
-pub fn EqFact::scope_generation(self : EqFact) -> Int {
+pub fn EqFact::scope_generation(self : EqFact) -> Int32 {
   self.scope_generation
 }
 
 ///|
-pub fn EqFact::is_valid_at(self : EqFact, scope_depth : Int) -> Bool {
+pub fn EqFact::is_valid_at(self : EqFact, scope_depth : Int32) -> Bool {
   scope_depth >= self.scope_generation
 }
 
@@ -86,17 +86,17 @@ pub impl Show for EqFact with fn output(self, logger) {
 ///|
 pub struct DiseqFact {
   priv owner : @ids.TheoryId
-  priv value : Int
-  priv scope_generation : Int
+  priv value : Int32
+  priv scope_generation : Int32
 } derive(Eq)
 
 ///|
 pub fn DiseqFact::new(
   owner : @ids.TheoryId,
-  value : Int,
-  scope_generation~ : Int,
+  value : Int32,
+  scope_generation~ : Int32,
 ) -> DiseqFact {
-  { owner, value, scope_generation }
+  { owner, value, scope_generation, }
 }
 
 ///|
@@ -105,17 +105,17 @@ pub fn DiseqFact::owner(self : DiseqFact) -> @ids.TheoryId {
 }
 
 ///|
-pub fn DiseqFact::to_int(self : DiseqFact) -> Int {
+pub fn DiseqFact::to_int(self : DiseqFact) -> Int32 {
   self.value
 }
 
 ///|
-pub fn DiseqFact::scope_generation(self : DiseqFact) -> Int {
+pub fn DiseqFact::scope_generation(self : DiseqFact) -> Int32 {
   self.scope_generation
 }
 
 ///|
-pub fn DiseqFact::is_valid_at(self : DiseqFact, scope_depth : Int) -> Bool {
+pub fn DiseqFact::is_valid_at(self : DiseqFact, scope_depth : Int32) -> Bool {
   scope_depth >= self.scope_generation
 }
 
@@ -127,17 +127,17 @@ pub impl Show for DiseqFact with fn output(self, logger) {
 ///|
 pub struct AntecedentId {
   priv owner : @ids.TheoryId
-  priv value : Int
-  priv scope_generation : Int
+  priv value : Int32
+  priv scope_generation : Int32
 } derive(Eq)
 
 ///|
 pub fn AntecedentId::new(
   owner : @ids.TheoryId,
-  value : Int,
-  scope_generation~ : Int,
+  value : Int32,
+  scope_generation~ : Int32,
 ) -> AntecedentId {
-  { owner, value, scope_generation }
+  { owner, value, scope_generation, }
 }
 
 ///|
@@ -146,14 +146,14 @@ pub fn AntecedentId::owner(self : AntecedentId) -> @ids.TheoryId {
 }
 
 ///|
-pub fn AntecedentId::to_int(self : AntecedentId) -> Int {
+pub fn AntecedentId::to_int(self : AntecedentId) -> Int32 {
   self.value
 }
 
 ///|
 pub fn AntecedentId::is_valid_at(
   self : AntecedentId,
-  scope_depth : Int,
+  scope_depth : Int32,
 ) -> Bool {
   scope_depth >= self.scope_generation
 }
@@ -166,17 +166,17 @@ pub impl Show for AntecedentId with fn output(self, logger) {
 ///|
 pub struct ProofHintId {
   priv owner : @ids.TheoryId
-  priv value : Int
-  priv scope_generation : Int
+  priv value : Int32
+  priv scope_generation : Int32
 } derive(Eq)
 
 ///|
 pub fn ProofHintId::new(
   owner : @ids.TheoryId,
-  value : Int,
-  scope_generation~ : Int,
+  value : Int32,
+  scope_generation~ : Int32,
 ) -> ProofHintId {
-  { owner, value, scope_generation }
+  { owner, value, scope_generation, }
 }
 
 ///|
@@ -185,12 +185,15 @@ pub fn ProofHintId::owner(self : ProofHintId) -> @ids.TheoryId {
 }
 
 ///|
-pub fn ProofHintId::to_int(self : ProofHintId) -> Int {
+pub fn ProofHintId::to_int(self : ProofHintId) -> Int32 {
   self.value
 }
 
 ///|
-pub fn ProofHintId::is_valid_at(self : ProofHintId, scope_depth : Int) -> Bool {
+pub fn ProofHintId::is_valid_at(
+  self : ProofHintId,
+  scope_depth : Int32,
+) -> Bool {
   scope_depth >= self.scope_generation
 }
 
@@ -201,16 +204,16 @@ pub impl Show for ProofHintId with fn output(self, logger) {
 
 ///|
 pub struct TheoryContextView {
-  priv scope_depth : Int
+  priv scope_depth : Int32
 }
 
 ///|
-pub fn TheoryContextView::new(scope_depth~ : Int) -> TheoryContextView {
+pub fn TheoryContextView::new(scope_depth~ : Int32) -> TheoryContextView {
   { scope_depth, }
 }
 
 ///|
-pub fn TheoryContextView::scope_depth(self : TheoryContextView) -> Int {
+pub fn TheoryContextView::scope_depth(self : TheoryContextView) -> Int32 {
   self.scope_depth
 }
 
@@ -242,7 +245,7 @@ pub struct ModelValidationView {
 pub fn ModelValidationView::new(
   eval_text~ : (@util.ExprId, Bool) -> String?,
 ) -> ModelValidationView {
-  { eval_text_fn: eval_text }
+  { eval_text_fn: eval_text, }
 }
 
 ///|
@@ -261,7 +264,7 @@ pub fn ModelValidationView::eval_text(
 
 ///|
 pub struct TheoryActions {
-  priv scope_depth_fn : () -> Int
+  priv scope_depth_fn : () -> Int32
   priv internalize_bool_fn : (@util.ExprId) -> @sat.Literal?
   priv internalize_term_ref_fn : (@util.ExprId) -> TheoryTermRef?
   priv sat_value_fn : (@sat.Literal) -> Bool?
@@ -305,7 +308,7 @@ pub fn TheoryActions::noop() -> TheoryActions {
 
 ///|
 pub fn TheoryActions::new(
-  scope_depth~ : () -> Int,
+  scope_depth~ : () -> Int32,
   enqueue~ : (@sat.Literal, AntecedentId) -> Unit,
   mark_unknown~ : (@util.ReasonUnknown) -> Unit,
 ) -> TheoryActions {
@@ -322,7 +325,7 @@ pub fn TheoryActions::new(
 
 ///|
 pub fn TheoryActions::new_with_justification(
-  scope_depth~ : () -> Int,
+  scope_depth~ : () -> Int32,
   enqueue~ : (@sat.Literal, AntecedentId) -> Unit,
   mark_unknown~ : (@util.ReasonUnknown) -> Unit,
   materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal],
@@ -345,7 +348,7 @@ pub fn TheoryActions::new_with_justification(
 
 ///|
 pub fn TheoryActions::new_with_context(
-  scope_depth~ : () -> Int,
+  scope_depth~ : () -> Int32,
   internalize_bool~ : (@util.ExprId) -> @sat.Literal?,
   add_clause~ : (Array[@sat.Literal]) -> Unit,
   add_lemma~ : (Array[@sat.Literal]) -> Unit,
@@ -378,7 +381,7 @@ pub fn TheoryActions::new_with_context(
 }
 
 ///|
-pub fn TheoryActions::scope_depth(self : TheoryActions) -> Int {
+pub fn TheoryActions::scope_depth(self : TheoryActions) -> Int32 {
   (self.scope_depth_fn)()
 }
 

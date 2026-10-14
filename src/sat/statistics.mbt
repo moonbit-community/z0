@@ -1,11 +1,11 @@
 ///|
 pub(all) struct SatCoreSnapshot {
-  vars : Int
-  root_clauses : Int
-  learned_clauses : Int
-  deleted_clauses : Int
-  decisions : Int
-  propagations : Int
+  vars : Int32
+  root_clauses : Int32
+  learned_clauses : Int32
+  deleted_clauses : Int32
+  decisions : Int32
+  propagations : Int32
   activity_text : String
   phase_text : String
 } derive(Eq)

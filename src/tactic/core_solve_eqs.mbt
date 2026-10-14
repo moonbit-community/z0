@@ -64,10 +64,10 @@ fn solve_eqs_assignment(
         None
       } else if solve_eqs_is_zero_arity_const(manager, lhs) &&
         !solve_eqs_contains(manager, rhs, lhs) {
-        Some({ source: lhs, target: rhs })
+        Some({ source: lhs, target: rhs, })
       } else if solve_eqs_is_zero_arity_const(manager, rhs) &&
         !solve_eqs_contains(manager, lhs, rhs) {
-        Some({ source: rhs, target: lhs })
+        Some({ source: rhs, target: lhs, })
       } else {
         None
       }
@@ -93,7 +93,7 @@ fn solve_eqs_substitute_args(
   manager : @ast.AstManager,
   args : Array[@util.ExprId],
   substitutions : Array[SolveEqSubstitution],
-  fuel : Int,
+  fuel : Int32,
 ) -> Array[@util.ExprId] raise {
   let substituted : Array[@util.ExprId] = []
   for arg in args {
@@ -107,7 +107,7 @@ fn solve_eqs_substitute(
   manager : @ast.AstManager,
   expr : @util.ExprId,
   substitutions : Array[SolveEqSubstitution],
-  fuel : Int,
+  fuel : Int32,
 ) -> @util.ExprId raise {
   match solve_eqs_lookup_substitution(substitutions, expr) {
     Some(target) =>

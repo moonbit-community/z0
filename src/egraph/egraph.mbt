@@ -6,17 +6,17 @@ priv struct ExprEnodeBinding {
 
 ///|
 priv struct ScopedLength {
-  index : Int
-  length : Int
+  index : Int32
+  length : Int32
 }
 
 ///|
 priv struct EGraphScope {
-  nodes_len : Int
-  bindings_len : Int
-  justifications_len : Int
-  new_eqs_len : Int
-  new_diseqs_len : Int
+  nodes_len : Int32
+  bindings_len : Int32
+  justifications_len : Int32
+  new_eqs_len : Int32
+  new_diseqs_len : Int32
   parent_lengths : Array[ScopedLength]
   theory_var_lengths : Array[ScopedLength]
 }
@@ -63,7 +63,7 @@ pub fn EGraph::mk_enode(
   self : EGraph,
   expr : @util.ExprId,
   args : Array[EnodeId],
-  generation : Int,
+  generation : Int32,
 ) -> EnodeId {
   self.mk_enode_with_key(expr, args, generation, expr.to_int())
 }
@@ -73,8 +73,8 @@ pub fn EGraph::mk_enode_with_key(
   self : EGraph,
   expr : @util.ExprId,
   args : Array[EnodeId],
-  generation : Int,
-  operator_key : Int,
+  generation : Int32,
+  operator_key : Int32,
 ) -> EnodeId {
   match self.find(expr) {
     Some(id) => id
@@ -83,7 +83,7 @@ pub fn EGraph::mk_enode_with_key(
       self.nodes.push(
         EnodeRecord::new(id, expr, args, generation, operator_key),
       )
-      self.expr_bindings.push(ExprEnodeBinding::{ expr, enode: id })
+      self.expr_bindings.push(ExprEnodeBinding::{ expr, enode: id, })
       for arg in args {
         if self.valid_index(arg) {
           self.nodes[arg.to_int()].parents.push(id)
@@ -124,7 +124,7 @@ pub fn EGraph::args(self : EGraph, id : EnodeId) -> Array[EnodeId] {
 }
 
 ///|
-pub fn EGraph::operator_key(self : EGraph, id : EnodeId) -> Int {
+pub fn EGraph::operator_key(self : EGraph, id : EnodeId) -> Int32 {
   if self.valid_index(id) {
     self.nodes[id.to_int()].operator_key
   } else {
@@ -145,7 +145,7 @@ pub fn EGraph::is_relevant(self : EGraph, id : EnodeId) -> Bool {
 }
 
 ///|
-pub fn EGraph::generation(self : EGraph, id : EnodeId) -> Int {
+pub fn EGraph::generation(self : EGraph, id : EnodeId) -> Int32 {
   if self.valid_index(id) {
     self.nodes[id.to_int()].generation
   } else {
@@ -204,7 +204,7 @@ fn EGraph::pop_one(self : EGraph) -> Unit {
 }
 
 ///|
-pub fn EGraph::pop(self : EGraph, count : Int) -> Unit {
+pub fn EGraph::pop(self : EGraph, count : Int32) -> Unit {
   if count <= 0 {
     return
   }
@@ -303,7 +303,7 @@ pub fn EGraph::justification_text(
 }
 
 ///|
-pub fn EGraph::new_eq_count(self : EGraph) -> Int {
+pub fn EGraph::new_eq_count(self : EGraph) -> Int32 {
   self.new_eqs.length()
 }
 
@@ -319,7 +319,7 @@ pub fn EGraph::enqueue_new_eq(
 }
 
 ///|
-pub fn EGraph::new_eq(self : EGraph, index : Int) -> EnodeParentLink? {
+pub fn EGraph::new_eq(self : EGraph, index : Int32) -> EnodeParentLink? {
   match self.new_eqs.get(index) {
     Some(link) => Some(link)
     None => None
@@ -327,7 +327,7 @@ pub fn EGraph::new_eq(self : EGraph, index : Int) -> EnodeParentLink? {
 }
 
 ///|
-pub fn EGraph::new_eq_text(self : EGraph, index : Int) -> String {
+pub fn EGraph::new_eq_text(self : EGraph, index : Int32) -> String {
   match self.new_eq(index) {
     Some(link) => "\{link.child()}->\{link.parent()}"
     None => "missing"
@@ -335,7 +335,7 @@ pub fn EGraph::new_eq_text(self : EGraph, index : Int) -> String {
 }
 
 ///|
-pub fn EGraph::new_diseq_count(self : EGraph) -> Int {
+pub fn EGraph::new_diseq_count(self : EGraph) -> Int32 {
   self.new_diseqs.length()
 }
 
@@ -347,7 +347,7 @@ pub fn EGraph::enqueue_new_diseq(self : EGraph, eq : EnodeId) -> Unit {
 }
 
 ///|
-pub fn EGraph::new_diseq(self : EGraph, index : Int) -> EnodeId? {
+pub fn EGraph::new_diseq(self : EGraph, index : Int32) -> EnodeId? {
   match self.new_diseqs.get(index) {
     Some(eq) => Some(eq)
     None => None
@@ -355,7 +355,7 @@ pub fn EGraph::new_diseq(self : EGraph, index : Int) -> EnodeId? {
 }
 
 ///|
-pub fn EGraph::new_diseq_text(self : EGraph, index : Int) -> String {
+pub fn EGraph::new_diseq_text(self : EGraph, index : Int32) -> String {
   match self.new_diseq(index) {
     Some(eq) => "\{eq}"
     None => "missing"
@@ -363,11 +363,11 @@ pub fn EGraph::new_diseq_text(self : EGraph, index : Int) -> String {
 }
 
 ///|
-pub fn EGraph::scope_depth(self : EGraph) -> Int {
+pub fn EGraph::scope_depth(self : EGraph) -> Int32 {
   self.scopes.length()
 }
 
 ///|
-pub fn EGraph::node_count(self : EGraph) -> Int {
+pub fn EGraph::node_count(self : EGraph) -> Int32 {
   self.nodes.length()
 }

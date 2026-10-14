@@ -11,7 +11,7 @@ pub struct DefinedNames {
 
 ///|
 pub fn DefinedNames::new() -> DefinedNames {
-  { entries: @util.ScopedVector::new() }
+  { entries: @util.ScopedVector::new(), }
 }
 
 ///|
@@ -20,7 +20,7 @@ pub fn DefinedNames::insert(
   name : String,
   expr : @util.ExprId,
 ) -> Unit {
-  self.entries.push_item({ name, expr })
+  self.entries.push_item({ name, expr, })
 }
 
 ///|
@@ -44,7 +44,7 @@ pub fn DefinedNames::push(self : DefinedNames) -> Unit {
 ///|
 pub fn DefinedNames::pop(
   self : DefinedNames,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   self.entries.pop_scope(count)
 }
@@ -75,6 +75,6 @@ pub fn NnfResult::result(self : NnfResult) -> @util.ExprId {
 }
 
 ///|
-pub fn NnfResult::new_defs_count(self : NnfResult) -> Int {
+pub fn NnfResult::new_defs_count(self : NnfResult) -> Int32 {
   self.new_defs.length()
 }

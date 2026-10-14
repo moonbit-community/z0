@@ -12,7 +12,7 @@ pub struct Params {
 
 ///|
 pub fn Params::new(descrs : ParamDescrs) -> Params {
-  { descrs, values: [] }
+  { descrs, values: [], }
 }
 
 ///|
@@ -29,11 +29,11 @@ fn Params::find_value(self : Params, name : String) -> ParamValue? {
 fn Params::set_value(self : Params, name : String, value : ParamValue) -> Unit {
   for i in 0..<self.values.length() {
     if self.values[i].name == name {
-      self.values[i] = ParamEntry::{ name, value }
+      self.values[i] = ParamEntry::{ name, value, }
       return
     }
   }
-  self.values.push(ParamEntry::{ name, value })
+  self.values.push(ParamEntry::{ name, value, })
 }
 
 ///|
@@ -72,7 +72,10 @@ pub fn Params::get_bool(
 }
 
 ///|
-pub fn Params::get_int(self : Params, name : String) -> @util.Availability[Int] {
+pub fn Params::get_int(
+  self : Params,
+  name : String,
+) -> @util.Availability[Int32] {
   match self.find_value(name) {
     Some(IntValue(value)) => @util.Available(value)
     Some(_) => kind_mismatch(name)
@@ -119,8 +122,8 @@ pub fn Params::set_bool_at(
 pub fn Params::set_int(
   self : Params,
   name : String,
-  value : Int,
-) -> @util.Availability[Int] {
+  value : Int32,
+) -> @util.Availability[Int32] {
   self.set_int_at(name, value, ParamSetStage::setup())
 }
 
@@ -128,9 +131,9 @@ pub fn Params::set_int(
 pub fn Params::set_int_at(
   self : Params,
   name : String,
-  value : Int,
+  value : Int32,
   stage : ParamSetStage,
-) -> @util.Availability[Int] {
+) -> @util.Availability[Int32] {
   match self.descrs.validate_set(name, stage) {
     @util.Unavailable(reason) => @util.Unavailable(reason)
     @util.Available(_) =>

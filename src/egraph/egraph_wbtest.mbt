@@ -1,5 +1,5 @@
 ///|
-fn eg_expr(value : Int) -> @util.ExprId {
+fn eg_expr(value : Int32) -> @util.ExprId {
   @util.ExprId::new(value)
 }
 

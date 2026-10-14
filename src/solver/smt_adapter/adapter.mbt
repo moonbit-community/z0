@@ -303,7 +303,7 @@ fn record_tracked_euf_proof_owner(
   match tracked_euf_active_formula(records, expr) {
     Some(tracker) =>
       if !tracked_euf_record_contains(result, expr, tracker) {
-        result.push(TrackedEufRecord::{ formula: expr, tracker })
+        result.push(TrackedEufRecord::{ formula: expr, tracker, })
       }
     None => ()
   }
@@ -495,7 +495,7 @@ fn backend_from_concrete(
   make_concrete : (@ast.AstManager, @solver.SolverFactoryConfig) -> @smt.Solver,
 ) -> @solver.SolverBackend {
   let tracked_euf_records : Array[TrackedEufRecord] = []
-  let tracked_euf_scopes : Array[Int] = []
+  let tracked_euf_scopes : Array[Int32] = []
   let tracked_euf_proof_records : Array[TrackedEufRecord] = []
   @solver.SolverBackend::new(
     assert_expr=fn(expr) {

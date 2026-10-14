@@ -70,7 +70,7 @@ pub fn CheckSatAssumingResult::new(
   result : CheckSatResult,
   unsat_assumptions : UnsatAssumptionSet,
 ) -> CheckSatAssumingResult {
-  { result, unsat_assumptions, unsat_core: UnsatCore::empty() }
+  { result, unsat_assumptions, unsat_core: UnsatCore::empty(), }
 }
 
 ///|
@@ -79,7 +79,7 @@ pub fn CheckSatAssumingResult::new_with_core(
   unsat_assumptions : UnsatAssumptionSet,
   unsat_core : UnsatCore,
 ) -> CheckSatAssumingResult {
-  { result, unsat_assumptions, unsat_core }
+  { result, unsat_assumptions, unsat_core, }
 }
 
 ///|

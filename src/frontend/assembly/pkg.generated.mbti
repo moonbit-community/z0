@@ -15,4 +15,3 @@ pub fn solver_factory() -> @solver.SolverFactory
 // Type aliases
 
 // Traits
-

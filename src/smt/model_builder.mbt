@@ -81,7 +81,7 @@ priv enum SmtTheoryValueHookResult {
 
 ///|
 fn SmtModelBuilder::init_model() -> SmtModelBuilder {
-  { model: @model.Model::new() }
+  { model: @model.Model::new(), }
 }
 
 ///|
@@ -234,7 +234,7 @@ fn smt_model_record_class_value(
       return
     }
   }
-  values.push(SmtEufClassValue::{ root, value })
+  values.push(SmtEufClassValue::{ root, value, })
 }
 
 ///|
@@ -246,7 +246,10 @@ fn smt_model_value_matches(
 }
 
 ///|
-fn smt_model_push_unique_pending_dep(deps : Array[Int], index : Int) -> Unit {
+fn smt_model_push_unique_pending_dep(
+  deps : Array[Int32],
+  index : Int32,
+) -> Unit {
   for existing in deps {
     if existing == index {
       return
@@ -259,7 +262,7 @@ fn smt_model_push_unique_pending_dep(deps : Array[Int], index : Int) -> Unit {
 fn smt_model_pending_index_for_decl(
   pending : Array[SmtEufValuePending],
   decl : @util.FuncDeclId,
-) -> Int? {
+) -> Int32? {
   for i, item in pending {
     if item.term.decl == decl {
       return Some(i)
@@ -273,7 +276,7 @@ fn smt_model_collect_pending_deps(
   manager : @ast.AstManager,
   pending : Array[SmtEufValuePending],
   expr : @util.ExprId,
-  deps : Array[Int],
+  deps : Array[Int32],
 ) -> Unit {
   match manager.get_expr(expr).kind {
     BoolValue(_) | IntValue(_) => ()
@@ -415,7 +418,7 @@ fn smt_model_eval_arg_texts(
 fn smt_model_find_func_model_index(
   functions : Array[SmtEufFuncModel],
   decl : @util.FuncDeclId,
-) -> Int? {
+) -> Int32? {
   for i, entry in functions {
     if entry.decl == decl {
       return Some(i)
@@ -433,14 +436,14 @@ fn smt_model_add_func_entry(
 ) -> Unit {
   match smt_model_find_func_model_index(functions, term.decl) {
     Some(index) =>
-      functions[index].entries.push(SmtEufFuncEntry::{ args, value })
+      functions[index].entries.push(SmtEufFuncEntry::{ args, value, })
     None =>
       functions.push(SmtEufFuncModel::{
         decl: term.decl,
         name: term.name,
         domain: term.domain,
         range: term.range,
-        entries: [SmtEufFuncEntry::{ args, value }],
+        entries: [SmtEufFuncEntry::{ args, value, }],
       })
   }
 }
@@ -547,7 +550,7 @@ fn SmtModelBuilder::resolve_euf_value_pending(
   theories : Array[@theory_core.TheoryPlugin],
   class_values : Array[SmtEufClassValue],
   pending : Array[SmtEufValuePending],
-  index : Int,
+  index : Int32,
 ) -> @util.ReasonUnknown? {
   match pending[index].state {
     SmtEufValuePendingDone => None
@@ -555,7 +558,7 @@ fn SmtModelBuilder::resolve_euf_value_pending(
     SmtEufValuePendingOpen => {
       pending[index].state = SmtEufValuePendingResolving
       let item = pending[index]
-      let deps : Array[Int] = []
+      let deps : Array[Int32] = []
       smt_model_collect_pending_deps(manager, pending, item.value_expr, deps)
       for dep_index in deps {
         if dep_index != index {

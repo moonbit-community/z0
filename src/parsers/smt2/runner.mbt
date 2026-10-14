@@ -56,7 +56,7 @@ fn output_or_error(
 pub struct Smt2RunResult {
   priv output : String
   priv stderr : String
-  priv exit_code : Int
+  priv exit_code : Int32
 }
 
 ///|
@@ -70,7 +70,7 @@ pub fn Smt2RunResult::stderr(self : Smt2RunResult) -> String {
 }
 
 ///|
-pub fn Smt2RunResult::exit_code(self : Smt2RunResult) -> Int {
+pub fn Smt2RunResult::exit_code(self : Smt2RunResult) -> Int32 {
   self.exit_code
 }
 
@@ -78,13 +78,13 @@ pub fn Smt2RunResult::exit_code(self : Smt2RunResult) -> Int {
 fn smt2_run_result(
   output : String,
   stderr : String,
-  exit_code : Int,
+  exit_code : Int32,
 ) -> Smt2RunResult {
-  { output, stderr, exit_code }
+  { output, stderr, exit_code, }
 }
 
 ///|
-fn exit_code_for_error(message : String) -> Int {
+fn exit_code_for_error(message : String) -> Int32 {
   if message.has_prefix("parse:") || message.has_prefix("line ") {
     1
   } else {
@@ -93,7 +93,7 @@ fn exit_code_for_error(message : String) -> Int {
 }
 
 ///|
-fn combine_exit_code(exit_code : Int, message : String) -> Int {
+fn combine_exit_code(exit_code : Int32, message : String) -> Int32 {
   if exit_code != 0 || exit_code_for_error(message) != 0 {
     1
   } else {
@@ -105,7 +105,7 @@ fn combine_exit_code(exit_code : Int, message : String) -> Int {
 fn output_or_error_result(
   context : @cmd_context.CommandContext,
   message : String,
-  exit_code : Int,
+  exit_code : Int32,
 ) -> Smt2RunResult {
   smt2_run_result(
     output_or_error(context, message),

@@ -58,4 +58,3 @@ pub fn ProofConverter::unsupported(String) -> Self
 // Type aliases
 
 // Traits
-

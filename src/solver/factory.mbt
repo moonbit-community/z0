@@ -129,7 +129,7 @@ pub struct SolverFactory {
 pub fn SolverFactory::new(
   create : (@ast.AstManager, SolverFactoryConfig) -> Solver,
 ) -> SolverFactory {
-  { create_fn: create }
+  { create_fn: create, }
 }
 
 ///|

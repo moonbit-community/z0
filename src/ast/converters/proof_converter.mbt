@@ -7,12 +7,12 @@ pub struct ProofConverter {
 
 ///|
 pub fn ProofConverter::identity() -> ProofConverter {
-  { steps: ["identity"], labels: [], unsupported: None }
+  { steps: ["identity"], labels: [], unsupported: None, }
 }
 
 ///|
 pub fn ProofConverter::unsupported(feature : String) -> ProofConverter {
-  { steps: ["unsupported:\{feature}"], labels: [], unsupported: Some(feature) }
+  { steps: ["unsupported:\{feature}"], labels: [], unsupported: Some(feature), }
 }
 
 ///|
@@ -95,7 +95,7 @@ pub struct GenericProofConverter {
 
 ///|
 pub fn GenericProofConverter::new() -> GenericProofConverter {
-  { converter: ProofConverter::identity() }
+  { converter: ProofConverter::identity(), }
 }
 
 ///|

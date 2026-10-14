@@ -1,15 +1,15 @@
 ///|
 pub struct JustificationId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn JustificationId::new(value : Int) -> JustificationId {
+pub fn JustificationId::new(value : Int32) -> JustificationId {
   { value, }
 }
 
 ///|
-pub fn JustificationId::to_int(self : JustificationId) -> Int {
+pub fn JustificationId::to_int(self : JustificationId) -> Int32 {
   self.value
 }
 
@@ -31,7 +31,7 @@ priv struct JustificationRecord {
 
 ///|
 fn JustificationRecord::axiom(theory_id : @ids.TheoryId) -> JustificationRecord {
-  { kind: Axiom(theory_id) }
+  { kind: Axiom(theory_id), }
 }
 
 ///|
@@ -39,7 +39,7 @@ fn JustificationRecord::equality(
   lhs : EnodeId,
   rhs : EnodeId,
 ) -> JustificationRecord {
-  { kind: Equality(lhs, rhs) }
+  { kind: Equality(lhs, rhs), }
 }
 
 ///|

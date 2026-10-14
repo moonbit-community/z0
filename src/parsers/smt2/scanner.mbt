@@ -1,14 +1,14 @@
 ///|
 pub struct Scanner {
   input : String
-  mut index : Int
-  mut line : Int
-  mut column : Int
+  mut index : Int32
+  mut line : Int32
+  mut column : Int32
 }
 
 ///|
 pub fn Scanner::new(input : String) -> Scanner {
-  Scanner::{ input, index: 0, line: 1, column: 1 }
+  Scanner::{ input, index: 0, line: 1, column: 1, }
 }
 
 ///|

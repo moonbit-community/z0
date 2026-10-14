@@ -92,4 +92,3 @@ pub fn TacticResult::goal_count(Self) -> Int
 // Type aliases
 
 // Traits
-

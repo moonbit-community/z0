@@ -1,15 +1,15 @@
 ///|
 priv struct EGraphDispatchScope {
-  eq_cursor : Int
-  diseq_cursor : Int
-  eq_facts_len : Int
-  diseq_facts_len : Int
+  eq_cursor : Int32
+  diseq_cursor : Int32
+  eq_facts_len : Int32
+  diseq_facts_len : Int32
 }
 
 ///|
 pub struct EGraphDispatchState {
-  priv mut eq_cursor : Int
-  priv mut diseq_cursor : Int
+  priv mut eq_cursor : Int32
+  priv mut diseq_cursor : Int32
   priv eq_facts : Array[@theory_core.EqFact]
   priv diseq_facts : Array[@theory_core.DiseqFact]
   priv scopes : Array[EGraphDispatchScope]
@@ -17,7 +17,7 @@ pub struct EGraphDispatchState {
 
 ///|
 pub fn EGraphDispatchState::new() -> EGraphDispatchState {
-  { eq_cursor: 0, diseq_cursor: 0, eq_facts: [], diseq_facts: [], scopes: [] }
+  { eq_cursor: 0, diseq_cursor: 0, eq_facts: [], diseq_facts: [], scopes: [], }
 }
 
 ///|
@@ -47,7 +47,7 @@ fn EGraphDispatchState::pop_one(self : EGraphDispatchState) -> Unit {
 ///|
 pub fn EGraphDispatchState::pop(
   self : EGraphDispatchState,
-  count : Int,
+  count : Int32,
 ) -> Unit {
   if count <= 0 {
     return
@@ -63,12 +63,14 @@ pub fn EGraphDispatchState::pop(
 }
 
 ///|
-pub fn EGraphDispatchState::eq_fact_count(self : EGraphDispatchState) -> Int {
+pub fn EGraphDispatchState::eq_fact_count(self : EGraphDispatchState) -> Int32 {
   self.eq_facts.length()
 }
 
 ///|
-pub fn EGraphDispatchState::diseq_fact_count(self : EGraphDispatchState) -> Int {
+pub fn EGraphDispatchState::diseq_fact_count(
+  self : EGraphDispatchState,
+) -> Int32 {
   self.diseq_facts.length()
 }
 

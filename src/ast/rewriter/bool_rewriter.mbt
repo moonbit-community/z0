@@ -7,7 +7,7 @@ fn bool_value(manager : @ast.AstManager, expr : @util.ExprId) -> Bool? {
 }
 
 ///|
-fn int_value(manager : @ast.AstManager, expr : @util.ExprId) -> Int? {
+fn int_value(manager : @ast.AstManager, expr : @util.ExprId) -> Int32? {
   match manager.get_expr(expr).kind {
     IntValue(value) => Some(value)
     _ => None
@@ -15,7 +15,7 @@ fn int_value(manager : @ast.AstManager, expr : @util.ExprId) -> Int? {
 }
 
 ///|
-fn eval_compare(op : @ast.ArithCompareOp, lhs : Int, rhs : Int) -> Bool {
+fn eval_compare(op : @ast.ArithCompareOp, lhs : Int32, rhs : Int32) -> Bool {
   match op {
     Lt => lhs < rhs
     Le => lhs <= rhs

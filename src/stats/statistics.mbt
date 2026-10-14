@@ -1,6 +1,6 @@
 ///|
 pub(all) enum StatValue {
-  Counter(Int)
+  Counter(Int32)
   TimerMs(Double)
 } derive(Eq)
 
@@ -50,7 +50,7 @@ pub struct StatManifest {
 
 ///|
 pub fn StatManifest::new() -> StatManifest {
-  { descriptors: [] }
+  { descriptors: [], }
 }
 
 ///|
@@ -68,7 +68,7 @@ fn StatDescriptor::matches(
 }
 
 ///|
-fn StatManifest::find_index(self : StatManifest, key : String) -> Int {
+fn StatManifest::find_index(self : StatManifest, key : String) -> Int32 {
   for i in 0..<self.descriptors.length() {
     if self.descriptors[i].key == key {
       return i
@@ -188,11 +188,11 @@ pub struct Statistics {
 
 ///|
 pub fn Statistics::new() -> Statistics {
-  { entries: [], incomplete_reasons: [] }
+  { entries: [], incomplete_reasons: [], }
 }
 
 ///|
-fn Statistics::find_index(self : Statistics, key : String) -> Int {
+fn Statistics::find_index(self : Statistics, key : String) -> Int32 {
   for i in 0..<self.entries.length() {
     if self.entries[i].key == key {
       return i
@@ -205,17 +205,20 @@ fn Statistics::find_index(self : Statistics, key : String) -> Int {
 pub fn Statistics::inc_counter(
   self : Statistics,
   key : String,
-  amount : Int,
+  amount : Int32,
 ) -> Unit {
   let index = self.find_index(key)
   if index >= 0 {
     match self.entries[index].value {
       Counter(value) =>
-        self.entries[index] = StatEntry::{ key, value: Counter(value + amount) }
+        self.entries[index] = StatEntry::{
+          key,
+          value: Counter(value + amount),
+        }
       TimerMs(_) => ()
     }
   } else {
-    self.entries.push(StatEntry::{ key, value: Counter(amount) })
+    self.entries.push(StatEntry::{ key, value: Counter(amount), })
   }
 }
 
@@ -229,11 +232,14 @@ pub fn Statistics::add_timer_ms(
   if index >= 0 {
     match self.entries[index].value {
       TimerMs(value) =>
-        self.entries[index] = StatEntry::{ key, value: TimerMs(value + amount) }
+        self.entries[index] = StatEntry::{
+          key,
+          value: TimerMs(value + amount),
+        }
       Counter(_) => ()
     }
   } else {
-    self.entries.push(StatEntry::{ key, value: TimerMs(amount) })
+    self.entries.push(StatEntry::{ key, value: TimerMs(amount), })
   }
 }
 
@@ -347,7 +353,7 @@ pub fn Statistics::record_proof_query(self : Statistics) -> Unit {
 }
 
 ///|
-fn compare_strings(lhs : String, rhs : String) -> Int {
+fn compare_strings(lhs : String, rhs : String) -> Int32 {
   if lhs < rhs {
     -1
   } else if lhs > rhs {

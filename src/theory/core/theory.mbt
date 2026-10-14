@@ -53,7 +53,7 @@ pub struct TheoryPlugin {
   priv mut new_diseq_fn : (TheoryContextView, TheoryActions, DiseqFact) -> Unit
   priv mut relevant_fn : (TheoryContextView, TheoryTermRef) -> Unit
   priv mut push_fn : (TheoryContextView) -> Unit
-  priv mut pop_fn : (TheoryContextView, Int) -> Unit
+  priv mut pop_fn : (TheoryContextView, Int32) -> Unit
   priv mut restart_fn : (TheoryContextView) -> Unit
   priv mut init_search_fn : (TheoryContextView, TheoryActions) -> Unit
   priv mut can_propagate_fn : (TheoryContextView) -> Bool
@@ -385,7 +385,7 @@ pub fn TheoryPlugin::set_push(
 pub fn TheoryPlugin::pop(
   self : TheoryPlugin,
   view : TheoryContextView,
-  count : Int,
+  count : Int32,
 ) -> Unit {
   (self.pop_fn)(view, count)
 }
@@ -393,7 +393,7 @@ pub fn TheoryPlugin::pop(
 ///|
 pub fn TheoryPlugin::set_pop(
   self : TheoryPlugin,
-  callback : (TheoryContextView, Int) -> Unit,
+  callback : (TheoryContextView, Int32) -> Unit,
 ) -> Unit {
   self.pop_fn = callback
 }

@@ -23,4 +23,3 @@ pub fn default_strategy_text(@solver.SolverFactoryConfig) -> String
 // Type aliases
 
 // Traits
-

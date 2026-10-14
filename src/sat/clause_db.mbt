@@ -1,15 +1,15 @@
 ///|
 pub struct ClauseId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn ClauseId::new(value : Int) -> ClauseId {
+pub fn ClauseId::new(value : Int32) -> ClauseId {
   { value, }
 }
 
 ///|
-pub fn ClauseId::to_int(self : ClauseId) -> Int {
+pub fn ClauseId::to_int(self : ClauseId) -> Int32 {
   self.value
 }
 
@@ -127,7 +127,7 @@ fn ClauseEvent::to_text(self : ClauseEvent) -> String {
 fn ClauseEvent::theory_proof_hint(self : ClauseEvent) -> ClauseTheoryProofHint? {
   match self {
     { action: "add", status: Theory(owner, _, Some(kind)), .. } =>
-      Some(ClauseTheoryProofHint::{ owner, kind })
+      Some(ClauseTheoryProofHint::{ owner, kind, })
     _ => None
   }
 }
@@ -148,7 +148,7 @@ pub struct ClauseDb {
 
 ///|
 pub fn ClauseDb::new() -> ClauseDb {
-  { records: [], events: [] }
+  { records: [], events: [], }
 }
 
 ///|
@@ -158,8 +158,8 @@ fn ClauseDb::add_clause_with_status(
   status : ClauseStatus,
 ) -> ClauseId {
   let clause_id = ClauseId::new(self.records.length())
-  self.records.push(ClauseRecord::{ clause, status, deleted: false })
-  self.events.push(ClauseEvent::{ action: "add", clause_id, status })
+  self.records.push(ClauseRecord::{ clause, status, deleted: false, })
+  self.events.push(ClauseEvent::{ action: "add", clause_id, status, })
   clause_id
 }
 
@@ -238,7 +238,7 @@ pub fn ClauseDb::clause_literals(
 }
 
 ///|
-pub fn ClauseDb::root_clause_count(self : ClauseDb) -> Int {
+pub fn ClauseDb::root_clause_count(self : ClauseDb) -> Int32 {
   let mut count = 0
   for record in self.records {
     if !record.deleted && record.status == Input {
@@ -249,7 +249,7 @@ pub fn ClauseDb::root_clause_count(self : ClauseDb) -> Int {
 }
 
 ///|
-pub fn ClauseDb::learned_clause_count(self : ClauseDb) -> Int {
+pub fn ClauseDb::learned_clause_count(self : ClauseDb) -> Int32 {
   let mut count = 0
   for record in self.records {
     if !record.deleted && record.status.is_learned() {
@@ -260,7 +260,7 @@ pub fn ClauseDb::learned_clause_count(self : ClauseDb) -> Int {
 }
 
 ///|
-pub fn ClauseDb::clause_count(self : ClauseDb) -> Int {
+pub fn ClauseDb::clause_count(self : ClauseDb) -> Int32 {
   let mut count = 0
   for record in self.records {
     if !record.deleted {
@@ -271,7 +271,7 @@ pub fn ClauseDb::clause_count(self : ClauseDb) -> Int {
 }
 
 ///|
-pub fn ClauseDb::deleted_clause_count(self : ClauseDb) -> Int {
+pub fn ClauseDb::deleted_clause_count(self : ClauseDb) -> Int32 {
   let mut count = 0
   for record in self.records {
     if record.deleted {
@@ -301,7 +301,7 @@ fn ClauseDb::theory_proof_hints(
 }
 
 ///|
-fn ClauseDb::unhinted_theory_clause_count(self : ClauseDb) -> Int {
+fn ClauseDb::unhinted_theory_clause_count(self : ClauseDb) -> Int32 {
   let mut count = 0
   for event in self.events {
     if event.is_unhinted_theory_clause() {

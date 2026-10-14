@@ -57,7 +57,7 @@ fn unsupported_operator(
 }
 
 ///|
-fn parse_int_atom(symbol : String) -> Int? {
+fn parse_int_atom(symbol : String) -> Int32? {
   if symbol.is_empty() {
     None
   } else {

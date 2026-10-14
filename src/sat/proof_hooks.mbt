@@ -5,7 +5,7 @@ pub struct SatProofStatusHook {
 
 ///|
 pub fn SatProofStatusHook::new() -> SatProofStatusHook {
-  { events: [] }
+  { events: [], }
 }
 
 ///|

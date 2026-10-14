@@ -26,7 +26,7 @@ priv struct SatConflictRecord {
 
 ///|
 pub struct SatSolverCore {
-  priv mut next_var : Int
+  priv mut next_var : Int32
   priv clause_db : ClauseDb
   priv mut assignment : Array[Bool?]
   priv trail : Array[Literal]
@@ -35,9 +35,9 @@ pub struct SatSolverCore {
   priv mut extension : SatExtension?
   priv ext_watches : Array[ExternalWatch]
   priv phase : Array[Bool]
-  priv activity : Array[Int]
-  priv mut decisions : Int
-  priv mut propagations : Int
+  priv activity : Array[Int32]
+  priv mut decisions : Int32
+  priv mut propagations : Int32
   priv mut last_conflict : SatConflictRecord?
   priv mut pending_unknown : String?
 }
@@ -135,11 +135,11 @@ pub fn SatSolverCore::watch_external(
     Some(extension) => if (extension.is_blocked)(constraint) { return }
     None => ()
   }
-  self.ext_watches.push(ExternalWatch::{ literal, constraint })
+  self.ext_watches.push(ExternalWatch::{ literal, constraint, })
 }
 
 ///|
-pub fn SatSolverCore::external_watch_count(self : SatSolverCore) -> Int {
+pub fn SatSolverCore::external_watch_count(self : SatSolverCore) -> Int32 {
   self.ext_watches.length()
 }
 
@@ -239,7 +239,7 @@ fn SatSolverCore::materialize_theory_conflict(
   justification : ExtJustificationId,
 ) -> SatConflictRecord {
   match self.extension {
-    None => SatConflictRecord::{ clause: Clause::empty(), status: Redundant }
+    None => SatConflictRecord::{ clause: Clause::empty(), status: Redundant, }
     Some(extension) =>
       SatConflictRecord::{
         clause: self.materialize_antecedents(justification),
@@ -253,7 +253,7 @@ fn SatSolverCore::record_boolean_conflict(
   self : SatSolverCore,
   clause : Clause,
 ) -> Unit {
-  self.last_conflict = Some(SatConflictRecord::{ clause, status: Redundant })
+  self.last_conflict = Some(SatConflictRecord::{ clause, status: Redundant, })
 }
 
 ///|
@@ -302,7 +302,7 @@ fn SatSolverCore::propagate_extension(self : SatSolverCore) -> Bool {
 
 ///|
 fn SatSolverCore::assignment_view(self : SatSolverCore) -> SatAssignmentView {
-  SatAssignmentView::{ assignments: self.assignment.copy() }
+  SatAssignmentView::{ assignments: self.assignment.copy(), }
 }
 
 ///|
@@ -472,7 +472,10 @@ fn SatSolverCore::choose_var(self : SatSolverCore) -> BoolVar? {
 }
 
 ///|
-fn SatSolverCore::backtrack_to(self : SatSolverCore, trail_size : Int) -> Unit {
+fn SatSolverCore::backtrack_to(
+  self : SatSolverCore,
+  trail_size : Int32,
+) -> Unit {
   for i in trail_size..<self.trail.length() {
     let index = self.trail[i].bool_var().to_int()
     if index > 0 && index <= self.next_var {
@@ -556,7 +559,7 @@ fn SatSolverCore::check_core(
   if !self.activate_scope_guards() || !self.activate_assumptions(assumptions) {
     SatCoreUnsat
   } else if self.search() {
-    SatCoreSat(SatCoreModel::{ assignments: self.assignment.copy() })
+    SatCoreSat(SatCoreModel::{ assignments: self.assignment.copy(), })
   } else if self.pending_unknown is Some(reason) {
     SatCoreUnknown(reason)
   } else {
@@ -574,7 +577,7 @@ pub fn SatSolverCore::check(self : SatSolverCore) -> SatCoreResult {
 ///|
 fn assumptions_without(
   assumptions : Array[Literal],
-  skip : Int,
+  skip : Int32,
 ) -> Array[Literal] {
   let result : Array[Literal] = []
   for i in 0..<assumptions.length() {
@@ -656,7 +659,7 @@ fn SatSolverCore::minimize_assumption_core(
       SatCoreSat(_) | SatCoreUnknown(_) => index += 1
     }
   }
-  AssumptionCore::{ literals: core }
+  AssumptionCore::{ literals: core, }
 }
 
 ///|
@@ -704,7 +707,7 @@ pub fn SatSolverCore::user_push(self : SatSolverCore) -> Unit {
 }
 
 ///|
-pub fn SatSolverCore::user_pop(self : SatSolverCore, count : Int) -> Unit {
+pub fn SatSolverCore::user_pop(self : SatSolverCore, count : Int32) -> Unit {
   if count <= 0 {
     return
   }
@@ -721,7 +724,7 @@ pub fn SatSolverCore::user_pop(self : SatSolverCore, count : Int) -> Unit {
 }
 
 ///|
-pub fn SatSolverCore::user_scope_depth(self : SatSolverCore) -> Int {
+pub fn SatSolverCore::user_scope_depth(self : SatSolverCore) -> Int32 {
   self.scope_guards.length()
 }
 
@@ -746,7 +749,7 @@ pub fn SatSolverCore::gc(self : SatSolverCore) -> Unit {
 }
 
 ///|
-fn int_array_text(values : Array[Int]) -> String {
+fn int_array_text(values : Array[Int32]) -> String {
   [ for i in 1..<values.length() => "b\{i}=\{values[i]}" ].join(",")
 }
 
@@ -768,7 +771,9 @@ pub fn SatSolverCore::clause_theory_proof_hints(
 }
 
 ///|
-pub fn SatSolverCore::unhinted_theory_clause_count(self : SatSolverCore) -> Int {
+pub fn SatSolverCore::unhinted_theory_clause_count(
+  self : SatSolverCore,
+) -> Int32 {
   self.clause_db.unhinted_theory_clause_count()
 }
 

@@ -27,7 +27,7 @@ pub fn Solver::setup_theories(
 }
 
 ///|
-pub fn Solver::registered_theory_count(self : Solver) -> Int {
+pub fn Solver::registered_theory_count(self : Solver) -> Int32 {
   self.context.registered_theory_count()
 }
 
@@ -48,7 +48,7 @@ pub fn Solver::assert_expr(
 ///|
 pub fn Solver::push(
   self : Solver,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   if count < 0 {
     raise @solver_error.SolverError("cannot push a negative number of scopes")
@@ -64,7 +64,7 @@ pub fn Solver::push(
 ///|
 pub fn Solver::pop(
   self : Solver,
-  count : Int,
+  count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   self.last_model = None
   self.assertions.pop_scope(count)
@@ -132,26 +132,26 @@ pub fn Solver::checked_proof_object(
 }
 
 ///|
-pub fn Solver::context_sat_core_id(self : Solver) -> Int {
+pub fn Solver::context_sat_core_id(self : Solver) -> Int32 {
   self.context.sat_core_id()
 }
 
 ///|
-pub fn Solver::context_root_clause_count(self : Solver) -> Int {
+pub fn Solver::context_root_clause_count(self : Solver) -> Int32 {
   self.context.root_clause_count()
 }
 
 ///|
-pub fn Solver::get_scope_level(self : Solver) -> Int {
+pub fn Solver::get_scope_level(self : Solver) -> Int32 {
   self.assertions.scope_depth()
 }
 
 ///|
-pub fn Solver::get_num_assertions(self : Solver) -> Int {
+pub fn Solver::get_num_assertions(self : Solver) -> Int32 {
   self.assertions.length()
 }
 
 ///|
-pub fn Solver::get_assertion(self : Solver, index : Int) -> @util.ExprId? {
+pub fn Solver::get_assertion(self : Solver, index : Int32) -> @util.ExprId? {
   self.assertions.items().get(index)
 }

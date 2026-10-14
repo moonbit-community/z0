@@ -1,15 +1,15 @@
 ///|
 pub struct TrackedAssertionId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn TrackedAssertionId::new(value : Int) -> TrackedAssertionId {
+pub fn TrackedAssertionId::new(value : Int32) -> TrackedAssertionId {
   { value, }
 }
 
 ///|
-pub fn TrackedAssertionId::to_int(self : TrackedAssertionId) -> Int {
+pub fn TrackedAssertionId::to_int(self : TrackedAssertionId) -> Int32 {
   self.value
 }
 
@@ -24,7 +24,7 @@ pub fn TrackedExpr::new(
   tracker : @util.ExprId,
   display_name : String?,
 ) -> TrackedExpr {
-  { tracker, display_name }
+  { tracker, display_name, }
 }
 
 ///|
@@ -47,7 +47,7 @@ pub struct AssumptionSet {
 
 ///|
 pub fn AssumptionSet::new() -> AssumptionSet {
-  { assumptions: [] }
+  { assumptions: [], }
 }
 
 ///|
@@ -61,7 +61,7 @@ pub fn AssumptionSet::add(self : AssumptionSet, expr : @util.ExprId) -> Unit {
 }
 
 ///|
-pub fn AssumptionSet::length(self : AssumptionSet) -> Int {
+pub fn AssumptionSet::length(self : AssumptionSet) -> Int32 {
   self.assumptions.length()
 }
 
@@ -77,7 +77,7 @@ pub struct UnsatAssumptionSet {
 
 ///|
 pub fn UnsatAssumptionSet::empty() -> UnsatAssumptionSet {
-  { assumptions: [] }
+  { assumptions: [], }
 }
 
 ///|
@@ -92,7 +92,7 @@ pub fn UnsatAssumptionSet::from_exprs(
 }
 
 ///|
-pub fn UnsatAssumptionSet::length(self : UnsatAssumptionSet) -> Int {
+pub fn UnsatAssumptionSet::length(self : UnsatAssumptionSet) -> Int32 {
   self.assumptions.length()
 }
 
@@ -154,7 +154,7 @@ pub fn UnsatCoreEntry::new(
   expr : @util.ExprId,
   name : String?,
 ) -> UnsatCoreEntry {
-  { expr, name }
+  { expr, name, }
 }
 
 ///|
@@ -180,7 +180,7 @@ pub struct UnsatCore {
 
 ///|
 pub fn UnsatCore::empty() -> UnsatCore {
-  { entries: [] }
+  { entries: [], }
 }
 
 ///|
@@ -191,7 +191,7 @@ fn UnsatCore::from_entries(entries : Array[UnsatCoreEntry]) -> UnsatCore {
       normalized.push(entry)
     }
   }
-  { entries: normalized }
+  { entries: normalized, }
 }
 
 ///|
@@ -232,7 +232,7 @@ fn UnsatCore::merge(self : UnsatCore, other : UnsatCore) -> UnsatCore {
 }
 
 ///|
-pub fn UnsatCore::length(self : UnsatCore) -> Int {
+pub fn UnsatCore::length(self : UnsatCore) -> Int32 {
   self.entries.length()
 }
 

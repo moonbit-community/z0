@@ -74,4 +74,3 @@ pub fn ProofRef::to_text(Self) -> String
 // Type aliases
 
 // Traits
-

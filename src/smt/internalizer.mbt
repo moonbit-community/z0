@@ -10,7 +10,7 @@ pub struct SmtInternalizer {
   priv sat_core : @pure_sat.SatSolverCore
   priv egraph : @egraph.EGraph
   priv bindings : Array[BoolBinding]
-  priv scopes : Array[Int]
+  priv scopes : Array[Int32]
 }
 
 ///|
@@ -19,7 +19,7 @@ pub fn SmtInternalizer::new(
   sat_core : @pure_sat.SatSolverCore,
   egraph : @egraph.EGraph,
 ) -> SmtInternalizer {
-  { manager, sat_core, egraph, bindings: [], scopes: [] }
+  { manager, sat_core, egraph, bindings: [], scopes: [], }
 }
 
 ///|
@@ -42,7 +42,7 @@ fn SmtInternalizer::enode_child_exprs(
 fn SmtInternalizer::enode_operator_key(
   self : SmtInternalizer,
   expr : @util.ExprId,
-) -> Int {
+) -> Int32 {
   match self.manager.get_expr(expr).kind {
     App(decl, _) => decl.to_int()
     _ => expr.to_int()
@@ -96,7 +96,10 @@ pub fn SmtInternalizer::push_scope(self : SmtInternalizer) -> Unit {
 }
 
 ///|
-pub fn SmtInternalizer::pop_scope(self : SmtInternalizer, count : Int) -> Unit {
+pub fn SmtInternalizer::pop_scope(
+  self : SmtInternalizer,
+  count : Int32,
+) -> Unit {
   if count <= 0 {
     return
   }
@@ -135,7 +138,7 @@ pub fn SmtInternalizer::to_bool_var(
     Some(bool_var) => bool_var
     None => {
       let bool_var = self.sat_core.add_var()
-      self.bindings.push(BoolBinding::{ expr, bool_var })
+      self.bindings.push(BoolBinding::{ expr, bool_var, })
       bool_var
     }
   }
@@ -274,7 +277,7 @@ pub fn SmtInternalizer::literal2expr(
 }
 
 ///|
-pub fn SmtInternalizer::sat_var_count(self : SmtInternalizer) -> Int {
+pub fn SmtInternalizer::sat_var_count(self : SmtInternalizer) -> Int32 {
   self.bindings.length()
 }
 

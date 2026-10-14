@@ -3,7 +3,7 @@ name = "moonbit-community/z0"
 version = "0.1.0"
 
 import {
-  "moonbitlang/x@0.4.38",
+  "moonbitlang/x@0.5.5",
 }
 
 readme = "README.mbt.md"

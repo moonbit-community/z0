@@ -1,15 +1,15 @@
 ///|
 pub struct ExtConstraintId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn ExtConstraintId::new(value : Int) -> ExtConstraintId {
+pub fn ExtConstraintId::new(value : Int32) -> ExtConstraintId {
   { value, }
 }
 
 ///|
-pub fn ExtConstraintId::to_int(self : ExtConstraintId) -> Int {
+pub fn ExtConstraintId::to_int(self : ExtConstraintId) -> Int32 {
   self.value
 }
 
@@ -20,16 +20,16 @@ pub impl Show for ExtConstraintId with fn output(self, logger) {
 
 ///|
 pub struct ExtJustificationId {
-  priv value : Int
+  priv value : Int32
 } derive(Eq, Compare, Hash)
 
 ///|
-pub fn ExtJustificationId::new(value : Int) -> ExtJustificationId {
+pub fn ExtJustificationId::new(value : Int32) -> ExtJustificationId {
   { value, }
 }
 
 ///|
-pub fn ExtJustificationId::to_int(self : ExtJustificationId) -> Int {
+pub fn ExtJustificationId::to_int(self : ExtJustificationId) -> Int32 {
   self.value
 }
 

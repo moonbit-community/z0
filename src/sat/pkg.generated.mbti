@@ -217,4 +217,3 @@ pub(all) enum WatchAction {
 // Type aliases
 
 // Traits
-

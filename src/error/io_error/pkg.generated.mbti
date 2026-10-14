@@ -16,4 +16,3 @@ pub impl Show for IoError
 // Type aliases
 
 // Traits
-

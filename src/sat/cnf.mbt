@@ -25,7 +25,7 @@ pub fn Clause::new(literals : Array[Literal]) -> Clause {
       normalized.push(literal)
     }
   }
-  { literals: normalized, tautology }
+  { literals: normalized, tautology, }
 }
 
 ///|
@@ -81,7 +81,7 @@ pub fn Clause::has_var_above(self : Clause, max_var : BoolVar) -> Bool {
 }
 
 ///|
-pub fn Clause::length(self : Clause) -> Int {
+pub fn Clause::length(self : Clause) -> Int32 {
   self.literals.length()
 }
 
