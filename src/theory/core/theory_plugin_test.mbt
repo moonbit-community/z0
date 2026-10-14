@@ -1,5 +1,5 @@
 ///|
-fn theory_result_text(result : TheoryInternalizeResult) -> String {
+fn theory_result_text(result : @core.TheoryInternalizeResult) -> String {
   match result {
     TheoryHandled(term) => "handled:\{term}"
     TheoryNotOwned => "not-owned"
@@ -8,7 +8,7 @@ fn theory_result_text(result : TheoryInternalizeResult) -> String {
 }
 
 ///|
-fn theory_check_text(result : TheoryCheckResult) -> String {
+fn theory_check_text(result : @core.TheoryCheckResult) -> String {
   match result {
     TheoryCheckContinue => "continue"
     TheoryCheckDone => "done"
@@ -19,20 +19,20 @@ fn theory_check_text(result : TheoryCheckResult) -> String {
 ///|
 fn theory_unit_availability_text(result : @util.Availability[Unit]) -> String {
   match result {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 test "theory_plugin_default_distinguishes_not_owned_from_unimplemented_owner" {
-  let plugin = TheoryPlugin::default_unimplemented(
+  let plugin = @core.TheoryPlugin::default_unimplemented(
     @ids.TheoryId::new(2),
     "fake",
     [@ast.FamilyId::new(7)],
   )
-  let view = TheoryContextView::new(scope_depth=0)
-  let actions = TheoryActions::noop()
+  let view = @core.TheoryContextView::new(scope_depth=0)
+  let actions = @core.TheoryActions::noop()
   inspect(
     theory_result_text(
       plugin.internalize_term(
@@ -60,7 +60,7 @@ test "theory_plugin_default_distinguishes_not_owned_from_unimplemented_owner" {
 
 ///|
 test "theory_plugin_params_hooks_default_and_callbacks" {
-  let plugin = TheoryPlugin::default_unimplemented(
+  let plugin = @core.TheoryPlugin::default_unimplemented(
     @ids.TheoryId::new(9),
     "fake-params",
     [@ast.FamilyId::new(9)],
@@ -75,8 +75,8 @@ test "theory_plugin_params_hooks_default_and_callbacks" {
   let log : Array[String] = []
   plugin.set_configure(fn(params) {
     match params.get_bool("theory.fake.enabled") {
-      @util.Available(value) => log.push("configure:\{value}")
-      @util.Unavailable(reason) => log.push("configure:\{reason.to_text()}")
+      Available(value) => log.push("configure:\{value}")
+      Unavailable(reason) => log.push("configure:\{reason.to_text()}")
     }
   })
   plugin.set_describe_params(fn() {
@@ -94,11 +94,11 @@ test "theory_plugin_params_hooks_default_and_callbacks" {
   })
   plugin.set_updt_params(fn(params) {
     match params.get_bool("theory.fake.enabled") {
-      @util.Available(value) => {
+      Available(value) => {
         log.push("update:\{value}")
-        @util.Available(())
+        Available(())
       }
-      @util.Unavailable(reason) => @util.Unavailable(reason)
+      Unavailable(reason) => Unavailable(reason)
     }
   })
   let descrs = plugin.describe_params()
@@ -123,9 +123,9 @@ test "theory_plugin_params_hooks_default_and_callbacks" {
 ///|
 test "theory_handles_carry_owner_and_scope_validity" {
   let owner = @ids.TheoryId::new(5)
-  let term = TheoryTermRef::new(owner, 3, scope_generation=2)
-  let eq = EqFact::new(owner, 4, scope_generation=2)
-  let diseq = DiseqFact::new(owner, 5, scope_generation=2)
+  let term = @core.TheoryTermRef::new(owner, 3, scope_generation=2)
+  let eq = @core.EqFact::new(owner, 4, scope_generation=2)
+  let diseq = @core.DiseqFact::new(owner, 5, scope_generation=2)
   inspect(
     "\{term.owner()}:\{term.to_int()}:\{term.is_valid_at(2)}",
     content="th#5:3:true",
@@ -142,7 +142,7 @@ test "theory_handles_carry_owner_and_scope_validity" {
 
 ///|
 test "theory_factory_descriptor_selects_by_logic_and_family" {
-  let descriptor = TheoryFactoryDescriptor::new(
+  let descriptor = @core.TheoryFactoryDescriptor::new(
     id=@ids.TheoryId::new(1),
     name="fake-a",
     families=[@ast.FamilyId::new(7)],
@@ -158,7 +158,7 @@ test "theory_factory_descriptor_selects_by_logic_and_family" {
 ///|
 test "theory_plugin_callbacks_record_lifecycle_order" {
   let log : Array[String] = []
-  let plugin = TheoryPlugin::default_unimplemented(
+  let plugin = @core.TheoryPlugin::default_unimplemented(
     @ids.TheoryId::new(3),
     "fake-b",
     [@ast.FamilyId::new(3)],
@@ -180,13 +180,13 @@ test "theory_plugin_callbacks_record_lifecycle_order" {
     TheoryCheckDone
   })
   plugin.set_finalize_check(fn(_, _) { log.push("finalize") })
-  let view = TheoryContextView::new(scope_depth=1)
-  let actions = TheoryActions::noop()
+  let view = @core.TheoryContextView::new(scope_depth=1)
+  let actions = @core.TheoryActions::noop()
   plugin.init_search(view, actions)
   plugin.asserted(
     view,
     actions,
-    TheoryAssertedLiteral::new(@sat.Literal::pos(@sat.BoolVar::new(1))),
+    @core.TheoryAssertedLiteral::new(@sat.Literal::pos(@sat.BoolVar::new(1))),
   )
   if plugin.can_propagate(view) {
     ignore(plugin.propagate(view, actions))
@@ -202,7 +202,7 @@ test "theory_plugin_callbacks_record_lifecycle_order" {
 ///|
 test "theory_plugin_model_add_value_callback_records_constructed_value_expr" {
   let log : Array[String] = []
-  let plugin = TheoryPlugin::default_unimplemented(
+  let plugin = @core.TheoryPlugin::default_unimplemented(
     @ids.TheoryId::new(4),
     "fake-model",
     [@ast.FamilyId::new(4)],
@@ -210,9 +210,13 @@ test "theory_plugin_model_add_value_callback_records_constructed_value_expr" {
   plugin.set_model_add_value(fn(_, _, term, value) {
     log.push("value:\{term}:\{value.to_int()}")
   })
-  let view = TheoryContextView::new(scope_depth=1)
-  let actions = TheoryActions::noop()
-  let term = TheoryTermRef::new(@ids.TheoryId::new(4), 6, scope_generation=1)
+  let view = @core.TheoryContextView::new(scope_depth=1)
+  let actions = @core.TheoryActions::noop()
+  let term = @core.TheoryTermRef::new(
+    @ids.TheoryId::new(4),
+    6,
+    scope_generation=1,
+  )
   plugin.model_add_value(view, actions, term, @util.ExprId::new(17))
   inspect(log.join(">"), content="value:th#4:6:17")
 }
@@ -226,7 +230,7 @@ fn optional_literal_text(value : @sat.Literal?) -> String {
 }
 
 ///|
-fn optional_term_text(value : TheoryTermRef?) -> String {
+fn optional_term_text(value : @core.TheoryTermRef?) -> String {
   match value {
     Some(term) => "\{term}"
     None => "none"
@@ -244,10 +248,10 @@ fn optional_bool_text(value : Bool?) -> String {
 ///|
 test "theory_actions_noop_exposes_safe_capabilities" {
   let owner = @ids.TheoryId::new(8)
-  let actions = TheoryActions::noop()
+  let actions = @core.TheoryActions::noop()
   let literal = @sat.Literal::pos(@sat.BoolVar::new(1))
-  let term = TheoryTermRef::new(owner, 2, scope_generation=0)
-  let antecedent = AntecedentId::new(owner, 3, scope_generation=0)
+  let term = @core.TheoryTermRef::new(owner, 2, scope_generation=0)
+  let antecedent = @core.AntecedentId::new(owner, 3, scope_generation=0)
   inspect(actions.scope_depth(), content="0")
   inspect(
     optional_literal_text(actions.internalize_bool(@util.ExprId::new(1))),

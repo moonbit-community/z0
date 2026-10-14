@@ -1,20 +1,20 @@
 ///|
 test "ast_has_builtin_bool_sort" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   inspect(manager.bool_sort(), content="sort#0")
   inspect(manager.int_sort(), content="sort#1")
 }
 
 ///|
 test "ast_declare_uninterpreted_sort_arity_zero" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let sort = manager.declare_sort("U", 0)
   inspect(sort, content="sort#2")
 }
 
 ///|
 test "ast_rejects_unsupported_sort_arity" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   try {
     ignore(manager.declare_sort("Vec", 1))
     inspect("missing diagnostic", content="diagnostic")
@@ -27,14 +27,14 @@ test "ast_rejects_unsupported_sort_arity" {
 
 ///|
 test "ast_declare_bool_const" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let decl = manager.declare_const("p", manager.bool_sort())
   inspect(decl, content="decl#0")
 }
 
 ///|
 test "ast_declare_uninterpreted_function" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let u = manager.declare_sort("U", 0)
   let decl = manager.declare_fun("f", [u], u)
   inspect(decl, content="decl#0")
@@ -42,7 +42,7 @@ test "ast_declare_uninterpreted_function" {
 
 ///|
 test "ast_scope_pop_removes_declaration" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   manager.push_scope()
   ignore(manager.declare_const("p", manager.bool_sort()))
   manager.pop_scope(1)
@@ -51,7 +51,7 @@ test "ast_scope_pop_removes_declaration" {
 
 ///|
 test "ast_scope_pop_removes_macro" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let truth = manager.mk_bool(true)
   manager.push_scope()
   ignore(manager.define_bool_macro("m", truth))
@@ -61,7 +61,7 @@ test "ast_scope_pop_removes_macro" {
 
 ///|
 test "ast_hash_conses_same_expr" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let p_decl = manager.declare_const("p", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])
   let n0 = manager.mk_not(p)
@@ -71,7 +71,7 @@ test "ast_hash_conses_same_expr" {
 
 ///|
 test "ast_rejects_bad_bool_argument_sort" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let u = manager.declare_sort("U", 0)
   let a_decl = manager.declare_const("a", u)
   let a = manager.mk_app(a_decl, [])
@@ -87,7 +87,7 @@ test "ast_rejects_bad_bool_argument_sort" {
 
 ///|
 test "ast_pretty_prints_bool_term" {
-  let manager = AstManager::new()
+  let manager = @ast.AstManager::new()
   let p_decl = manager.declare_const("p", manager.bool_sort())
   let q_decl = manager.declare_const("q", manager.bool_sort())
   let p = manager.mk_app(p_decl, [])

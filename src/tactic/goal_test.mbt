@@ -1,7 +1,7 @@
 ///|
 test "goal_tracks_formulas_precision_and_decided_states" {
   let manager = @ast.AstManager::new()
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   inspect(goal.is_decided_sat(), content="true")
   let false_expr = manager.mk_bool(false)
   goal.add(false_expr)
@@ -16,7 +16,7 @@ test "goal_tracks_formulas_precision_and_decided_states" {
 
 ///|
 test "dependency_converter_records_labels_without_goal_storage_exposure" {
-  let deps = DependencyConverter::new()
+  let deps = @tactic.DependencyConverter::new()
   deps.add_label("a")
   deps.add_label("b")
   inspect(deps.labels_text(), content="a,b")
@@ -25,7 +25,7 @@ test "dependency_converter_records_labels_without_goal_storage_exposure" {
 ///|
 test "goal_tracks_dependency_converter_and_query_requirements" {
   let manager = @ast.AstManager::new()
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   goal.dependency_converter().add_label("named-a")
   goal.dependency_converter().add_label("named-b")
   inspect(goal.dependency_converter().labels_text(), content="named-a,named-b")
@@ -45,7 +45,7 @@ test "goal_tracks_dependency_converter_and_query_requirements" {
 ///|
 test "goal_precision_controls_sat_and_unsat_preservation" {
   let manager = @ast.AstManager::new()
-  let goal = Goal::new(manager)
+  let goal = @tactic.Goal::new(manager)
   inspect(
     "\{goal.sat_preserved()},\{goal.unsat_preserved()}",
     content="true,true",

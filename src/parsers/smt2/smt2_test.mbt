@@ -1,16 +1,16 @@
 ///|
 fn run_smt2(input : String) -> String {
-  run_smt2_with_factory(input, @assembly.solver_factory())
+  @smt2.run_smt2_with_factory(input, @assembly.solver_factory())
 }
 
 ///|
-fn run_smt2_result(input : String) -> Smt2RunResult {
-  run_smt2_result_with_factory(input, @assembly.solver_factory())
+fn run_smt2_result(input : String) -> @smt2.Smt2RunResult {
+  @smt2.run_smt2_result_with_factory(input, @assembly.solver_factory())
 }
 
 ///|
 fn expect_parse_ok(input : String, expected : String) -> Unit raise {
-  let exprs = parse_program(input)
+  let exprs = @smt2.parse_program(input)
   if exprs.length() == 0 {
     abort("expected parsed expression")
   } else {
@@ -21,7 +21,7 @@ fn expect_parse_ok(input : String, expected : String) -> Unit raise {
 ///|
 fn expect_parse_err(input : String, expected : String) -> Unit raise {
   try {
-    let exprs = parse_program(input)
+    let exprs = @smt2.parse_program(input)
     abort("expected parse diagnostic, got \{exprs.length()} expression(s)")
   } catch {
     err => inspect(err, content=expected)
@@ -78,12 +78,12 @@ test "sexpr_reports_extra_right_paren" {
 
 ///|
 test "sexpr_cursor_parses_one_top_level_form" {
-  let cursor = SExprCursor::new("(exit) \"unterminated")
-  match parse_next(cursor) {
+  let cursor = @smt2.SExprCursor::new("(exit) \"unterminated")
+  match @smt2.parse_next(cursor) {
     Next(expr, next) => {
       inspect(expr, content="List([Atom(\"exit\")])")
       try {
-        ignore(parse_next(next))
+        ignore(@smt2.parse_next(next))
         inspect("missing diagnostic", content="diagnostic")
       } catch {
         err => inspect(err, content="line 1, col 8: unclosed string")
@@ -98,8 +98,8 @@ fn parse_one_command(
   manager : @ast.AstManager,
   input : String,
 ) -> @cmd_context.Command raise {
-  let exprs = parse_program(input)
-  parse_command(manager, exprs[0])
+  let exprs = @smt2.parse_program(input)
+  @smt2.parse_command(manager, exprs[0])
 }
 
 ///|
@@ -289,7 +289,7 @@ test "parse_assert_named_bool_formula" {
   ignore(manager.mk_app(p_decl, []))
   let command = parse_one_command(manager, "(assert (! p :named core-p))")
   match command {
-    @cmd_context.AssertNamed(expr, name) => {
+    AssertNamed(expr, name) => {
       inspect(manager.pretty(expr), content="p")
       inspect(name, content="core-p")
     }
@@ -300,11 +300,11 @@ test "parse_assert_named_bool_formula" {
 ///|
 test "parse_push_pop_check_sat_get_model" {
   let manager = @ast.AstManager::new()
-  let exprs = parse_program("(push)(pop 1)(check-sat)(get-model)")
-  let c0 = parse_command(manager, exprs[0])
-  let c1 = parse_command(manager, exprs[1])
-  let c2 = parse_command(manager, exprs[2])
-  let c3 = parse_command(manager, exprs[3])
+  let exprs = @smt2.parse_program("(push)(pop 1)(check-sat)(get-model)")
+  let c0 = @smt2.parse_command(manager, exprs[0])
+  let c1 = @smt2.parse_command(manager, exprs[1])
+  let c2 = @smt2.parse_command(manager, exprs[2])
+  let c3 = @smt2.parse_command(manager, exprs[3])
   inspect(c0, content="Push(1)")
   inspect(c1, content="Pop(1)")
   inspect(c2, content="CheckSat")
@@ -339,7 +339,7 @@ test "parse_check_sat_assuming" {
   ignore(manager.mk_app(p_decl, []))
   let command = parse_one_command(manager, "(check-sat-assuming ((not p)))")
   match command {
-    @cmd_context.CheckSatAssuming(assumptions) => {
+    CheckSatAssuming(assumptions) => {
       inspect(assumptions.length(), content="1")
       inspect(manager.pretty(assumptions[0]), content="(not p)")
     }

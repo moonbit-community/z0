@@ -1,18 +1,18 @@
 ///|
 fn euf_result_text(result : @theory_core.TheoryInternalizeResult) -> String {
   match result {
-    @theory_core.TheoryHandled(term) =>
+    TheoryHandled(term) =>
       "handled:\{term.owner()}:\{term.to_int()}:\{term.is_valid_at(2)}"
-    @theory_core.TheoryNotOwned => "not-owned"
-    @theory_core.TheoryUnsupported(reason) => "unsupported:\{reason.to_text()}"
+    TheoryNotOwned => "not-owned"
+    TheoryUnsupported(reason) => "unsupported:\{reason.to_text()}"
   }
 }
 
 ///|
 fn euf_unit_availability_text(result : @util.Availability[Unit]) -> String {
   match result {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 

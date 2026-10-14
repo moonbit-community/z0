@@ -1,8 +1,8 @@
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -57,7 +57,7 @@ test "smt_context_theory_actions_lazy_materialize_antecedents" {
   plugin.set_theory_check(fn(_, actions) {
     let literals = actions.materialize_antecedent(antecedent)
     log.push([ for literal in literals => "\{literal}" ].join(","))
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   context.register_theory(plugin)
   ignore(context.check_sat())
@@ -77,7 +77,7 @@ test "smt_context_theory_actions_allocate_scoped_proof_hints" {
   plugin.set_theory_check(fn(_, actions) {
     let hint = actions.create_proof_hint(owner, "congruence")
     log.push("\{hint}:\{hint.is_valid_at(actions.scope_depth())}")
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   context.register_theory(plugin)
   ignore(context.check_sat())
@@ -111,7 +111,7 @@ test "smt_context_theory_enqueue_reaches_sat_extension_conflict" {
       Some(literal) => actions.enqueue(literal, antecedent)
       None => log.push("missing-internalize")
     }
-    @theory_core.TheoryPropagateDone
+    TheoryPropagateDone
   })
   plugin.set_get_antecedents(fn(requested) {
     log.push("query:\{requested}")
@@ -154,9 +154,9 @@ test "smt_context_theory_add_clause_reaches_sat_core" {
         Some(literal) => actions.add_clause([literal.negate()])
         None => log.push("missing-internalize")
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -192,9 +192,9 @@ test "smt_context_theory_add_lemma_reaches_sat_core" {
         Some(literal) => actions.add_lemma([literal.negate()])
         None => log.push("missing-internalize")
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -229,9 +229,9 @@ test "smt_context_proof_checker_rejects_unhinted_theory_lemma" {
         Some(literal) => actions.add_lemma([literal.negate()])
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -273,9 +273,9 @@ test "smt_context_theory_add_lemma_with_hint_reaches_sat_core" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -312,9 +312,9 @@ test "smt_context_proof_object_carries_theory_lemma_hints" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -488,9 +488,9 @@ test "smt_context_proof_checker_rejects_tampered_theory_hint" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -533,9 +533,9 @@ test "smt_context_proof_checker_rejects_unsupported_theory_hint_kind" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -574,9 +574,9 @@ test "smt_context_proof_checker_rejects_malformed_congruence_hint_kind" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -615,9 +615,9 @@ test "smt_context_proof_checker_rejects_single_argument_congruence_hint" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -658,9 +658,9 @@ test "smt_context_proof_checker_accepts_multi_argument_congruence_hint" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -704,9 +704,9 @@ test "smt_context_proof_checker_rejects_trailing_suffix_congruence_hint" {
         }
         None => ()
       }
-      @theory_core.TheoryCheckContinue
+      TheoryCheckContinue
     } else {
-      @theory_core.TheoryCheckDone
+      TheoryCheckDone
     }
   })
   context.register_theory(plugin)
@@ -737,7 +737,7 @@ test "smt_context_theory_conflict_reaches_sat_extension" {
   )
   plugin.set_theory_check(fn(_, actions) {
     actions.conflict(antecedent)
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   plugin.set_get_antecedents(fn(requested) {
     log.push("query:\{requested}")
@@ -762,8 +762,8 @@ test "smt_context_theory_mark_unknown_reaches_sat_extension" {
     [@ast.FamilyId::new(47)],
   )
   plugin.set_theory_check(fn(_, actions) {
-    actions.mark_unknown(@util.ReasonUnknown::Other("bridge-unknown"))
-    @theory_core.TheoryCheckDone
+    actions.mark_unknown(Other("bridge-unknown"))
+    TheoryCheckDone
   })
   context.register_theory(plugin)
   inspect(

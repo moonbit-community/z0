@@ -60,7 +60,7 @@ test "combo_arch_fact_lifecycle_reaches_arith_and_fake_plugins" {
   let fake = fake_harness.plugin()
   let expr = @util.ExprId::new(77)
   match arith.internalize_term(view, actions, family, expr) {
-    @theory_core.TheoryHandled(term) => {
+    TheoryHandled(term) => {
       inspect(term.owner(), content="th#4")
       inspect(term.to_int(), content="77")
     }
@@ -72,7 +72,7 @@ test "combo_arch_fact_lifecycle_reaches_arith_and_fake_plugins" {
   fake.new_diseq(view, actions, diseq)
   fake.init_search(view, actions)
   match fake.theory_check(view, actions) {
-    @theory_core.TheoryCheckContinue => ()
+    TheoryCheckContinue => ()
     _ => fail("expected fake_combo check to request another round")
   }
   fake.init_model(view, actions)

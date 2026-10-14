@@ -7,8 +7,8 @@ fn bool_const(manager : @ast.AstManager, name : String) -> @util.ExprId raise {
 ///|
 fn unit_availability_text(value : @util.Availability[Unit]) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -17,8 +17,8 @@ fn[T] discard_available(
   value : @util.Availability[T],
 ) -> @util.Availability[Unit] {
   match value {
-    @util.Available(_) => @util.Available(())
-    @util.Unavailable(reason) => @util.Unavailable(reason)
+    Available(_) => Available(())
+    Unavailable(reason) => Unavailable(reason)
   }
 }
 
@@ -27,8 +27,8 @@ fn solver_availability_text(
   value : @util.Availability[@solver.Solver],
 ) -> String {
   match value {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -37,21 +37,24 @@ fn core_availability_text(
   value : @util.Availability[@solver.UnsatCore],
 ) -> String {
   match value {
-    @util.Available(core) => core.to_text()
-    @util.Unavailable(reason) => reason.to_text()
+    Available(core) => core.to_text()
+    Unavailable(reason) => reason.to_text()
   }
 }
 
 ///|
 test "default_factory_reports_preprocess_strategy" {
   let config = @solver.SolverFactoryConfig::new().with_logic("QF_UF")
-  inspect(default_strategy_text(config), content="logic=QF_UF;preprocess=on")
+  inspect(
+    @default_factory.default_strategy_text(config),
+    content="logic=QF_UF;preprocess=on",
+  )
 }
 
 ///|
 test "default_factory_reports_solver_params_contract" {
   inspect(
-    default_params_descrs().keys_text(),
+    @default_factory.default_params_descrs().keys_text(),
     content="produce_models,produce_proofs,produce_unsat_cores,produce_unsat_assumptions,model_completion,proof_check",
   )
 }
@@ -60,28 +63,28 @@ test "default_factory_reports_solver_params_contract" {
 test "default_factory_reports_phase11_theory_selection" {
   let manager = @ast.AstManager::new()
   inspect(
-    default_configured_theory_names(
+    @default_factory.default_configured_theory_names(
       manager,
       @solver.SolverFactoryConfig::new().with_logic("QF_UF"),
     ),
     content="euf",
   )
   inspect(
-    default_configured_theory_names(
+    @default_factory.default_configured_theory_names(
       manager,
       @solver.SolverFactoryConfig::new().with_logic("QF_UFLIA"),
     ),
     content="euf,arith_lite",
   )
   inspect(
-    default_configured_theory_names(
+    @default_factory.default_configured_theory_names(
       manager,
       @solver.SolverFactoryConfig::new().with_logic("QF_FAKE_COMBO"),
     ),
     content="euf,fake_combo",
   )
   inspect(
-    default_configured_theory_names(
+    @default_factory.default_configured_theory_names(
       manager,
       @solver.SolverFactoryConfig::new().with_logic("ALL"),
     ),
@@ -93,7 +96,7 @@ test "default_factory_reports_phase11_theory_selection" {
 test "default_factory_solves_bool_sat_through_preprocess_wrapper" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = default_factory().create(
+  let solver = @default_factory.default_factory().create(
     manager,
     @solver.SolverFactoryConfig::new().with_logic("QF_UF"),
   )
@@ -106,7 +109,7 @@ test "default_factory_solves_bool_sat_through_preprocess_wrapper" {
 test "default_factory_solves_bool_unsat_through_preprocess_wrapper" {
   let manager = @ast.AstManager::new()
   let p = bool_const(manager, "p")
-  let solver = default_factory().create(
+  let solver = @default_factory.default_factory().create(
     manager,
     @solver.SolverFactoryConfig::new().with_logic("QF_UF"),
   )
@@ -124,7 +127,7 @@ test "default_factory_translate_preserves_scopes_and_tracked_core" {
   let p = bool_const(source, "p")
   let q = bool_const(source, "q")
   let tracker = bool_const(source, "named-p")
-  let solver = default_factory().create(
+  let solver = @default_factory.default_factory().create(
     source,
     @solver.SolverFactoryConfig::new()
     .with_logic("QF_UF")
@@ -156,7 +159,7 @@ test "default_factory_translate_preserves_scopes_and_tracked_core" {
     content="available",
   )
   match translated_availability {
-    @util.Available(translated) => {
+    Available(translated) => {
       inspect(translated.get_scope_level(), content="2")
       inspect(translated.get_num_assertions(), content="3")
       inspect(
@@ -173,6 +176,6 @@ test "default_factory_translate_preserves_scopes_and_tracked_core" {
       inspect(unit_availability_text(translated.pop(1)), content="available")
       inspect(translated.check_sat().to_text(), content="sat")
     }
-    @util.Unavailable(_) => fail("expected translated solver")
+    Unavailable(_) => fail("expected translated solver")
   }
 }

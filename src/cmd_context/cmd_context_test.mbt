@@ -1,6 +1,6 @@
 ///|
 fn context_bool_expr(
-  context : CommandContext,
+  context : @cmd_context.CommandContext,
   name : String,
 ) -> @util.ExprId raise {
   let decl = context.manager().lookup_decl(name).unwrap()
@@ -8,19 +8,25 @@ fn context_bool_expr(
 }
 
 ///|
-fn new_default_context() -> CommandContext {
-  CommandContext::new(@assembly.solver_factory())
+fn new_default_context() -> @cmd_context.CommandContext {
+  @cmd_context.CommandContext::new(@assembly.solver_factory())
 }
 
 ///|
-fn expect_command_ok(context : CommandContext, command : Command) -> Unit raise {
+fn expect_command_ok(
+  context : @cmd_context.CommandContext,
+  command : @cmd_context.Command,
+) -> Unit raise {
   context.execute(command) catch {
     err => fail("unexpected command diagnostic: \{err}")
   }
 }
 
 ///|
-fn command_error_text(context : CommandContext, command : Command) -> String {
+fn command_error_text(
+  context : @cmd_context.CommandContext,
+  command : @cmd_context.Command,
+) -> String {
   context.execute(command) catch {
     err => return err.to_string()
   }
@@ -29,7 +35,7 @@ fn command_error_text(context : CommandContext, command : Command) -> String {
 
 ///|
 fn unavailable_unit(feature : String) -> @util.Availability[Unit] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment(feature),
     ),
@@ -43,18 +49,18 @@ fn pop_rejecting_factory() -> @solver.SolverFactory {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
-        push=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
+        push=fn(_) { Available(()) },
         pop=fn(_) { unavailable_unit("backend-pop") },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::sat(),
           )
         },
-        model=fn() { @util.Available(@model.Model::new()) },
+        model=fn() { Available(@model.Model::new()) },
         proof=fn() {
-          @util.Unavailable(
+          Unavailable(
             @util.AvailabilityReason::unsupported(
               @util.ReasonUnknown::unsupported_fragment("proof-query"),
             ),
@@ -73,18 +79,18 @@ fn push_rejecting_factory() -> @solver.SolverFactory {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
         push=fn(_) { unavailable_unit("backend-push") },
-        pop=fn(_) { @util.Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::sat(),
           )
         },
-        model=fn() { @util.Available(@model.Model::new()) },
+        model=fn() { Available(@model.Model::new()) },
         proof=fn() {
-          @util.Unavailable(
+          Unavailable(
             @util.AvailabilityReason::unsupported(
               @util.ReasonUnknown::unsupported_fragment("proof-query"),
             ),
@@ -103,20 +109,20 @@ fn tracked_assert_rejecting_factory() -> @solver.SolverFactory {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
         assert_expr_tracked=fn(_, _) {
           unavailable_unit("backend-tracked-assert")
         },
-        push=fn(_) { @util.Available(()) },
-        pop=fn(_) { @util.Available(()) },
+        push=fn(_) { Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::sat(),
           )
         },
-        model=fn() { @util.Available(@model.Model::new()) },
+        model=fn() { Available(@model.Model::new()) },
         proof=fn() {
-          @util.Unavailable(
+          Unavailable(
             @util.AvailabilityReason::unsupported(
               @util.ReasonUnknown::unsupported_fragment("proof-query"),
             ),
@@ -135,15 +141,13 @@ fn unknown_with_model_factory() -> @solver.SolverFactory {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
-        push=fn(_) { @util.Available(()) },
-        pop=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
+        push=fn(_) { Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
-            @solver.CheckSatResult::unknown_with_model(
-              @util.ReasonUnknown::Other("maybe"),
-            ),
+            @solver.CheckSatResult::unknown_with_model(Other("maybe")),
           )
         },
         model=fn() {
@@ -152,10 +156,10 @@ fn unknown_with_model_factory() -> @solver.SolverFactory {
             Some(p_decl) => model.add_bool_const(p_decl, "p", true)
             None => ()
           }
-          @util.Available(model)
+          Available(model)
         },
         proof=fn() {
-          @util.Unavailable(
+          Unavailable(
             @util.AvailabilityReason::unsupported(
               @util.ReasonUnknown::unsupported_fragment("proof-query"),
             ),
@@ -174,10 +178,10 @@ fn unknown_unsupported_factory() -> @solver.SolverFactory {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
-        push=fn(_) { @util.Available(()) },
-        pop=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
+        push=fn(_) { Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::unknown_no_model(
@@ -185,9 +189,9 @@ fn unknown_unsupported_factory() -> @solver.SolverFactory {
             ),
           )
         },
-        model=fn() { @util.Available(@model.Model::new()) },
+        model=fn() { Available(@model.Model::new()) },
         proof=fn() {
-          @util.Unavailable(
+          Unavailable(
             @util.AvailabilityReason::unsupported(
               @util.ReasonUnknown::unsupported_fragment("proof-query"),
             ),
@@ -208,7 +212,9 @@ test "context_set_logic_qf_uf" {
 
 ///|
 test "context_can_be_constructed_with_injected_solver_factory" {
-  let context = CommandContext::new_with_factory(@assembly.solver_factory())
+  let context = @cmd_context.CommandContext::new_with_factory(
+    @assembly.solver_factory(),
+  )
   expect_command_ok(context, DeclareConst("p", context.manager().bool_sort()))
   let p = context_bool_expr(context, "p")
   expect_command_ok(context, Assert(p))
@@ -423,18 +429,18 @@ test "context_get_info_all_statistics_serializes_incomplete_reasons" {
       manager,
       config,
       @solver.SolverBackend::new(
-        assert_expr=fn(_) { @util.Available(()) },
-        assert_expr_tracked=fn(_, _) { @util.Available(()) },
-        push=fn(_) { @util.Available(()) },
-        pop=fn(_) { @util.Available(()) },
+        assert_expr=fn(_) { Available(()) },
+        assert_expr_tracked=fn(_, _) { Available(()) },
+        push=fn(_) { Available(()) },
+        pop=fn(_) { Available(()) },
         check_sat_assuming=fn(_) {
           @solver.CheckSatAssumingResult::from_result(
             @solver.CheckSatResult::sat(),
           )
         },
-        model=fn() { @util.Available(@model.Model::new()) },
+        model=fn() { Available(@model.Model::new()) },
         proof=fn() {
-          @util.Unavailable(
+          Unavailable(
             @util.AvailabilityReason::unsupported(
               @util.ReasonUnknown::unsupported_fragment("proof-query"),
             ),
@@ -443,13 +449,13 @@ test "context_get_info_all_statistics_serializes_incomplete_reasons" {
         collect_statistics=fn() {
           let stats = @stats.Statistics::new()
           stats.inc_counter("backend.custom", 1)
-          stats.mark_incomplete(@util.ReasonUnknown::IncompleteTheory("stats"))
+          stats.mark_incomplete(IncompleteTheory("stats"))
           stats
         },
       ),
     )
   })
-  let context = CommandContext::new_with_factory(factory)
+  let context = @cmd_context.CommandContext::new_with_factory(factory)
   expect_command_ok(context, GetInfo(":all-statistics"))
   inspect(
     context.output(),
@@ -459,7 +465,9 @@ test "context_get_info_all_statistics_serializes_incomplete_reasons" {
 
 ///|
 test "context_get_info_reason_unknown_tracks_current_unknown_only" {
-  let context = CommandContext::new_with_factory(unknown_unsupported_factory())
+  let context = @cmd_context.CommandContext::new_with_factory(
+    unknown_unsupported_factory(),
+  )
   expect_command_ok(context, GetInfo(":reason-unknown"))
   expect_command_ok(context, CheckSat)
   expect_command_ok(context, GetInfo(":reason-unknown"))
@@ -631,7 +639,9 @@ test "context_global_decls_survives_reset" {
 
 ///|
 test "context_failed_solver_pop_preserves_ast_scope" {
-  let context = CommandContext::new_with_factory(pop_rejecting_factory())
+  let context = @cmd_context.CommandContext::new_with_factory(
+    pop_rejecting_factory(),
+  )
   expect_command_ok(context, Push(1))
   expect_command_ok(context, DeclareConst("p", context.manager().bool_sort()))
   inspect(
@@ -643,7 +653,9 @@ test "context_failed_solver_pop_preserves_ast_scope" {
 
 ///|
 test "context_failed_solver_push_preserves_ast_scope" {
-  let context = CommandContext::new_with_factory(push_rejecting_factory())
+  let context = @cmd_context.CommandContext::new_with_factory(
+    push_rejecting_factory(),
+  )
   inspect(
     command_error_text(context, Push(1)),
     content="solver: unsupported(backend-push)",
@@ -669,7 +681,7 @@ test "context_failed_named_assertion_does_not_create_tracker" {
 
 ///|
 test "context_failed_backend_tracked_assertion_removes_tracker" {
-  let context = CommandContext::new_with_factory(
+  let context = @cmd_context.CommandContext::new_with_factory(
     tracked_assert_rejecting_factory(),
   )
   expect_command_ok(context, DeclareConst("p", context.manager().bool_sort()))
@@ -798,14 +810,22 @@ test "context_get_model_requires_model_option" {
 
 ///|
 test "context_model_queries_use_unknown_with_model_candidate" {
-  let context = CommandContext::new_with_factory(unknown_with_model_factory())
+  let context = @cmd_context.CommandContext::new_with_factory(
+    unknown_with_model_factory(),
+  )
   expect_command_ok(context, SetOption(":produce-models", "true"))
   expect_command_ok(context, DeclareConst("p", context.manager().bool_sort()))
   let p = context_bool_expr(context, "p")
   expect_command_ok(context, CheckSat)
   expect_command_ok(context, GetModel)
-  expect_command_ok(context, GetValue([ModelQueryTerm::new("p", p)]))
-  expect_command_ok(context, Eval(ModelQueryTerm::new("p", p), false))
+  expect_command_ok(
+    context,
+    GetValue([@cmd_context.ModelQueryTerm::new("p", p)]),
+  )
+  expect_command_ok(
+    context,
+    Eval(@cmd_context.ModelQueryTerm::new("p", p), false),
+  )
   inspect(
     context.output(),
     content=(

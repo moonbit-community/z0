@@ -106,7 +106,7 @@ test "smt_context_check_sat_drains_queued_egraph_facts_before_theory_check" {
   plugin.set_new_eq(fn(_, _, fact) { log.push("eq:\{fact.to_int()}") })
   plugin.set_theory_check(fn(_, _) {
     log.push("check")
-    @theory_core.TheoryCheckDone
+    TheoryCheckDone
   })
   context.register_theory(plugin)
   context.enqueue_egraph_eq(lhs, rhs)

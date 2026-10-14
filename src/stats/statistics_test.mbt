@@ -1,6 +1,6 @@
 ///|
 test "statistics_counter_accumulates_by_stable_key" {
-  let stats = Statistics::new()
+  let stats = @stats.Statistics::new()
   stats.inc_counter("sat.decisions", 1)
   stats.inc_counter("sat.decisions", 2)
   inspect(stats.value_text("sat.decisions"), content="counter:3")
@@ -8,7 +8,7 @@ test "statistics_counter_accumulates_by_stable_key" {
 
 ///|
 test "statistics_timer_accumulates_by_stable_key" {
-  let stats = Statistics::new()
+  let stats = @stats.Statistics::new()
   stats.add_timer_ms("smt.internalize.ms", 1.5)
   stats.add_timer_ms("smt.internalize.ms", 0.25)
   inspect(stats.value_text("smt.internalize.ms"), content="timer-ms:1.75")
@@ -16,9 +16,9 @@ test "statistics_timer_accumulates_by_stable_key" {
 
 ///|
 test "statistics_merge_combines_matching_keys" {
-  let lhs = Statistics::new()
+  let lhs = @stats.Statistics::new()
   lhs.inc_counter("sat.propagations", 3)
-  let rhs = Statistics::new()
+  let rhs = @stats.Statistics::new()
   rhs.inc_counter("sat.propagations", 4)
   lhs.merge(rhs)
   inspect(lhs.value_text("sat.propagations"), content="counter:7")
@@ -26,7 +26,7 @@ test "statistics_merge_combines_matching_keys" {
 
 ///|
 test "statistics_keys_are_sorted_for_stable_snapshots" {
-  let stats = Statistics::new()
+  let stats = @stats.Statistics::new()
   stats.inc_counter("z.key", 1)
   stats.inc_counter("a.key", 1)
   inspect(stats.keys_text(), content="a.key,z.key")
@@ -34,7 +34,7 @@ test "statistics_keys_are_sorted_for_stable_snapshots" {
 
 ///|
 test "statistics_records_solver_model_proof_query_keys" {
-  let stats = Statistics::new()
+  let stats = @stats.Statistics::new()
   stats.record_solver_check()
   stats.record_model_query()
   stats.record_proof_query()
@@ -49,8 +49,8 @@ test "statistics_records_solver_model_proof_query_keys" {
 ///|
 fn stat_unit_availability_text(result : @util.Availability[Unit]) -> String {
   match result {
-    @util.Available(_) => "available"
-    @util.Unavailable(reason) => reason.to_text()
+    Available(_) => "available"
+    Unavailable(reason) => reason.to_text()
   }
 }
 
@@ -61,13 +61,13 @@ fn stat_reasons_text(reasons : Array[@util.ReasonUnknown]) -> String {
 
 ///|
 test "stat_manifest_rejects_incompatible_duplicate_descriptors" {
-  let manifest = StatManifest::new()
+  let manifest = @stats.StatManifest::new()
   inspect(
     stat_unit_availability_text(
       manifest.add_counter(
         "sat.decisions",
         "sat",
-        StatMergePolicy::sum(),
+        @stats.StatMergePolicy::sum(),
         "phase-10",
       ),
     ),
@@ -78,7 +78,7 @@ test "stat_manifest_rejects_incompatible_duplicate_descriptors" {
       manifest.add_counter(
         "sat.decisions",
         "sat",
-        StatMergePolicy::sum(),
+        @stats.StatMergePolicy::sum(),
         "phase-10",
       ),
     ),
@@ -89,7 +89,7 @@ test "stat_manifest_rejects_incompatible_duplicate_descriptors" {
       manifest.add_timer_ms(
         "sat.decisions",
         "sat",
-        StatMergePolicy::sum(),
+        @stats.StatMergePolicy::sum(),
         "phase-10",
       ),
     ),
@@ -102,16 +102,16 @@ test "stat_manifest_rejects_incompatible_duplicate_descriptors" {
 
 ///|
 test "statistics_manifest_reports_missing_owner_and_required_keys" {
-  let manifest = StatManifest::new()
+  let manifest = @stats.StatManifest::new()
   ignore(
     manifest.add_counter(
       "solver.checks",
       "solver",
-      StatMergePolicy::sum(),
+      @stats.StatMergePolicy::sum(),
       "phase-10",
     ),
   )
-  let stats = Statistics::new()
+  let stats = @stats.Statistics::new()
   stats.inc_counter("unowned.key", 1)
   inspect(
     stat_reasons_text(stats.incomplete_reasons(manifest)),
@@ -121,12 +121,12 @@ test "statistics_manifest_reports_missing_owner_and_required_keys" {
 
 ///|
 test "statistics_merge_propagates_incomplete_reasons" {
-  let manifest = StatManifest::new()
-  let lhs = Statistics::new()
-  lhs.mark_incomplete(@util.ReasonUnknown::IncompleteTheory("lhs"))
-  let rhs = Statistics::new()
-  rhs.mark_incomplete(@util.ReasonUnknown::InvalidModel)
-  rhs.mark_incomplete(@util.ReasonUnknown::InvalidModel)
+  let manifest = @stats.StatManifest::new()
+  let lhs = @stats.Statistics::new()
+  lhs.mark_incomplete(IncompleteTheory("lhs"))
+  let rhs = @stats.Statistics::new()
+  rhs.mark_incomplete(InvalidModel)
+  rhs.mark_incomplete(InvalidModel)
   lhs.merge(rhs)
   inspect(
     stat_reasons_text(lhs.incomplete_reasons(manifest)),
