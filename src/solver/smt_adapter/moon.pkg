@@ -1,7 +1,5 @@
 import {
   "moonbit-community/z0/src/ast",
-  "moonbit-community/z0/src/error/solver_error",
-  "moonbit-community/z0/src/error/type_error",
   "moonbit-community/z0/src/proof",
   "moonbit-community/z0/src/smt",
   "moonbit-community/z0/src/solver",

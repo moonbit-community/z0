@@ -29,7 +29,7 @@ fn EufSolver::expect_same_sort(
   rhs : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if self.manager.expr_sort(lhs) != self.manager.expr_sort(rhs) {
-    raise @type_error.TypeError("EUF terms have different sorts", None)
+    raise TypeError("EUF terms have different sorts", None)
   }
 }
 
@@ -39,7 +39,7 @@ fn EufSolver::expect_euf_sort(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if self.manager.expr_sort(expr) == self.manager.bool_sort() {
-    raise @type_error.TypeError("expected non-Bool EUF term", None)
+    raise TypeError("expected non-Bool EUF term", None)
   }
 }
 
@@ -65,7 +65,7 @@ fn EufSolver::make_term(
       self.congruence.add_term(node)
       node
     }
-    _ => raise @type_error.TypeError("expected uninterpreted term", None)
+    _ => raise TypeError("expected uninterpreted term", None)
   }
 }
 
@@ -138,9 +138,9 @@ pub fn EufSolver::pop_scope(
   count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   if count < 0 {
-    raise @solver_error.SolverError("cannot pop a negative number of scopes")
+    raise SolverError("cannot pop a negative number of scopes")
   } else if count > self.scope_depth {
-    raise @solver_error.SolverError(
+    raise SolverError(
       "cannot pop \{count} scope(s); only \{self.scope_depth} scope(s) are active",
     )
   } else if count == 0 {

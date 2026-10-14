@@ -8,7 +8,7 @@ pub struct Scanner {
 
 ///|
 pub fn Scanner::new(input : String) -> Scanner {
-  Scanner::{ input, index: 0, line: 1, column: 1, }
+  { input, index: 0, line: 1, column: 1, }
 }
 
 ///|
@@ -84,14 +84,10 @@ fn Scanner::scan_string(
   start : @source.SourcePos,
 ) -> Token raise @parse_error.ParseError {
   ignore(self.advance())
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   while true {
     match self.peek() {
-      None =>
-        raise @parse_error.ParseError(
-          "unclosed string",
-          Some(self.span_from(start)),
-        )
+      None => raise ParseError("unclosed string", Some(self.span_from(start)))
       Some('"') => {
         ignore(self.advance())
         match self.peek() {
@@ -116,7 +112,7 @@ fn Scanner::scan_string(
 
 ///|
 fn Scanner::scan_symbol(self : Scanner, start : @source.SourcePos) -> Token {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   while true {
     match self.peek() {
       Some(c) if !is_symbol_delimiter(c) => {

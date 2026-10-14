@@ -94,7 +94,7 @@ pub(all) struct SatExtension {
 
 ///|
 pub fn SatExtension::no_extension() -> SatExtension {
-  SatExtension::{
+  {
     init_search: fn() { ExtensionNoAction },
     tracking_assumptions: fn() { [] },
     add_assumptions: fn(_) { () },
@@ -110,7 +110,7 @@ pub fn SatExtension::no_extension() -> SatExtension {
     check: fn(_) { ExtensionNoAction },
     reason_unknown: fn() { None },
     collect_statistics: fn() { @stats.Statistics::new() },
-    validate: fn(_) { @util.Available(()) },
+    validate: fn(_) { Available(()) },
     init_use_list: fn() { () },
     gc: fn() { () },
     gc_vars: fn(_) { () },

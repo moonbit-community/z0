@@ -1,6 +1,6 @@
 ///|
 fn simplify_unavailable(message : String) -> @util.Availability[TacticResult] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("simplify:\{message}"),
     ),
@@ -44,11 +44,11 @@ pub fn Tactic::simplify() -> Tactic {
         Some(true) => ()
         Some(false) => {
           simplified.add(rewritten)
-          return @util.Available(TacticResult::from_goals([simplified]))
+          return Available(TacticResult::from_goals([simplified]))
         }
         None => simplified.add(rewritten)
       }
     }
-    @util.Available(TacticResult::from_goals([simplified]))
+    Available(TacticResult::from_goals([simplified]))
   })
 }

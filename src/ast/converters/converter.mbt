@@ -7,7 +7,7 @@ fn unsupported_reason(feature : String) -> @util.AvailabilityReason {
 
 ///|
 fn[T] converter_unavailable(feature : String) -> @util.Availability[T] {
-  @util.Unavailable(unsupported_reason(feature))
+  Unavailable(unsupported_reason(feature))
 }
 
 ///|

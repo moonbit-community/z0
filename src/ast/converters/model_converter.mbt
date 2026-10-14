@@ -138,7 +138,7 @@ pub fn ModelConverter::get_units(
           None => remove_model_unit(result, action.name)
         }
       }
-      @util.Available(result)
+      Available(result)
     }
   }
 }
@@ -155,7 +155,7 @@ pub fn ModelConverter::convert_initialize_values(
       for value in self.initialize_values {
         result.push(value)
       }
-      @util.Available(result)
+      Available(result)
     }
   }
 }
@@ -172,7 +172,7 @@ pub fn ModelConverter::apply_model(
 ) -> @util.Availability[@model.Model] {
   match self.unsupported {
     Some(feature) => converter_unavailable(feature)
-    None => @util.Available(model)
+    None => Available(model)
   }
 }
 
@@ -183,7 +183,7 @@ pub fn ModelConverter::translate(
 ) -> @util.Availability[ModelConverter] {
   match self.unsupported {
     Some(feature) => converter_unavailable(feature)
-    None => @util.Available(self)
+    None => Available(self)
   }
 }
 

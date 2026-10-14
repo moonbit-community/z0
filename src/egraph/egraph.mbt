@@ -83,7 +83,7 @@ pub fn EGraph::mk_enode_with_key(
       self.nodes.push(
         EnodeRecord::new(id, expr, args, generation, operator_key),
       )
-      self.expr_bindings.push(ExprEnodeBinding::{ expr, enode: id, })
+      self.expr_bindings.push({ expr, enode: id, })
       for arg in args {
         if self.valid_index(arg) {
           self.nodes[arg.to_int()].parents.push(id)
@@ -158,16 +158,13 @@ pub fn EGraph::push(self : EGraph) -> Unit {
   let parent_lengths : Array[ScopedLength] = []
   let theory_var_lengths : Array[ScopedLength] = []
   for i in 0..<self.nodes.length() {
-    parent_lengths.push(ScopedLength::{
-      index: i,
-      length: self.nodes[i].parents.length(),
-    })
-    theory_var_lengths.push(ScopedLength::{
+    parent_lengths.push({ index: i, length: self.nodes[i].parents.length(), })
+    theory_var_lengths.push({
       index: i,
       length: self.nodes[i].theory_vars.length(),
     })
   }
-  self.scopes.push(EGraphScope::{
+  self.scopes.push({
     nodes_len: self.nodes.length(),
     bindings_len: self.expr_bindings.length(),
     justifications_len: self.justifications.length(),

@@ -19,37 +19,37 @@ fn unsupported_operator(
   op : String,
 ) -> Unit raise @unsupported_error.UnsupportedError {
   if op == "forall" || op == "exists" {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "quantifiers are not supported in Bool+EUF milestone",
       None,
     )
   } else if op == "match" || op == "as" {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "datatypes are not supported in Bool+EUF milestone",
       None,
     )
   } else if op == "!" || op == "par" {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "reserved identifiers are not supported in Bool+EUF milestone",
       None,
     )
   } else if op == "+" || op == "-" || op == "*" || op == "/" {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "arithmetic is not supported in Bool+EUF milestone",
       None,
     )
   } else if op.has_prefix("bv") {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "bit-vectors are not supported in Bool+EUF milestone",
       None,
     )
   } else if op.has_prefix("str.") || op.has_prefix("re.") {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "strings are not supported in Bool+EUF milestone",
       None,
     )
   } else if op == "select" || op == "store" {
-    raise @unsupported_error.UnsupportedError(
+    raise UnsupportedError(
       "arrays are not supported in Bool+EUF milestone",
       None,
     )
@@ -75,10 +75,10 @@ fn parse_int_atom(symbol : String) -> Int32? {
 ///|
 fn arith_compare_op(op : String) -> @ast.ArithCompareOp? {
   match op {
-    "<" => Some(@ast.Lt)
-    "<=" => Some(@ast.Le)
-    ">" => Some(@ast.Gt)
-    ">=" => Some(@ast.Ge)
+    "<" => Some(Lt)
+    "<=" => Some(Le)
+    ">" => Some(Gt)
+    ">=" => Some(Ge)
     _ => None
   }
 }
@@ -175,23 +175,15 @@ fn parse_scoped_let_body(
   body : SExpr,
 ) -> @util.ExprId raise {
   manager.push_scope()
-  try {
-    for binding in bindings {
-      let (name, expr) = binding
-      manager.define_scoped_macro(name, expr)
-    }
-    let parsed_body = parse_term(manager, body)
-    let expanded_body = manager.expand_macros(parsed_body).result()
-    manager.pop_scope(1)
-    expanded_body
-  } catch {
-    err => {
-      manager.pop_scope(1) catch {
-        _ => ()
-      }
-      raise err
-    }
+  errdefer (manager.pop_scope(1) catch { _ => () })
+  for binding in bindings {
+    let (name, expr) = binding
+    manager.define_scoped_macro(name, expr)
   }
+  let parsed_body = parse_term(manager, body)
+  let expanded_body = manager.expand_macros(parsed_body).result()
+  manager.pop_scope(1)
+  expanded_body
 }
 
 ///|

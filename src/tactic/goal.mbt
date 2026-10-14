@@ -193,7 +193,7 @@ pub fn Goal::is_decided_unsat(self : Goal) -> Bool {
   }
   for formula in self.formulas {
     match self.manager.get_expr(formula).kind {
-      @ast.BoolValue(false) => return true
+      BoolValue(false) => return true
       _ => ()
     }
   }

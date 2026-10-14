@@ -64,7 +64,7 @@ pub fn run_interactive_input(input : String) -> String {
 ///|
 pub fn read_input_file(path : String) -> String raise @io_error.IoError {
   @fs.read_file_to_string(path) catch {
-    @fs.IOError(message) => raise @io_error.IoError(message)
+    IOError(message) => raise IoError(message)
   }
 }
 
@@ -100,10 +100,22 @@ fn run_action(action : ShellAction) -> ShellResult {
 }
 
 ///|
+#cfg(not(target="js"))
+fn user_args_start() -> Int32 {
+  1
+}
+
+///|
+#cfg(target="js")
+fn user_args_start() -> Int32 {
+  2
+}
+
+///|
 fn user_args() -> Array[String] {
-  let args = @sys.get_cli_args()
+  let args = @env.args()
   let parsed : Array[String] = []
-  for i in 1..<args.length() {
+  for i in user_args_start()..<args.length() {
     parsed.push(args[i])
   }
   parsed

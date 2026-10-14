@@ -36,7 +36,7 @@ fn egraph_euf_same_sort(
   rhs : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if manager.expr_sort(lhs) != manager.expr_sort(rhs) {
-    raise @type_error.TypeError("EUF terms have different sorts", None)
+    raise TypeError("EUF terms have different sorts", None)
   }
 }
 
@@ -46,7 +46,7 @@ fn egraph_euf_expect_term(
   expr : @util.ExprId,
 ) -> Unit raise @type_error.TypeError {
   if manager.expr_sort(expr) == manager.bool_sort() {
-    raise @type_error.TypeError("expected non-Bool EUF term", None)
+    raise TypeError("expected non-Bool EUF term", None)
   }
 }
 
@@ -74,7 +74,7 @@ fn EGraphEufSearch::materialize_term(
       self.remember_term(id)
       id
     }
-    _ => raise @type_error.TypeError("expected uninterpreted term", None)
+    _ => raise TypeError("expected uninterpreted term", None)
   }
 }
 
@@ -196,8 +196,7 @@ fn EGraphEufSearch::assert_formula(
 ) -> Unit raise @type_error.TypeError {
   let expanded = self.manager.expand_macros(expr).result()
   match self.manager.get_expr(expanded).kind {
-    MacroRef(_) =>
-      raise @type_error.TypeError("unexpanded macro in EUF assertion", None)
+    MacroRef(_) => raise TypeError("unexpanded macro in EUF assertion", None)
     Not(inner) => self.assert_formula(inner, !polarity)
     And(args) =>
       if polarity {
@@ -205,7 +204,7 @@ fn EGraphEufSearch::assert_formula(
           self.assert_formula(arg, true)
         }
       } else {
-        raise @type_error.TypeError("negated EUF conjunction", None)
+        raise TypeError("negated EUF conjunction", None)
       }
     Eq(lhs, rhs) =>
       if self.manager.expr_sort(lhs) == self.manager.bool_sort() {
@@ -228,10 +227,10 @@ fn EGraphEufSearch::assert_formula(
       } else if args.length() == 2 {
         self.assert_equal(args[0], args[1])
       } else {
-        raise @type_error.TypeError("negated n-ary distinct", None)
+        raise TypeError("negated n-ary distinct", None)
       }
     IntValue(_) | ArithCompare(_, _, _) =>
-      raise @type_error.TypeError("unsupported arithmetic EUF assertion", None)
+      raise TypeError("unsupported arithmetic EUF assertion", None)
     BoolValue(_) | App(_, _) | Or(_) | Implies(_, _) | Xor(_, _) => ()
   }
 }
@@ -246,8 +245,7 @@ fn smt_euf_enqueue_assertion_facts(
 ) -> Unit raise @type_error.TypeError {
   let expanded = manager.expand_macros(expr).result()
   match manager.get_expr(expanded).kind {
-    MacroRef(_) =>
-      raise @type_error.TypeError("unexpanded macro in EUF assertion", None)
+    MacroRef(_) => raise TypeError("unexpanded macro in EUF assertion", None)
     Not(inner) =>
       smt_euf_enqueue_assertion_facts(
         manager,
@@ -264,7 +262,7 @@ fn smt_euf_enqueue_assertion_facts(
           )
         }
       } else {
-        raise @type_error.TypeError("negated EUF conjunction", None)
+        raise TypeError("negated EUF conjunction", None)
       }
     Eq(lhs, rhs) =>
       if manager.expr_sort(lhs) != manager.bool_sort() {
@@ -287,11 +285,11 @@ fn smt_euf_enqueue_assertion_facts(
             internalizer.mk_enode(args[1]),
           )
         } else {
-          raise @type_error.TypeError("negated n-ary distinct", None)
+          raise TypeError("negated n-ary distinct", None)
         }
       }
     IntValue(_) | ArithCompare(_, _, _) =>
-      raise @type_error.TypeError("unsupported arithmetic EUF assertion", None)
+      raise TypeError("unsupported arithmetic EUF assertion", None)
     BoolValue(_) | App(_, _) | Or(_) | Implies(_, _) | Xor(_, _) => ()
   }
 }

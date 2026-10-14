@@ -21,7 +21,7 @@ fn atom_or_error(
 ) -> String raise @parse_error.ParseError {
   match sexpr_as_atom(expr) {
     Some(atom) => atom
-    None => raise @parse_error.ParseError("\{what} must be a symbol", None)
+    None => raise ParseError("\{what} must be a symbol", None)
   }
 }
 
@@ -94,14 +94,10 @@ fn parse_count(
     let text = atom_or_error(items[1], "\{command} count")
     match parse_nonnegative_int(text) {
       Some(count) => count
-      None =>
-        raise @parse_error.ParseError(
-          "\{command} count must be non-negative",
-          None,
-        )
+      None => raise ParseError("\{command} count must be non-negative", None)
     }
   } else {
-    raise @parse_error.ParseError("\{command} expects zero or one count", None)
+    raise ParseError("\{command} expects zero or one count", None)
   }
 }
 
@@ -109,8 +105,7 @@ fn parse_count(
 fn parse_option_value(expr : SExpr) -> String raise @parse_error.ParseError {
   match expr {
     Atom(value, _) | StringLit(value, _) => value
-    List(_, _) =>
-      raise @parse_error.ParseError("option value must be atomic", None)
+    List(_, _) => raise ParseError("option value must be atomic", None)
   }
 }
 
@@ -150,13 +145,13 @@ fn parse_assert_command(
 ) -> @cmd_context.Command raise {
   match sexpr_as_list(expr) {
     Some([Atom("!", _), term, Atom(":named", _), Atom(name, _)]) =>
-      @cmd_context.AssertNamed(parse_term(manager, term), name)
+      AssertNamed(parse_term(manager, term), name)
     Some([Atom("!", _), ..]) =>
       raise @parse_error.ParseError(
         "assert annotation supports only :named",
         None,
       )
-    _ => @cmd_context.Assert(parse_term(manager, expr))
+    _ => Assert(parse_term(manager, expr))
   }
 }
 
@@ -177,7 +172,7 @@ fn parse_assumption_list(
 
 ///|
 fn smt2_quote_string(value : String) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('"')
   for c in value {
     if c == '"' {
@@ -198,7 +193,7 @@ fn sexpr_to_smt2(expr : SExpr) -> String {
     Atom(value, _) => value
     StringLit(value, _) => smt2_quote_string(value)
     List(items, _) => {
-      let builder = StringBuilder::new()
+      let builder = StringBuilder()
       builder.write_char('(')
       for i in 0..<items.length() {
         if i > 0 {
@@ -253,10 +248,8 @@ fn parse_bool_keyword_value(
   match sexpr_as_atom(expr) {
     Some("true") => true
     Some("false") => false
-    Some(_) =>
-      raise @parse_error.ParseError("\{keyword} expects true or false", None)
-    None =>
-      raise @parse_error.ParseError("\{keyword} expects true or false", None)
+    Some(_) => raise ParseError("\{keyword} expects true or false", None)
+    None => raise ParseError("\{keyword} expects true or false", None)
   }
 }
 
@@ -266,11 +259,11 @@ fn parse_eval_command(
   items : Array[SExpr],
 ) -> @cmd_context.Command raise {
   if items.length() == 2 {
-    @cmd_context.Eval(parse_model_query_term(manager, items[1]), false)
+    Eval(parse_model_query_term(manager, items[1]), false)
   } else if items.length() == 4 {
     match sexpr_as_atom(items[2]) {
       Some(":completion") =>
-        @cmd_context.Eval(
+        Eval(
           parse_model_query_term(manager, items[1]),
           parse_bool_keyword_value(":completion", items[3]),
         )
@@ -303,7 +296,7 @@ pub fn parse_command(
         match name {
           "set-logic" =>
             if items.length() == 2 {
-              @cmd_context.SetLogic(atom_or_error(items[1], "logic"))
+              SetLogic(atom_or_error(items[1], "logic"))
             } else {
               raise @parse_error.ParseError(
                 "set-logic expects one argument",
@@ -312,7 +305,7 @@ pub fn parse_command(
             }
           "set-option" =>
             if items.length() == 3 {
-              @cmd_context.SetOption(
+              SetOption(
                 atom_or_error(items[1], "option name"),
                 parse_option_value(items[2]),
               )
@@ -324,7 +317,7 @@ pub fn parse_command(
             }
           "set-info" =>
             if items.length() == 3 {
-              @cmd_context.SetInfo(
+              SetInfo(
                 atom_or_error(items[1], "info name"),
                 parse_option_value(items[2]),
               )
@@ -336,7 +329,7 @@ pub fn parse_command(
             }
           "get-option" =>
             if items.length() == 2 {
-              @cmd_context.GetOption(atom_or_error(items[1], "option name"))
+              GetOption(atom_or_error(items[1], "option name"))
             } else {
               raise @parse_error.ParseError(
                 "get-option expects one argument",
@@ -348,7 +341,7 @@ pub fn parse_command(
               let sort_name = atom_or_error(items[1], "sort name")
               let arity_text = atom_or_error(items[2], "sort arity")
               match parse_nonnegative_int(arity_text) {
-                Some(arity) => @cmd_context.DeclareSort(sort_name, arity)
+                Some(arity) => DeclareSort(sort_name, arity)
                 None =>
                   raise @parse_error.ParseError(
                     "sort arity must be non-negative",
@@ -363,7 +356,7 @@ pub fn parse_command(
             }
           "declare-const" =>
             if items.length() == 3 {
-              @cmd_context.DeclareConst(
+              DeclareConst(
                 atom_or_error(items[1], "constant name"),
                 parse_sort(manager, items[2]),
               )
@@ -375,7 +368,7 @@ pub fn parse_command(
             }
           "declare-fun" =>
             if items.length() == 4 {
-              @cmd_context.DeclareFun(
+              DeclareFun(
                 atom_or_error(items[1], "function name"),
                 parse_sort_list(manager, items[2]),
                 parse_sort(manager, items[3]),
@@ -403,7 +396,7 @@ pub fn parse_command(
                   None,
                 )
               } else {
-                @cmd_context.DefineFun(fun_name, params, range, body)
+                DefineFun(fun_name, params, range, body)
               }
             } else {
               raise @parse_error.ParseError(
@@ -417,17 +410,17 @@ pub fn parse_command(
             } else {
               raise @parse_error.ParseError("assert expects one argument", None)
             }
-          "push" => @cmd_context.Push(parse_count(items, "push"))
-          "pop" => @cmd_context.Pop(parse_count(items, "pop"))
+          "push" => Push(parse_count(items, "push"))
+          "pop" => Pop(parse_count(items, "pop"))
           "reset" =>
             if items.length() == 1 {
-              @cmd_context.Reset
+              Reset
             } else {
               raise @parse_error.ParseError("reset expects no arguments", None)
             }
           "reset-assertions" =>
             if items.length() == 1 {
-              @cmd_context.ResetAssertions
+              ResetAssertions
             } else {
               raise @parse_error.ParseError(
                 "reset-assertions expects no arguments",
@@ -436,7 +429,7 @@ pub fn parse_command(
             }
           "check-sat" =>
             if items.length() == 1 {
-              @cmd_context.CheckSat
+              CheckSat
             } else {
               raise @parse_error.ParseError(
                 "check-sat expects no arguments",
@@ -445,9 +438,7 @@ pub fn parse_command(
             }
           "check-sat-assuming" =>
             if items.length() == 2 {
-              @cmd_context.CheckSatAssuming(
-                parse_assumption_list(manager, items[1]),
-              )
+              CheckSatAssuming(parse_assumption_list(manager, items[1]))
             } else {
               raise @parse_error.ParseError(
                 "check-sat-assuming expects one argument",
@@ -456,7 +447,7 @@ pub fn parse_command(
             }
           "get-model" =>
             if items.length() == 1 {
-              @cmd_context.GetModel
+              GetModel
             } else {
               raise @parse_error.ParseError(
                 "get-model expects no arguments",
@@ -465,7 +456,7 @@ pub fn parse_command(
             }
           "get-value" =>
             if items.length() == 2 {
-              @cmd_context.GetValue(parse_get_value_terms(manager, items[1]))
+              GetValue(parse_get_value_terms(manager, items[1]))
             } else {
               raise @parse_error.ParseError(
                 "get-value expects one argument",
@@ -475,7 +466,7 @@ pub fn parse_command(
           "eval" => parse_eval_command(manager, items)
           "get-proof" =>
             if items.length() == 1 {
-              @cmd_context.GetProof
+              GetProof
             } else {
               raise @parse_error.ParseError(
                 "get-proof expects no arguments",
@@ -484,7 +475,7 @@ pub fn parse_command(
             }
           "get-unsat-core" =>
             if items.length() == 1 {
-              @cmd_context.GetUnsatCore
+              GetUnsatCore
             } else {
               raise @parse_error.ParseError(
                 "get-unsat-core expects no arguments",
@@ -493,7 +484,7 @@ pub fn parse_command(
             }
           "get-unsat-assumptions" =>
             if items.length() == 1 {
-              @cmd_context.GetUnsatAssumptions
+              GetUnsatAssumptions
             } else {
               raise @parse_error.ParseError(
                 "get-unsat-assumptions expects no arguments",
@@ -502,7 +493,7 @@ pub fn parse_command(
             }
           "get-info" =>
             if items.length() == 2 {
-              @cmd_context.GetInfo(atom_or_error(items[1], "info name"))
+              GetInfo(atom_or_error(items[1], "info name"))
             } else {
               raise @parse_error.ParseError(
                 "get-info expects one argument",
@@ -511,13 +502,13 @@ pub fn parse_command(
             }
           "echo" =>
             if items.length() == 2 {
-              @cmd_context.Echo(parse_option_value(items[1]))
+              Echo(parse_option_value(items[1]))
             } else {
               raise @parse_error.ParseError("echo expects one argument", None)
             }
           "exit" =>
             if items.length() == 1 {
-              @cmd_context.Exit
+              Exit
             } else {
               raise @parse_error.ParseError("exit expects no arguments", None)
             }

@@ -22,7 +22,7 @@ pub fn CommandContext::new_with_factory(
   factory : @solver.SolverFactory,
 ) -> CommandContext {
   let manager = @ast.AstManager::new()
-  CommandContext::{
+  {
     manager,
     factory,
     solver: factory.create(manager, @solver.SolverFactoryConfig::new()),
@@ -112,7 +112,7 @@ fn runner_parse_message_body(message : String) -> String {
 
 ///|
 fn smt2_quote_runner_error_string(value : String) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('"')
   for c in value {
     if c == '"' {
@@ -187,7 +187,7 @@ fn render_output_lines(lines : Array[String]) -> String {
   if lines.is_empty() {
     ""
   } else {
-    let builder = StringBuilder::new()
+    let builder = StringBuilder()
     for line in lines {
       builder.write_string(line)
       builder.write_char('\n')
@@ -211,12 +211,12 @@ fn CommandContext::get_value_text(
   self : CommandContext,
   terms : Array[ModelQueryTerm],
 ) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('(')
   for i in 0..<terms.length() {
     let term = terms[i]
     match self.solver.get_value(term.expr()) {
-      @util.Available(value) => {
+      Available(value) => {
         if i > 0 {
           builder.write_char(' ')
         }
@@ -226,9 +226,8 @@ fn CommandContext::get_value_text(
         builder.write_string(value.format_smt2())
         builder.write_char(')')
       }
-      @util.Unavailable(@util.AvailabilityReason::Disabled(_)) =>
-        return "error: model production is disabled"
-      @util.Unavailable(reason) =>
+      Unavailable(Disabled(_)) => return "error: model production is disabled"
+      Unavailable(reason) =>
         return "error: value is not available: \{reason.to_text()}"
     }
   }
@@ -281,9 +280,8 @@ fn CommandContext::assert_expr(
   let expanded = @rewriter.expand_macros(self.manager, expr)
   match
     self.solver.assert_expr(@rewriter.rewrite_bool(self.manager, expanded)) {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) =>
-      raise @type_error.TypeError(reason.to_text(), None)
+    Available(_) => ()
+    Unavailable(reason) => raise TypeError(reason.to_text(), None)
   }
 }
 
@@ -296,11 +294,11 @@ fn CommandContext::assert_named_expr(
   let expanded = @rewriter.expand_macros(self.manager, expr)
   let rewritten = @rewriter.rewrite_bool(self.manager, expanded)
   if self.manager.expr_sort(rewritten) != self.manager.bool_sort() {
-    raise @type_error.TypeError("expected Bool named assertion", None)
+    raise TypeError("expected Bool named assertion", None)
   }
   if self.manager.lookup_decl(name) is Some(_) ||
     self.manager.lookup_macro(name) is Some(_) {
-    raise @type_error.TypeError("declaration already exists: \{name}", None)
+    raise TypeError("declaration already exists: \{name}", None)
   }
   self.manager.push_scope()
   let tracker_decl = self.manager.declare_const(name, self.manager.bool_sort())
@@ -310,15 +308,15 @@ fn CommandContext::assert_named_expr(
       rewritten,
       @solver.TrackedExpr::new(tracker_expr, Some(name)),
     ) {
-    @util.Available(_) =>
+    Available(_) =>
       self.manager.commit_scope(1) catch {
-        err => raise @type_error.TypeError(err.to_string(), None)
+        err => raise TypeError(err.to_string(), None)
       }
-    @util.Unavailable(reason) => {
+    Unavailable(reason) => {
       self.manager.pop_scope(1) catch {
-        err => raise @type_error.TypeError(err.to_string(), None)
+        err => raise TypeError(err.to_string(), None)
       }
-      raise @type_error.TypeError(reason.to_text(), None)
+      raise TypeError(reason.to_text(), None)
     }
   }
 }
@@ -329,12 +327,11 @@ fn CommandContext::push_scopes(
   count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   if count < 0 {
-    raise @solver_error.SolverError("cannot push a negative number of scopes")
+    raise SolverError("cannot push a negative number of scopes")
   } else {
     match self.solver.push(count) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
-        raise @solver_error.SolverError(reason.to_text())
+      Available(_) => ()
+      Unavailable(reason) => raise SolverError(reason.to_text())
     }
     if !self.options.global_decls() {
       for _ in 0..<count {
@@ -350,9 +347,8 @@ fn CommandContext::pop_scopes(
   count : Int32,
 ) -> Unit raise @solver_error.SolverError {
   match self.solver.pop(count) {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) =>
-      raise @solver_error.SolverError(command_solver_reason_text(reason))
+    Available(_) => ()
+    Unavailable(reason) => raise SolverError(command_solver_reason_text(reason))
   }
   if !self.options.global_decls() {
     self.manager.pop_scope(count)
@@ -362,9 +358,7 @@ fn CommandContext::pop_scopes(
 ///|
 fn command_solver_reason_text(reason : @util.AvailabilityReason) -> String {
   match reason {
-    @util.AvailabilityReason::Unsupported(
-      @util.ReasonUnknown::UnsupportedFragment(fragment)
-    ) =>
+    Unsupported(UnsupportedFragment(fragment)) =>
       if fragment == "invalid-pop" || fragment.has_prefix("late-option:") {
         fragment
       } else {
@@ -405,9 +399,8 @@ fn CommandContext::reset_assertions(
   )
   if scope_depth > 0 {
     match next_solver.push(scope_depth) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
-        raise @solver_error.SolverError(reason.to_text())
+      Available(_) => ()
+      Unavailable(reason) => raise SolverError(reason.to_text())
     }
   }
   self.solver = next_solver
@@ -458,7 +451,7 @@ fn parse_command_bool_option(
 ) -> Bool raise @parse_error.ParseError {
   match parse_bool_option(value) {
     Some(parsed) => parsed
-    None => raise @parse_error.ParseError("\{name} expects true or false", None)
+    None => raise ParseError("\{name} expects true or false", None)
   }
 }
 
@@ -471,32 +464,32 @@ fn CommandContext::set_option(
   if name == ":produce-models" {
     let parsed = parse_command_bool_option(name, value)
     match self.solver.set_produce_models(parsed) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
+      Available(_) => ()
+      Unavailable(reason) =>
         raise @solver_error.SolverError(command_solver_reason_text(reason))
     }
     self.options.set(name, value)
   } else if name == ":produce-proofs" {
     let parsed = parse_command_bool_option(name, value)
     match self.solver.set_produce_proofs(parsed) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
+      Available(_) => ()
+      Unavailable(reason) =>
         raise @solver_error.SolverError(command_solver_reason_text(reason))
     }
     self.options.set(name, value)
   } else if name == ":produce-unsat-cores" {
     let parsed = parse_command_bool_option(name, value)
     match self.solver.set_produce_unsat_cores(parsed) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
+      Available(_) => ()
+      Unavailable(reason) =>
         raise @solver_error.SolverError(command_solver_reason_text(reason))
     }
     self.options.set(name, value)
   } else if name == ":produce-unsat-assumptions" {
     let parsed = parse_command_bool_option(name, value)
     match self.solver.set_produce_unsat_assumptions(parsed) {
-      @util.Available(_) => ()
-      @util.Unavailable(reason) =>
+      Available(_) => ()
+      Unavailable(reason) =>
         raise @solver_error.SolverError(command_solver_reason_text(reason))
     }
     self.options.set(name, value)
@@ -524,14 +517,12 @@ fn CommandContext::checkpoint_limits(
   self : CommandContext,
 ) -> Unit raise @solver_error.SolverError {
   match self.cancel_flag.checkpoint() {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) =>
-      raise @solver_error.SolverError(reason.to_text())
+    Available(_) => ()
+    Unavailable(reason) => raise SolverError(reason.to_text())
   }
   match self.resource_limit.checkpoint() {
-    @util.Available(_) => ()
-    @util.Unavailable(reason) =>
-      raise @solver_error.SolverError(reason.to_text())
+    Available(_) => ()
+    Unavailable(reason) => raise SolverError(reason.to_text())
   }
 }
 
@@ -554,8 +545,8 @@ fn CommandContext::statistics_info_text(self : CommandContext) -> String {
 ///|
 fn CommandContext::reason_unknown_info_text(self : CommandContext) -> String {
   match self.solver.reason_unknown() {
-    @util.Available(reason) => "(:reason-unknown \{reason.to_text()})"
-    @util.Unavailable(reason) => "(:reason-unknown \{reason.to_text()})"
+    Available(reason) => "(:reason-unknown \{reason.to_text()})"
+    Unavailable(reason) => "(:reason-unknown \{reason.to_text()})"
   }
 }
 
@@ -610,49 +601,49 @@ fn CommandContext::execute_checked(
       self.append_line(result_line(self.check_sat_assuming(assumptions)))
     GetModel =>
       match self.solver.get_model_text() {
-        @util.Available(model_text) => self.append_line(model_text)
-        @util.Unavailable(@util.AvailabilityReason::Disabled(_)) =>
+        Available(model_text) => self.append_line(model_text)
+        Unavailable(Disabled(_)) =>
           self.append_line("error: model production is disabled")
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           self.append_line("error: model is not available: \{reason.to_text()}")
       }
     GetValue(terms) => self.append_line(self.get_value_text(terms))
     Eval(term, completion) =>
       match self.solver.eval(term.expr(), completion~) {
-        @util.Available(value) => self.append_line(value.format_smt2())
-        @util.Unavailable(@util.AvailabilityReason::Disabled(_)) =>
+        Available(value) => self.append_line(value.format_smt2())
+        Unavailable(Disabled(_)) =>
           self.append_line("error: model production is disabled")
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           self.append_line("error: eval is not available: \{reason.to_text()}")
       }
     GetProof =>
       match self.solver.get_proof() {
-        @util.Available(proof) => self.append_line(proof.to_text())
-        @util.Unavailable(@util.AvailabilityReason::Disabled(_)) =>
+        Available(proof) => self.append_line(proof.to_text())
+        Unavailable(Disabled(_)) =>
           self.append_line("error: proof production is disabled")
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           self.append_line("error: proof is not available: \{reason.to_text()}")
       }
     GetUnsatCore =>
       match self.solver.get_unsat_core() {
-        @util.Available(core) =>
+        Available(core) =>
           self.append_line(
             core.to_text_with_expr(fn(expr) { self.manager.pretty(expr) }),
           )
-        @util.Unavailable(@util.AvailabilityReason::Disabled(_)) =>
+        Unavailable(Disabled(_)) =>
           self.append_line("error: unsat core production is disabled")
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           self.append_line(
             "error: unsat core is not available: \{reason.to_text()}",
           )
       }
     GetUnsatAssumptions =>
       match self.solver.get_unsat_assumptions() {
-        @util.Available(assumptions) =>
+        Available(assumptions) =>
           self.append_line(self.assumption_set_text(assumptions))
-        @util.Unavailable(@util.AvailabilityReason::Disabled(_)) =>
+        Unavailable(Disabled(_)) =>
           self.append_line("error: unsat assumption production is disabled")
-        @util.Unavailable(reason) =>
+        Unavailable(reason) =>
           self.append_line(
             "error: unsat assumptions are not available: \{reason.to_text()}",
           )

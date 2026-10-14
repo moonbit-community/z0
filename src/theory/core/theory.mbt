@@ -108,13 +108,13 @@ pub fn TheoryPlugin::default_unimplemented(
   name : String,
   families : Array[@ast.FamilyId],
 ) -> TheoryPlugin {
-  TheoryPlugin::{
+  {
     id,
     name,
     families: families.copy(),
     configure_fn: fn(_) { () },
     describe_params_fn: fn() { @params.ParamDescrs::new() },
-    updt_params_fn: fn(_) { @util.Available(()) },
+    updt_params_fn: fn(_) { Available(()) },
     internalize_atom_fn: fn(_, _, _, _) {
       default_internalize_unsupported(name, "internalize-atom")
     },
@@ -145,8 +145,8 @@ pub fn TheoryPlugin::default_unimplemented(
     has_unhandled_fn: fn() { false },
     model_incomplete_reason_fn: fn() { None },
     finalize_model_fn: fn(_, _) { () },
-    validate_model_fn: fn(_, _, _) { @util.Available(()) },
-    validate_unsat_core_fn: fn(_, _) { @util.Available(()) },
+    validate_model_fn: fn(_, _, _) { Available(()) },
+    validate_unsat_core_fn: fn(_, _) { Available(()) },
     get_antecedents_fn: fn(_) { [] },
     proof_hint_fn: fn(_) { "" },
     collect_statistics_fn: fn() { @stats.Statistics::new() },

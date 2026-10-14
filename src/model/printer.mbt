@@ -41,7 +41,7 @@ pub fn Model::format(self : Model) -> String {
     func_entries.is_empty() {
     "()"
   } else {
-    let builder = StringBuilder::new()
+    let builder = StringBuilder()
     builder.write_char('(')
     for universe in universe_entries {
       builder.write_string("\n  ;; universe \{universe.name}:")

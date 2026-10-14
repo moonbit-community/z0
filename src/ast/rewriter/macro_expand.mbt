@@ -20,7 +20,7 @@ pub fn expand_macros(
     BoolValue(_) | IntValue(_) => expr_id
     MacroRef(name) =>
       match manager.lookup_macro(name) {
-        None => raise @type_error.TypeError("unknown macro: \{name}", None)
+        None => raise TypeError("unknown macro: \{name}", None)
         Some(body) => expand_macros(manager, body)
       }
     App(decl, args) => manager.mk_app(decl, expand_args(manager, args))

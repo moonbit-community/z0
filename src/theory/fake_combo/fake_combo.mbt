@@ -18,9 +18,9 @@ pub fn fake_combo_theory_plugin(
     [family],
   )
   plugin.set_describe_params(fn() { fake_combo_param_descrs() })
-  plugin.set_updt_params(fn(_) { @util.Available(()) })
+  plugin.set_updt_params(fn(_) { Available(()) })
   plugin.set_internalize_term(fn(view, _, _, expr) {
-    @theory_core.TheoryHandled(
+    TheoryHandled(
       @theory_core.TheoryTermRef::new(
         id,
         expr.to_int(),
@@ -31,9 +31,9 @@ pub fn fake_combo_theory_plugin(
   plugin.set_internalize_atom(fn(view, actions, family, expr) {
     plugin.internalize_term(view, actions, family, expr)
   })
-  plugin.set_theory_check(fn(_, _) { @theory_core.TheoryCheckContinue })
-  plugin.set_validate_model(fn(_, _, _) { @util.Available(()) })
-  plugin.set_validate_unsat_core(fn(_, _) { @util.Available(()) })
+  plugin.set_theory_check(fn(_, _) { TheoryCheckContinue })
+  plugin.set_validate_model(fn(_, _, _) { Available(()) })
+  plugin.set_validate_unsat_core(fn(_, _) { Available(()) })
   plugin.set_collect_statistics(fn() {
     let statistics = @stats.Statistics::new()
     statistics.inc_counter("fake_combo.checks", 1)
@@ -77,7 +77,7 @@ pub fn FakeComboHarness::new(
   plugin.set_init_search(fn(_, _) { log.push("init-search") })
   plugin.set_theory_check(fn(_, _) {
     log.push("check")
-    @theory_core.TheoryCheckContinue
+    TheoryCheckContinue
   })
   plugin.set_init_model(fn(_, _) { log.push("init-model") })
   plugin.set_finalize_model(fn(_, _) { log.push("finalize-model") })

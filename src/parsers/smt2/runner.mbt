@@ -14,7 +14,7 @@ fn runner_parse_message_body(message : String) -> String {
 
 ///|
 fn smt2_quote_runner_error_string(value : String) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('"')
   for c in value {
     if c == '"' {

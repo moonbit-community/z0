@@ -340,12 +340,7 @@ pub fn ModelHandle::new(id : Int32, result : @util.ResultKind) -> ModelHandle {
 
 ///|
 pub fn ModelHandle::disabled(feature : String) -> ModelHandle {
-  {
-    id: -1,
-    result: @util.ResultKind::NoResult,
-    disabled: Some(feature),
-    stale: false,
-  }
+  { id: -1, result: NoResult, disabled: Some(feature), stale: false, }
 }
 
 ///|
@@ -356,23 +351,18 @@ pub fn ModelHandle::mark_stale(self : ModelHandle) -> Unit {
 ///|
 pub fn ModelHandle::view(self : ModelHandle) -> @util.Availability[ModelRef] {
   match self.disabled {
-    Some(feature) =>
-      @util.Unavailable(@util.AvailabilityReason::Disabled(feature))
+    Some(feature) => Unavailable(Disabled(feature))
     None =>
       if self.stale {
-        @util.Unavailable(@util.AvailabilityReason::Stale)
+        Unavailable(Stale)
       } else {
         match self.result {
-          @util.ResultKind::Sat | @util.ResultKind::Unknown(true) =>
-            @util.Available(ModelRef::{ id: self.id, result: self.result, })
-          @util.ResultKind::NoResult =>
-            @util.Unavailable(@util.AvailabilityReason::NoCurrentResult)
+          Sat | Unknown(true) =>
+            Available({ id: self.id, result: self.result, })
+          NoResult => Unavailable(NoCurrentResult)
           _ =>
-            @util.Unavailable(
-              @util.AvailabilityReason::wrong_result(
-                @util.ResultKind::Sat,
-                self.result,
-              ),
+            Unavailable(
+              @util.AvailabilityReason::wrong_result(Sat, self.result),
             )
         }
       }

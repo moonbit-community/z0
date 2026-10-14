@@ -53,7 +53,7 @@ pub(all) enum Command {
 
 ///|
 fn sort_list_repr(sorts : Array[@util.SortId]) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   builder.write_char('[')
   for i in 0..<sorts.length() {
     if i > 0 {

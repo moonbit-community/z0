@@ -133,19 +133,19 @@ pub fn FamilyDescriptor::hook_status(
   hook : DeclPluginHook,
 ) -> @util.Availability[Unit] {
   if !self.has_hook(hook) {
-    @util.Unavailable(
-      @util.Unsupported(
+    Unavailable(
+      Unsupported(
         @util.ReasonUnknown::unsupported_fragment("\{self.name}.\{hook.name()}"),
       ),
     )
   } else if !self.supported {
-    @util.Unavailable(
-      @util.Unsupported(
+    Unavailable(
+      Unsupported(
         @util.ReasonUnknown::unsupported_fragment("\{self.name}.\{hook.name()}"),
       ),
     )
   } else {
-    @util.Available(())
+    Available(())
   }
 }
 

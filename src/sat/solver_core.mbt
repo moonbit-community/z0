@@ -135,7 +135,7 @@ pub fn SatSolverCore::watch_external(
     Some(extension) => if (extension.is_blocked)(constraint) { return }
     None => ()
   }
-  self.ext_watches.push(ExternalWatch::{ literal, constraint, })
+  self.ext_watches.push({ literal, constraint, })
 }
 
 ///|
@@ -239,9 +239,9 @@ fn SatSolverCore::materialize_theory_conflict(
   justification : ExtJustificationId,
 ) -> SatConflictRecord {
   match self.extension {
-    None => SatConflictRecord::{ clause: Clause::empty(), status: Redundant, }
+    None => { clause: Clause::empty(), status: Redundant, }
     Some(extension) =>
-      SatConflictRecord::{
+      {
         clause: self.materialize_antecedents(justification),
         status: (extension.describe_justification)(justification),
       }
@@ -253,7 +253,7 @@ fn SatSolverCore::record_boolean_conflict(
   self : SatSolverCore,
   clause : Clause,
 ) -> Unit {
-  self.last_conflict = Some(SatConflictRecord::{ clause, status: Redundant, })
+  self.last_conflict = Some({ clause, status: Redundant, })
 }
 
 ///|
@@ -302,7 +302,7 @@ fn SatSolverCore::propagate_extension(self : SatSolverCore) -> Bool {
 
 ///|
 fn SatSolverCore::assignment_view(self : SatSolverCore) -> SatAssignmentView {
-  SatAssignmentView::{ assignments: self.assignment.copy(), }
+  { assignments: self.assignment.copy(), }
 }
 
 ///|
@@ -310,12 +310,10 @@ fn sat_validation_reason_from_availability_reason(
   reason : @util.AvailabilityReason,
 ) -> @util.ReasonUnknown {
   match reason {
-    @util.UnknownReason(reason) => reason
-    @util.Unsupported(reason) => reason
-    @util.Disabled(_)
-    | @util.NoCurrentResult
-    | @util.WrongResult(_, _)
-    | @util.Stale => @util.ReasonUnknown::ModelValidationFailed
+    UnknownReason(reason) => reason
+    Unsupported(reason) => reason
+    Disabled(_) | NoCurrentResult | WrongResult(_, _) | Stale =>
+      ModelValidationFailed
   }
 }
 
@@ -325,8 +323,8 @@ fn SatSolverCore::handle_extension_validation(
   result : @util.Availability[Unit],
 ) -> Bool {
   match result {
-    @util.Available(_) => true
-    @util.Unavailable(reason) => {
+    Available(_) => true
+    Unavailable(reason) => {
       self.pending_unknown = Some(
         sat_validation_reason_from_availability_reason(reason).to_text(),
       )
@@ -559,7 +557,7 @@ fn SatSolverCore::check_core(
   if !self.activate_scope_guards() || !self.activate_assumptions(assumptions) {
     SatCoreUnsat
   } else if self.search() {
-    SatCoreSat(SatCoreModel::{ assignments: self.assignment.copy(), })
+    SatCoreSat({ assignments: self.assignment.copy(), })
   } else if self.pending_unknown is Some(reason) {
     SatCoreUnknown(reason)
   } else {
@@ -659,7 +657,7 @@ fn SatSolverCore::minimize_assumption_core(
       SatCoreSat(_) | SatCoreUnknown(_) => index += 1
     }
   }
-  AssumptionCore::{ literals: core, }
+  { literals: core, }
 }
 
 ///|

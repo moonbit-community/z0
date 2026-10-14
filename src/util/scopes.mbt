@@ -6,7 +6,7 @@ pub struct ScopedVector[T] {
 
 ///|
 pub fn[T] ScopedVector::new() -> ScopedVector[T] {
-  ScopedVector::{ items: [], scopes: [], }
+  { items: [], scopes: [], }
 }
 
 ///|
@@ -41,9 +41,9 @@ pub fn[T] ScopedVector::pop_scope(
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
-    raise @solver_error.SolverError("cannot pop a negative number of scopes")
+    raise SolverError("cannot pop a negative number of scopes")
   } else if count > depth {
-    raise @solver_error.SolverError(
+    raise SolverError(
       "cannot pop \{count} scope(s); only \{depth} scope(s) are active",
     )
   } else {
@@ -63,9 +63,9 @@ pub fn[T] ScopedVector::commit_scope(
 ) -> Unit raise @solver_error.SolverError {
   let depth = self.scopes.length()
   if count < 0 {
-    raise @solver_error.SolverError("cannot commit a negative number of scopes")
+    raise SolverError("cannot commit a negative number of scopes")
   } else if count > depth {
-    raise @solver_error.SolverError(
+    raise SolverError(
       "cannot commit \{count} scope(s); only \{depth} scope(s) are active",
     )
   } else if count > 0 {

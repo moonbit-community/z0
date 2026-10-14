@@ -29,16 +29,16 @@ fn Params::find_value(self : Params, name : String) -> ParamValue? {
 fn Params::set_value(self : Params, name : String, value : ParamValue) -> Unit {
   for i in 0..<self.values.length() {
     if self.values[i].name == name {
-      self.values[i] = ParamEntry::{ name, value, }
+      self.values[i] = { name, value, }
       return
     }
   }
-  self.values.push(ParamEntry::{ name, value, })
+  self.values.push({ name, value, })
 }
 
 ///|
 fn[T] unknown_param(name : String) -> @util.Availability[T] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("unknown-param:\{name}"),
     ),
@@ -47,7 +47,7 @@ fn[T] unknown_param(name : String) -> @util.Availability[T] {
 
 ///|
 fn[T] kind_mismatch(name : String) -> @util.Availability[T] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("param-kind:\{name}"),
     ),
@@ -60,11 +60,11 @@ pub fn Params::get_bool(
   name : String,
 ) -> @util.Availability[Bool] {
   match self.find_value(name) {
-    Some(BoolValue(value)) => @util.Available(value)
+    Some(BoolValue(value)) => Available(value)
     Some(_) => kind_mismatch(name)
     None =>
       match self.descrs.default_value(name) {
-        Some(BoolValue(value)) => @util.Available(value)
+        Some(BoolValue(value)) => Available(value)
         Some(_) => kind_mismatch(name)
         None => unknown_param(name)
       }
@@ -77,11 +77,11 @@ pub fn Params::get_int(
   name : String,
 ) -> @util.Availability[Int32] {
   match self.find_value(name) {
-    Some(IntValue(value)) => @util.Available(value)
+    Some(IntValue(value)) => Available(value)
     Some(_) => kind_mismatch(name)
     None =>
       match self.descrs.default_value(name) {
-        Some(IntValue(value)) => @util.Available(value)
+        Some(IntValue(value)) => Available(value)
         Some(_) => kind_mismatch(name)
         None => unknown_param(name)
       }
@@ -105,12 +105,12 @@ pub fn Params::set_bool_at(
   stage : ParamSetStage,
 ) -> @util.Availability[Bool] {
   match self.descrs.validate_set(name, stage) {
-    @util.Unavailable(reason) => @util.Unavailable(reason)
-    @util.Available(_) =>
+    Unavailable(reason) => Unavailable(reason)
+    Available(_) =>
       match self.descrs.default_value(name) {
         Some(BoolValue(_)) => {
           self.set_value(name, BoolValue(value))
-          @util.Available(value)
+          Available(value)
         }
         Some(_) => kind_mismatch(name)
         None => unknown_param(name)
@@ -135,12 +135,12 @@ pub fn Params::set_int_at(
   stage : ParamSetStage,
 ) -> @util.Availability[Int32] {
   match self.descrs.validate_set(name, stage) {
-    @util.Unavailable(reason) => @util.Unavailable(reason)
-    @util.Available(_) =>
+    Unavailable(reason) => Unavailable(reason)
+    Available(_) =>
       match self.descrs.default_value(name) {
         Some(IntValue(_)) => {
           self.set_value(name, IntValue(value))
-          @util.Available(value)
+          Available(value)
         }
         Some(_) => kind_mismatch(name)
         None => unknown_param(name)
@@ -154,11 +154,11 @@ pub fn Params::get_string(
   name : String,
 ) -> @util.Availability[String] {
   match self.find_value(name) {
-    Some(StringValue(value)) => @util.Available(value)
+    Some(StringValue(value)) => Available(value)
     Some(_) => kind_mismatch(name)
     None =>
       match self.descrs.default_value(name) {
-        Some(StringValue(value)) => @util.Available(value)
+        Some(StringValue(value)) => Available(value)
         Some(_) => kind_mismatch(name)
         None => unknown_param(name)
       }
@@ -182,12 +182,12 @@ pub fn Params::set_string_at(
   stage : ParamSetStage,
 ) -> @util.Availability[String] {
   match self.descrs.validate_set(name, stage) {
-    @util.Unavailable(reason) => @util.Unavailable(reason)
-    @util.Available(_) =>
+    Unavailable(reason) => Unavailable(reason)
+    Available(_) =>
       match self.descrs.default_value(name) {
         Some(StringValue(_)) => {
           self.set_value(name, StringValue(value))
-          @util.Available(value)
+          Available(value)
         }
         Some(_) => kind_mismatch(name)
         None => unknown_param(name)

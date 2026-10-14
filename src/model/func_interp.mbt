@@ -182,7 +182,7 @@ fn FuncInterp::write_definition(
 
 ///|
 pub fn FuncInterp::format(self : FuncInterp) -> String {
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   self.write_definition(builder, "")
   builder.to_string()
 }

@@ -8,7 +8,7 @@ priv struct TseitinCnfEncoder {
 
 ///|
 fn tseitin_unavailable(message : String) -> @util.Availability[TacticResult] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("tseitin-cnf:\{message}"),
     ),
@@ -211,7 +211,7 @@ pub fn Tactic::tseitin_cnf() -> Tactic {
         Some(false) => {
           cnf_goal.add(rewritten)
           encoder.append_aux_metadata(cnf_goal)
-          return @util.Available(TacticResult::from_goals([cnf_goal]))
+          return Available(TacticResult::from_goals([cnf_goal]))
         }
         None => {
           let root = encoder.encode(rewritten) catch {
@@ -226,6 +226,6 @@ pub fn Tactic::tseitin_cnf() -> Tactic {
       }
     }
     encoder.append_aux_metadata(cnf_goal)
-    @util.Available(TacticResult::from_goals([cnf_goal]))
+    Available(TacticResult::from_goals([cnf_goal]))
   })
 }

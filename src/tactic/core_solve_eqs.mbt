@@ -6,7 +6,7 @@ priv struct SolveEqSubstitution {
 
 ///|
 fn solve_eqs_unavailable(message : String) -> @util.Availability[TacticResult] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("solve-eqs:\{message}"),
     ),
@@ -230,7 +230,7 @@ pub fn Tactic::solve_eqs() -> Tactic {
         Some(true) => ()
         Some(false) => {
           solved.add(normalized)
-          return @util.Available(TacticResult::from_goals([solved]))
+          return Available(TacticResult::from_goals([solved]))
         }
         None =>
           match solve_eqs_assignment(goal.manager, normalized) {
@@ -248,9 +248,9 @@ pub fn Tactic::solve_eqs() -> Tactic {
         err => return solve_eqs_unavailable(err.to_string())
       }
       if solve_eqs_add_residual(solved, residual) {
-        return @util.Available(TacticResult::from_goals([solved]))
+        return Available(TacticResult::from_goals([solved]))
       }
     }
-    @util.Available(TacticResult::from_goals([solved]))
+    Available(TacticResult::from_goals([solved]))
   })
 }

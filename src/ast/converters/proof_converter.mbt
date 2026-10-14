@@ -56,7 +56,7 @@ pub fn ProofConverter::apply_proof(
 ) -> @util.Availability[@proof.ProofObject] {
   match self.unsupported {
     Some(feature) => converter_unavailable(feature)
-    None => @util.Available(proof)
+    None => Available(proof)
   }
 }
 
@@ -72,7 +72,7 @@ pub fn ProofConverter::apply_labels(
       for label in self.labels {
         result.push(label)
       }
-      @util.Available(result)
+      Available(result)
     }
   }
 }
@@ -84,7 +84,7 @@ pub fn ProofConverter::translate(
 ) -> @util.Availability[ProofConverter] {
   match self.unsupported {
     Some(feature) => converter_unavailable(feature)
-    None => @util.Available(self)
+    None => Available(self)
   }
 }
 

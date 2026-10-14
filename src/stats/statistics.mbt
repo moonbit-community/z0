@@ -79,7 +79,7 @@ fn StatManifest::find_index(self : StatManifest, key : String) -> Int32 {
 
 ///|
 fn[T] stat_manifest_unavailable(message : String) -> @util.Availability[T] {
-  @util.Unavailable(
+  Unavailable(
     @util.AvailabilityReason::unsupported(
       @util.ReasonUnknown::unsupported_fragment("stat-manifest:\{message}"),
     ),
@@ -100,19 +100,13 @@ fn StatManifest::add_descriptor(
     if self.descriptors[index].matches(
         kind, owner, merge_policy, required_by_phase,
       ) {
-      @util.Available(())
+      Available(())
     } else {
       stat_manifest_unavailable("incompatible-key:\{key}")
     }
   } else {
-    self.descriptors.push(StatDescriptor::{
-      key,
-      owner,
-      kind,
-      merge_policy,
-      required_by_phase,
-    })
-    @util.Available(())
+    self.descriptors.push({ key, owner, kind, merge_policy, required_by_phase, })
+    Available(())
   }
 }
 
@@ -211,14 +205,11 @@ pub fn Statistics::inc_counter(
   if index >= 0 {
     match self.entries[index].value {
       Counter(value) =>
-        self.entries[index] = StatEntry::{
-          key,
-          value: Counter(value + amount),
-        }
+        self.entries[index] = { key, value: Counter(value + amount), }
       TimerMs(_) => ()
     }
   } else {
-    self.entries.push(StatEntry::{ key, value: Counter(amount), })
+    self.entries.push({ key, value: Counter(amount), })
   }
 }
 
@@ -232,14 +223,11 @@ pub fn Statistics::add_timer_ms(
   if index >= 0 {
     match self.entries[index].value {
       TimerMs(value) =>
-        self.entries[index] = StatEntry::{
-          key,
-          value: TimerMs(value + amount),
-        }
+        self.entries[index] = { key, value: TimerMs(value + amount), }
       Counter(_) => ()
     }
   } else {
-    self.entries.push(StatEntry::{ key, value: TimerMs(amount), })
+    self.entries.push({ key, value: TimerMs(amount), })
   }
 }
 
@@ -254,8 +242,8 @@ fn StatValue::to_text(self : StatValue) -> String {
 ///|
 pub fn Statistics::value_text(self : Statistics, key : String) -> String {
   match self.value(key) {
-    @util.Available(value) => value.to_text()
-    @util.Unavailable(_) => "missing"
+    Available(value) => value.to_text()
+    Unavailable(_) => "missing"
   }
 }
 
@@ -266,9 +254,9 @@ pub fn Statistics::value(
 ) -> @util.Availability[StatValue] {
   let index = self.find_index(key)
   if index >= 0 {
-    @util.Available(self.entries[index].value)
+    Available(self.entries[index].value)
   } else {
-    @util.Unavailable(
+    Unavailable(
       @util.AvailabilityReason::unsupported(
         @util.ReasonUnknown::unsupported_fragment("unknown-stat:\{key}"),
       ),
@@ -320,7 +308,7 @@ pub fn Statistics::incomplete_reasons(
     if manifest.find(entry.key) is None {
       statistics_push_unique_reason(
         reasons,
-        @util.ReasonUnknown::Other("statistics-missing-owner:\{entry.key}"),
+        Other("statistics-missing-owner:\{entry.key}"),
       )
     }
   }
@@ -328,7 +316,7 @@ pub fn Statistics::incomplete_reasons(
     if descriptor.required_by_phase != "" && self.find_index(descriptor.key) < 0 {
       statistics_push_unique_reason(
         reasons,
-        @util.ReasonUnknown::Other(
+        Other(
           "statistics-missing-required:\{descriptor.required_by_phase}:\{descriptor.key}",
         ),
       )
@@ -370,7 +358,7 @@ pub fn Statistics::keys_text(self : Statistics) -> String {
     keys.push(entry.key)
   }
   keys.sort_by(compare_strings)
-  let builder = StringBuilder::new()
+  let builder = StringBuilder()
   for i in 0..<keys.length() {
     if i > 0 {
       builder.write_char(',')

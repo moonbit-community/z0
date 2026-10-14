@@ -111,7 +111,7 @@ fn EnodeRecord::new(
   generation : Int32,
   operator_key : Int32,
 ) -> EnodeRecord {
-  EnodeRecord::{
+  {
     id,
     expr,
     operator_key,

@@ -22,7 +22,7 @@ pub fn EGraphDispatchState::new() -> EGraphDispatchState {
 
 ///|
 pub fn EGraphDispatchState::push(self : EGraphDispatchState) -> Unit {
-  self.scopes.push(EGraphDispatchScope::{
+  self.scopes.push({
     eq_cursor: self.eq_cursor,
     diseq_cursor: self.diseq_cursor,
     eq_facts_len: self.eq_facts.length(),

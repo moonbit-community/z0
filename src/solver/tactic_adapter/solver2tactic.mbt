@@ -5,20 +5,20 @@ fn solver2tactic_result_from_goal(
 ) -> @util.Availability[@tactic.TacticResult] {
   let manager = goal.manager()
   match result {
-    @solver.CheckSat => {
+    CheckSat => {
       let sat_goal = @tactic.Goal::new(manager)
       sat_goal.set_requires_model(goal.requires_model())
       sat_goal.set_requires_proof(goal.requires_proof())
       sat_goal.set_requires_unsat_core(goal.requires_unsat_core())
-      @util.Available(@tactic.TacticResult::from_goals([sat_goal]))
+      Available(@tactic.TacticResult::from_goals([sat_goal]))
     }
-    @solver.CheckUnsat => {
+    CheckUnsat => {
       let unsat_goal = @tactic.Goal::new(manager)
       unsat_goal.add(manager.mk_bool(false))
-      @util.Available(@tactic.TacticResult::from_goals([unsat_goal]))
+      Available(@tactic.TacticResult::from_goals([unsat_goal]))
     }
-    @solver.CheckUnknown(reason, _) =>
-      @util.Unavailable(@util.AvailabilityReason::unknown(reason))
+    CheckUnknown(reason, _) =>
+      Unavailable(@util.AvailabilityReason::unknown(reason))
   }
 }
 
@@ -28,23 +28,22 @@ fn solver2tactic_update_config(
   params : @params.Params,
 ) -> @util.Availability[Unit] {
   match params.get_bool("produce_models") {
-    @util.Available(value) => ignore(config.with_produce_models(value))
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => ignore(config.with_produce_models(value))
+    Unavailable(reason) => return Unavailable(reason)
   }
   match params.get_bool("produce_proofs") {
-    @util.Available(value) => ignore(config.with_produce_proofs(value))
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => ignore(config.with_produce_proofs(value))
+    Unavailable(reason) => return Unavailable(reason)
   }
   match params.get_bool("produce_unsat_cores") {
-    @util.Available(value) => ignore(config.with_produce_unsat_cores(value))
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => ignore(config.with_produce_unsat_cores(value))
+    Unavailable(reason) => return Unavailable(reason)
   }
   match params.get_bool("produce_unsat_assumptions") {
-    @util.Available(value) =>
-      ignore(config.with_produce_unsat_assumptions(value))
-    @util.Unavailable(reason) => return @util.Unavailable(reason)
+    Available(value) => ignore(config.with_produce_unsat_assumptions(value))
+    Unavailable(reason) => return Unavailable(reason)
   }
-  @util.Available(())
+  Available(())
 }
 
 ///|
@@ -57,8 +56,8 @@ pub fn solver2tactic(factory : @solver.SolverFactory) -> @tactic.Tactic {
       match goal.formula(i) {
         Some(formula) =>
           match solver.assert_expr(formula) {
-            @util.Available(_) => ()
-            @util.Unavailable(reason) => return @util.Unavailable(reason)
+            Available(_) => ()
+            Unavailable(reason) => return Unavailable(reason)
           }
         None => ()
       }
@@ -73,7 +72,7 @@ pub fn solver2tactic(factory : @solver.SolverFactory) -> @tactic.Tactic {
   })
   tactic.set_logic_callback(fn(logic) {
     ignore(config.with_logic(logic))
-    @util.Available(())
+    Available(())
   })
   tactic.set_collect_statistics(fn() { statistics })
   tactic
