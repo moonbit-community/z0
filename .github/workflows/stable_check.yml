@@ -29,7 +29,9 @@ jobs:
           moon update
 
       - name: moon check
-        run: moon check
+        run: |
+          moon check --target wasm
+          moon check --target native
 
       - name: format diff
         run: |
@@ -39,3 +41,8 @@ jobs:
       - name: moon test
         run: |
           moon test --target all
+
+      - name: CLI smoke tests (wasm and native)
+        run: |
+          moonx moonbit-community/mooncram@0.0.6 test tests --target wasm --timeout-ms 120000
+          moonx moonbit-community/mooncram@0.0.6 test tests --target native --timeout-ms 120000
