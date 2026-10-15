@@ -102,7 +102,7 @@ fn z3_arch_validate_shell_fixture(fixture : Z3ArchShellFixture) -> Unit raise {
 }
 
 ///|
-fn z3_arch_read_expected_stderr(fixture : Z3ArchShellFixture) -> String raise {
+async fn z3_arch_read_expected_stderr(fixture : Z3ArchShellFixture) -> String {
   if fixture.expected_stderr == "" {
     ""
   } else {
@@ -171,7 +171,7 @@ fn z3_arch_theory_parity_ids_from_manifest(manifest : String) -> Array[String] {
 }
 
 ///|
-test "z3_arch_followup_theory_parity_doc_matches_manifest_ids" {
+async test "z3_arch_followup_theory_parity_doc_matches_manifest_ids" {
   let manifest = read_input_file("smt2/z3_arch_manifest.txt")
   let doc = read_input_file("docs/followup-theory-parity.md")
   let ids = z3_arch_theory_parity_ids_from_manifest(manifest)
@@ -208,7 +208,7 @@ test "z3_arch_followup_theory_parity_doc_matches_manifest_ids" {
 }
 
 ///|
-test "z3_arch_smoke_suite_doc_matches_manifest_rows" {
+async test "z3_arch_smoke_suite_doc_matches_manifest_rows" {
   let manifest = read_input_file("smt2/z3_arch_manifest.txt")
   let doc = read_input_file("docs/z3-arch-smoke-suite.md")
   let fixtures = z3_arch_all_fixtures_from_manifest(manifest)
@@ -222,7 +222,7 @@ test "z3_arch_smoke_suite_doc_matches_manifest_rows" {
 }
 
 ///|
-test "z3_arch_manifest_disk_paths_exist_for_all_rows" {
+async test "z3_arch_manifest_disk_paths_exist_for_all_rows" {
   let manifest = read_input_file("smt2/z3_arch_manifest.txt")
   let fixtures = z3_arch_all_fixtures_from_manifest(manifest)
   inspect(fixtures.length(), content="91")
@@ -237,7 +237,7 @@ test "z3_arch_manifest_disk_paths_exist_for_all_rows" {
 }
 
 ///|
-test "z3_arch_file_and_interactive_shell_fixtures_match_disk_expected_output" {
+async test "z3_arch_file_and_interactive_shell_fixtures_match_disk_expected_output" {
   let manifest = read_input_file("smt2/z3_arch_manifest.txt")
   let fixtures = z3_arch_shell_fixtures_from_manifest(manifest)
   assert_true(fixtures.length() > 0)

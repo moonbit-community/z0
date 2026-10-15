@@ -335,14 +335,12 @@ fn parse_z3_arch_manifest(text : String) -> Array[Z3ArchManifestEntry] {
 }
 
 ///|
-fn z3_arch_read_file(path : String) -> String {
-  @fs.read_file_to_string(path) catch {
-    IOError(message) => abort("failed to read \{path}: \{message}")
-  }
+async fn z3_arch_read_file(path : String) -> String {
+  @fs.read_file(path).text()
 }
 
 ///|
-fn z3_arch_disk_manifest_text() -> String {
+async fn z3_arch_disk_manifest_text() -> String {
   z3_arch_read_file("smt2/z3_arch_manifest.txt")
 }
 
@@ -943,7 +941,7 @@ fn run_z3_arch_fixture(id : String, input : String) -> @smt2.Smt2RunResult {
 }
 
 ///|
-test "z3_arch_manifest_parses_and_covers_embedded_seed_fixtures" {
+async test "z3_arch_manifest_parses_and_covers_embedded_seed_fixtures" {
   let entries = parse_z3_arch_manifest(z3_arch_disk_manifest_text())
   let embedded_entries = parse_z3_arch_manifest(z3_arch_manifest_text())
   let ids = z3_arch_fixture_ids()
@@ -969,7 +967,7 @@ test "z3_arch_manifest_parses_and_covers_embedded_seed_fixtures" {
 }
 
 ///|
-test "z3_arch_embedded_manifest_text_matches_disk_manifest" {
+async test "z3_arch_embedded_manifest_text_matches_disk_manifest" {
   if z3_arch_trim_final_newlines(z3_arch_manifest_text()) !=
     z3_arch_trim_final_newlines(z3_arch_disk_manifest_text()) {
     fail("embedded z3_arch manifest text diverged from disk manifest")
@@ -977,7 +975,7 @@ test "z3_arch_embedded_manifest_text_matches_disk_manifest" {
 }
 
 ///|
-test "z3_arch_embedded_fixture_copy_matches_disk_files" {
+async test "z3_arch_embedded_fixture_copy_matches_disk_files" {
   let entries = parse_z3_arch_manifest(z3_arch_disk_manifest_text())
   for entry in entries {
     z3_arch_validate_manifest_entry(entry)
@@ -999,7 +997,7 @@ test "z3_arch_embedded_fixture_copy_matches_disk_files" {
 }
 
 ///|
-test "z3_arch_manifest_command_counts_match_fixture_inputs" {
+async test "z3_arch_manifest_command_counts_match_fixture_inputs" {
   let entries = parse_z3_arch_manifest(z3_arch_disk_manifest_text())
   inspect(entries.length(), content="91")
   for entry in entries {
@@ -1015,7 +1013,7 @@ test "z3_arch_manifest_command_counts_match_fixture_inputs" {
 }
 
 ///|
-test "z3_arch_manifest_allow_flags_match_status_and_expected_output" {
+async test "z3_arch_manifest_allow_flags_match_status_and_expected_output" {
   let entries = parse_z3_arch_manifest(z3_arch_disk_manifest_text())
   inspect(entries.length(), content="91")
   for entry in entries {
@@ -1028,7 +1026,7 @@ test "z3_arch_manifest_allow_flags_match_status_and_expected_output" {
 }
 
 ///|
-test "z3_arch_parser_runner_disk_fixtures_match_expected_stdout" {
+async test "z3_arch_parser_runner_disk_fixtures_match_expected_stdout" {
   let entries = parse_z3_arch_manifest(z3_arch_disk_manifest_text())
   let mut parser_runner_count = 0
   for entry in entries {

@@ -1,16 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbit-community/z0/src/shell"
 
-import {
-  "moonbit-community/z0/src/error/io_error",
-}
-
 // Values
 pub fn normalize_output(String) -> String
 
 pub fn parse_args(Array[String]) -> ShellAction
 
-pub fn read_input_file(String) -> String raise @io_error.IoError
+pub async fn read_input_file(String) -> String
 
 pub fn run_input(String) -> String
 

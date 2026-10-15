@@ -9,7 +9,7 @@ test "shell_rejects_missing_file_argument" {
 }
 
 ///|
-test "shell_action_help_reports_zero_exit" {
+async test "shell_action_help_reports_zero_exit" {
   let result = run_action(ShowHelp)
   inspect(result.stdout, content="Usage: z0 <file.smt2>\n")
   inspect(result.stderr, content="")
@@ -17,7 +17,7 @@ test "shell_action_help_reports_zero_exit" {
 }
 
 ///|
-test "shell_action_reject_args_reports_nonzero_exit" {
+async test "shell_action_reject_args_reports_nonzero_exit" {
   let result = run_action(RejectArgs)
   inspect(result.stdout, content="Usage: z0 <file.smt2>\n")
   inspect(result.stderr, content="")
@@ -25,7 +25,7 @@ test "shell_action_reject_args_reports_nonzero_exit" {
 }
 
 ///|
-test "shell_action_run_file_reports_runner_parse_error_exit" {
+async test "shell_action_run_file_reports_runner_parse_error_exit" {
   let result = run_action(
     RunFile("smt2/z3_arch_error_recovery_parse_continued.smt2"),
   )
@@ -41,6 +41,14 @@ test "shell_action_run_file_reports_runner_parse_error_exit" {
 test "shell_formats_solver_output" {
   let input = "(set-logic QF_UF)\n(declare-const p Bool)\n(assert p)\n(check-sat)"
   inspect(run_input(input), content="sat\n")
+}
+
+///|
+async test "shell_action_missing_file_reports_io_error_exit" {
+  let result = run_action(RunFile("smt2/nonexistent-shell-input.smt2"))
+  assert_true(result.stdout.has_prefix("io: "))
+  inspect(result.stderr, content="")
+  inspect(result.exit_code, content="1")
 }
 
 ///|
