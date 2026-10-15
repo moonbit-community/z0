@@ -1,0 +1,14 @@
+import {
+  "moonbit-community/z0/src/ast",
+  "moonbit-community/z0/src/frontend/assembly",
+  "moonbit-community/z0/src/model",
+  "moonbit-community/z0/src/parsers/smt2",
+  "moonbit-community/z0/src/proof",
+  "moonbit-community/z0/src/solver",
+  "moonbit-community/z0/src/stats",
+  "moonbit-community/z0/src/util",
+  "moonbitlang/async",
+  "moonbitlang/async/fs",
+} for "test"
+
+supported_targets = "+wasm+native"

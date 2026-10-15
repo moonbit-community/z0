@@ -11,8 +11,4 @@ import {
 
 import {
   "moonbit-community/z0/src/frontend/assembly",
-  "moonbit-community/z0/src/model",
-  "moonbit-community/z0/src/proof",
-  "moonbit-community/z0/src/stats",
-  "moonbitlang/x/fs",
 } for "test"

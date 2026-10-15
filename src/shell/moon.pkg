@@ -3,8 +3,14 @@ import {
   "moonbit-community/z0/src/frontend/assembly",
   "moonbit-community/z0/src/parsers/smt2",
   "moonbitlang/core/env",
-  "moonbitlang/x/fs",
-  "moonbitlang/x/sys",
+  "moonbitlang/async",
+  "moonbitlang/async/fs",
 }
 
 pkgtype(kind: "executable")
+
+supported_targets = "+wasm+native"
+
+options(
+  targets: { "exit_wasm.mbt": [ "wasm" ], "exit_native.mbt": [ "native" ] },
+)

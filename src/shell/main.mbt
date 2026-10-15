@@ -62,9 +62,9 @@ pub fn run_interactive_input(input : String) -> String {
 }
 
 ///|
-pub fn read_input_file(path : String) -> String raise @io_error.IoError {
-  @fs.read_file_to_string(path) catch {
-    IOError(message) => raise IoError(message)
+pub async fn read_input_file(path : String) -> String {
+  @fs.read_file(path).text() catch {
+    err => raise @io_error.IoError(Show::to_string(err))
   }
 }
 
@@ -78,7 +78,7 @@ fn shell_result(
 }
 
 ///|
-fn run_action(action : ShellAction) -> ShellResult {
+async fn run_action(action : ShellAction) -> ShellResult {
   match action {
     ShowHelp => shell_result(usage() + "\n", "", 0)
     RejectArgs => shell_result(usage() + "\n", "", 1)
@@ -100,22 +100,10 @@ fn run_action(action : ShellAction) -> ShellResult {
 }
 
 ///|
-#cfg(not(target="js"))
-fn user_args_start() -> Int32 {
-  1
-}
-
-///|
-#cfg(target="js")
-fn user_args_start() -> Int32 {
-  2
-}
-
-///|
 fn user_args() -> Array[String] {
   let args = @env.args()
   let parsed : Array[String] = []
-  for i in user_args_start()..<args.length() {
+  for i in 1..<args.length() {
     parsed.push(args[i])
   }
   parsed
@@ -132,10 +120,10 @@ fn print_shell_result(result : ShellResult) -> Unit {
 }
 
 ///|
-fn main {
+async fn main {
   let result = run_action(parse_args(user_args()))
   print_shell_result(result)
   if result.exit_code != 0 {
-    @sys.exit(result.exit_code)
+    exit(result.exit_code)
   }
 }
