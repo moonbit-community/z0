@@ -17,14 +17,14 @@ pub(all) enum Command {
   SetOption(String, String)
   SetInfo(String, String)
   GetOption(String)
-  DeclareSort(String, Int)
+  DeclareSort(String, Int32)
   DeclareConst(String, @util.SortId)
   DeclareFun(String, Array[@util.SortId], @util.SortId)
   DefineFun(String, Array[(String, @util.SortId)], @util.SortId, @util.ExprId)
   Assert(@util.ExprId)
   AssertNamed(@util.ExprId, String)
-  Push(Int)
-  Pop(Int)
+  Push(Int32)
+  Pop(Int32)
   Reset
   ResetAssertions
   CheckSat
@@ -85,7 +85,7 @@ pub fn Options::produce_proofs(Self) -> Bool
 pub fn Options::produce_unsat_assumptions(Self) -> Bool
 pub fn Options::produce_unsat_cores(Self) -> Bool
 pub fn Options::regular_output_channel(Self) -> String
-pub fn Options::reproducible_resource_limit(Self) -> Int?
+pub fn Options::reproducible_resource_limit(Self) -> Int32?
 pub fn Options::set(Self, String, String) -> Unit raise
 
 // Type aliases

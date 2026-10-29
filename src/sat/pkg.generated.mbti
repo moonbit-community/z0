@@ -26,8 +26,8 @@ pub fn AssumptionCore::text(Self) -> String
 pub struct BoolVar {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn BoolVar::new(Int) -> Self
-pub fn BoolVar::to_int(Self) -> Int
+pub fn BoolVar::new(Int32) -> Self
+pub fn BoolVar::to_int(Self) -> Int32
 pub impl Show for BoolVar
 
 pub struct Clause {
@@ -37,7 +37,7 @@ pub fn Clause::contains_bool_var(Self, BoolVar) -> Bool
 pub fn Clause::empty() -> Self
 pub fn Clause::has_var_above(Self, BoolVar) -> Bool
 pub fn Clause::is_tautology(Self) -> Bool
-pub fn Clause::length(Self) -> Int
+pub fn Clause::length(Self) -> Int32
 pub fn Clause::literals(Self) -> Array[Literal]
 pub fn Clause::new(Array[Literal]) -> Self
 pub fn Clause::unit(Literal) -> Self
@@ -50,16 +50,16 @@ pub struct ClauseDb {
 pub fn ClauseDb::active_clauses(Self) -> Array[Clause]
 pub fn ClauseDb::add_learned_clause(Self, Clause) -> ClauseId
 pub fn ClauseDb::add_root_clause(Self, Clause) -> ClauseId
-pub fn ClauseDb::clause_count(Self) -> Int
+pub fn ClauseDb::clause_count(Self) -> Int32
 pub fn ClauseDb::clause_literals(Self, ClauseId) -> Array[Literal]
 pub fn ClauseDb::delete_clause(Self, ClauseId) -> Unit
 pub fn ClauseDb::delete_clauses_touching_vars(Self, Array[BoolVar]) -> Unit
 pub fn ClauseDb::delete_clauses_with_vars_above(Self, BoolVar) -> Unit
-pub fn ClauseDb::deleted_clause_count(Self) -> Int
+pub fn ClauseDb::deleted_clause_count(Self) -> Int32
 pub fn ClauseDb::event_log_text(Self) -> String
-pub fn ClauseDb::learned_clause_count(Self) -> Int
+pub fn ClauseDb::learned_clause_count(Self) -> Int32
 pub fn ClauseDb::new() -> Self
-pub fn ClauseDb::root_clause_count(Self) -> Int
+pub fn ClauseDb::root_clause_count(Self) -> Int32
 
 pub(all) struct ClauseEvent {
   action : String
@@ -70,8 +70,8 @@ pub(all) struct ClauseEvent {
 pub struct ClauseId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn ClauseId::new(Int) -> Self
-pub fn ClauseId::to_int(Self) -> Int
+pub fn ClauseId::new(Int32) -> Self
+pub fn ClauseId::to_int(Self) -> Int32
 pub impl Show for ClauseId
 
 pub(all) enum ClauseStatus {
@@ -91,15 +91,15 @@ pub fn ClauseTheoryProofHint::owner_text(Self) -> String
 pub struct ExtConstraintId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn ExtConstraintId::new(Int) -> Self
-pub fn ExtConstraintId::to_int(Self) -> Int
+pub fn ExtConstraintId::new(Int32) -> Self
+pub fn ExtConstraintId::to_int(Self) -> Int32
 pub impl Show for ExtConstraintId
 
 pub struct ExtJustificationId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn ExtJustificationId::new(Int) -> Self
-pub fn ExtJustificationId::to_int(Self) -> Int
+pub fn ExtJustificationId::new(Int32) -> Self
+pub fn ExtJustificationId::to_int(Self) -> Int32
 pub impl Show for ExtJustificationId
 
 pub(all) enum ExtensionAction {
@@ -113,8 +113,8 @@ pub struct Literal {
   // private fields
 } derive(Eq)
 pub fn Literal::bool_var(Self) -> BoolVar
-pub fn Literal::from_index(Int) -> Self
-pub fn Literal::index(Self) -> Int
+pub fn Literal::from_index(Int32) -> Self
+pub fn Literal::index(Self) -> Int32
 pub fn Literal::is_positive(Self) -> Bool
 pub fn Literal::neg(BoolVar) -> Self
 pub fn Literal::negate(Self) -> Self
@@ -140,12 +140,12 @@ pub(all) enum SatCoreResult {
 } derive(Eq)
 
 pub(all) struct SatCoreSnapshot {
-  vars : Int
-  root_clauses : Int
-  learned_clauses : Int
-  deleted_clauses : Int
-  decisions : Int
-  propagations : Int
+  vars : Int32
+  root_clauses : Int32
+  learned_clauses : Int32
+  deleted_clauses : Int32
+  decisions : Int32
+  propagations : Int32
   activity_text : String
   phase_text : String
 } derive(Eq)
@@ -195,7 +195,7 @@ pub fn SatSolverCore::check_with_assumptions(Self, Array[Literal]) -> Assumption
 pub fn SatSolverCore::clause_event_log_text(Self) -> String
 pub fn SatSolverCore::clause_theory_proof_hints(Self) -> Array[ClauseTheoryProofHint]
 pub fn SatSolverCore::collect_statistics(Self) -> @stats.Statistics
-pub fn SatSolverCore::external_watch_count(Self) -> Int
+pub fn SatSolverCore::external_watch_count(Self) -> Int32
 pub fn SatSolverCore::gc(Self) -> Unit
 pub fn SatSolverCore::gc_vars(Self, BoolVar) -> Unit
 pub fn SatSolverCore::has_unsat_proof_clause(Self) -> Bool
@@ -203,10 +203,10 @@ pub fn SatSolverCore::inspect_state(Self) -> SatCoreSnapshot
 pub fn SatSolverCore::new() -> Self
 pub fn SatSolverCore::reset_search_state(Self) -> Unit
 pub fn SatSolverCore::set_extension(Self, SatExtension) -> Unit
-pub fn SatSolverCore::unhinted_theory_clause_count(Self) -> Int
-pub fn SatSolverCore::user_pop(Self, Int) -> Unit
+pub fn SatSolverCore::unhinted_theory_clause_count(Self) -> Int32
+pub fn SatSolverCore::user_pop(Self, Int32) -> Unit
 pub fn SatSolverCore::user_push(Self) -> Unit
-pub fn SatSolverCore::user_scope_depth(Self) -> Int
+pub fn SatSolverCore::user_scope_depth(Self) -> Int32
 pub fn SatSolverCore::watch_external(Self, Literal, ExtConstraintId) -> Unit
 
 pub(all) enum WatchAction {

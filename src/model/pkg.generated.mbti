@@ -44,7 +44,7 @@ pub struct ModelHandle {
 }
 pub fn ModelHandle::disabled(String) -> Self
 pub fn ModelHandle::mark_stale(Self) -> Unit
-pub fn ModelHandle::new(Int, @util.ResultKind) -> Self
+pub fn ModelHandle::new(Int32, @util.ResultKind) -> Self
 pub fn ModelHandle::to_text(Self) -> String
 pub fn ModelHandle::view(Self) -> @util.Availability[ModelRef]
 
@@ -58,7 +58,7 @@ pub struct ModelValue {
 }
 pub fn ModelValue::bool(Bool) -> Self
 pub fn ModelValue::format_smt2(Self) -> String
-pub fn ModelValue::int(Int) -> Self
+pub fn ModelValue::int(Int32) -> Self
 pub fn ModelValue::sort(Self) -> @util.SortId?
 pub fn ModelValue::to_text(Self) -> String
 

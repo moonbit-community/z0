@@ -26,11 +26,11 @@ pub struct AstManager {
 pub fn AstManager::arith_family(Self) -> FamilyId
 pub fn AstManager::bool_family(Self) -> FamilyId
 pub fn AstManager::bool_sort(Self) -> @util.SortId
-pub fn AstManager::commit_scope(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn AstManager::commit_scope(Self, Int32) -> Unit raise @solver_error.SolverError
 pub fn AstManager::decl_family(Self, @util.FuncDeclId) -> FamilyId
 pub fn AstManager::declare_const(Self, String, @util.SortId) -> @util.FuncDeclId raise @type_error.TypeError
 pub fn AstManager::declare_fun(Self, String, Array[@util.SortId], @util.SortId) -> @util.FuncDeclId raise @type_error.TypeError
-pub fn AstManager::declare_sort(Self, String, Int) -> @util.SortId raise
+pub fn AstManager::declare_sort(Self, String, Int32) -> @util.SortId raise
 pub fn AstManager::define_bool_macro(Self, String, @util.ExprId) -> Unit raise @type_error.TypeError
 pub fn AstManager::define_macro(Self, String, @util.ExprId) -> Unit raise @type_error.TypeError
 pub fn AstManager::define_scoped_macro(Self, String, @util.ExprId) -> Unit
@@ -58,7 +58,7 @@ pub fn AstManager::mk_eq(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise
 pub fn AstManager::mk_ge(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
 pub fn AstManager::mk_gt(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
 pub fn AstManager::mk_implies(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
-pub fn AstManager::mk_int(Self, Int) -> @util.ExprId
+pub fn AstManager::mk_int(Self, Int32) -> @util.ExprId
 pub fn AstManager::mk_le(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
 pub fn AstManager::mk_lt(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
 pub fn AstManager::mk_macro_ref(Self, String) -> @util.ExprId raise @type_error.TypeError
@@ -66,7 +66,7 @@ pub fn AstManager::mk_not(Self, @util.ExprId) -> @util.ExprId raise @type_error.
 pub fn AstManager::mk_or(Self, Array[@util.ExprId]) -> @util.ExprId raise @type_error.TypeError
 pub fn AstManager::mk_xor(Self, @util.ExprId, @util.ExprId) -> @util.ExprId raise @type_error.TypeError
 pub fn AstManager::new() -> Self
-pub fn AstManager::pop_scope(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn AstManager::pop_scope(Self, Int32) -> Unit raise @solver_error.SolverError
 pub fn AstManager::pretty(Self, @util.ExprId) -> String
 pub fn AstManager::push_scope(Self) -> Unit
 pub fn AstManager::sort_family(Self, @util.SortId) -> FamilyId
@@ -112,7 +112,7 @@ pub struct DefinedNames {
 pub fn DefinedNames::insert(Self, String, @util.ExprId) -> Unit
 pub fn DefinedNames::lookup(Self, String) -> @util.ExprId?
 pub fn DefinedNames::new() -> Self
-pub fn DefinedNames::pop(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn DefinedNames::pop(Self, Int32) -> Unit raise @solver_error.SolverError
 pub fn DefinedNames::push(Self) -> Unit
 
 pub(all) struct Expr {
@@ -123,7 +123,7 @@ pub(all) struct Expr {
 
 pub(all) enum ExprKind {
   BoolValue(Bool)
-  IntValue(Int)
+  IntValue(Int32)
   App(@util.FuncDeclId, Array[@util.ExprId])
   MacroRef(String)
   Not(@util.ExprId)
@@ -152,8 +152,8 @@ pub fn FamilyDescriptor::support_text(Self) -> String
 pub struct FamilyId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn FamilyId::new(Int) -> Self
-pub fn FamilyId::to_int(Self) -> Int
+pub fn FamilyId::new(Int32) -> Self
+pub fn FamilyId::to_int(Self) -> Int32
 pub impl Show for FamilyId
 
 pub(all) struct FuncDecl {
@@ -181,7 +181,7 @@ pub fn MacroManager::expand_macros(Self, AstManager, @util.ExprId) -> MacroExpan
 pub fn MacroManager::insert(Self, String, @util.ExprId) -> Unit
 pub fn MacroManager::lookup(Self, String) -> @util.ExprId?
 pub fn MacroManager::new() -> Self
-pub fn MacroManager::pop(Self, Int) -> Unit raise @solver_error.SolverError
+pub fn MacroManager::pop(Self, Int32) -> Unit raise @solver_error.SolverError
 pub fn MacroManager::push(Self) -> Unit
 pub fn MacroManager::reset(Self) -> Unit
 
@@ -193,7 +193,7 @@ pub(all) struct NnfResult {
   aux_decl_visibility : String
 } derive(Eq)
 pub fn NnfResult::identity(@util.ExprId) -> Self
-pub fn NnfResult::new_defs_count(Self) -> Int
+pub fn NnfResult::new_defs_count(Self) -> Int32
 pub fn NnfResult::result(Self) -> @util.ExprId
 
 pub(all) struct Sort {

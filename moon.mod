@@ -8,12 +8,12 @@ import {
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "https://github.com/moonbit-community/z0"
 
 license = "Apache-2.0"
 
 keywords = [ ]
 
-description = ""
+description = "An SMT solver for the quantifier-free Bool and EUF subset."
 
 preferred_target = "wasm"

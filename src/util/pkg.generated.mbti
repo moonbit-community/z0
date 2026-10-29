@@ -38,14 +38,14 @@ pub fn CancelFlag::is_canceled(Self) -> Bool
 pub fn CancelFlag::new() -> Self
 pub fn CancelFlag::reset(Self) -> Unit
 
-pub(all) struct ExprId(Int) derive(Compare, Eq, Hash)
-pub fn ExprId::new(Int) -> Self
-pub fn ExprId::to_int(Self) -> Int
+pub(all) struct ExprId(Int32) derive(Compare, Eq, Hash)
+pub fn ExprId::new(Int32) -> Self
+pub fn ExprId::to_int(Self) -> Int32
 pub impl Show for ExprId
 
-pub(all) struct FuncDeclId(Int) derive(Compare, Eq, Hash)
-pub fn FuncDeclId::new(Int) -> Self
-pub fn FuncDeclId::to_int(Self) -> Int
+pub(all) struct FuncDeclId(Int32) derive(Compare, Eq, Hash)
+pub fn FuncDeclId::new(Int32) -> Self
+pub fn FuncDeclId::to_int(Self) -> Int32
 pub impl Show for FuncDeclId
 
 pub(all) enum ReasonUnknown {
@@ -75,8 +75,8 @@ pub struct ResourceLimit {
 pub fn ResourceLimit::checkpoint(Self) -> Availability[Unit]
 pub fn ResourceLimit::reset(Self) -> Unit
 pub fn ResourceLimit::unlimited() -> Self
-pub fn ResourceLimit::used_steps(Self) -> Int
-pub fn ResourceLimit::with_step_limit(Int) -> Self
+pub fn ResourceLimit::used_steps(Self) -> Int32
+pub fn ResourceLimit::with_step_limit(Int32) -> Self
 
 pub(all) enum ResultKind {
   NoResult
@@ -88,32 +88,32 @@ pub fn ResultKind::to_text(Self) -> String
 pub fn ResultKind::unknown_no_model() -> Self
 pub fn ResultKind::unknown_with_model() -> Self
 
-pub(all) struct SatVar(Int) derive(Compare, Eq, Hash)
-pub fn SatVar::new(Int) -> Self
-pub fn SatVar::to_int(Self) -> Int
+pub(all) struct SatVar(Int32) derive(Compare, Eq, Hash)
+pub fn SatVar::new(Int32) -> Self
+pub fn SatVar::to_int(Self) -> Int32
 pub impl Show for SatVar
 
-pub(all) struct ScopeLevel(Int) derive(Compare, Eq, Hash)
-pub fn ScopeLevel::new(Int) -> Self
-pub fn ScopeLevel::to_int(Self) -> Int
+pub(all) struct ScopeLevel(Int32) derive(Compare, Eq, Hash)
+pub fn ScopeLevel::new(Int32) -> Self
+pub fn ScopeLevel::to_int(Self) -> Int32
 pub impl Show for ScopeLevel
 
 pub struct ScopedVector[T] {
   items : Array[T]
-  scopes : Array[Int]
+  scopes : Array[Int32]
 }
-pub fn[T] ScopedVector::commit_scope(Self[T], Int) -> Unit raise @solver_error.SolverError
+pub fn[T] ScopedVector::commit_scope(Self[T], Int32) -> Unit raise @solver_error.SolverError
 pub fn[T] ScopedVector::items(Self[T]) -> Array[T]
-pub fn[T] ScopedVector::length(Self[T]) -> Int
+pub fn[T] ScopedVector::length(Self[T]) -> Int32
 pub fn[T] ScopedVector::new() -> Self[T]
-pub fn[T] ScopedVector::pop_scope(Self[T], Int) -> Unit raise @solver_error.SolverError
+pub fn[T] ScopedVector::pop_scope(Self[T], Int32) -> Unit raise @solver_error.SolverError
 pub fn[T] ScopedVector::push_item(Self[T], T) -> Unit
 pub fn[T] ScopedVector::push_scope(Self[T]) -> Unit
-pub fn[T] ScopedVector::scope_depth(Self[T]) -> Int
+pub fn[T] ScopedVector::scope_depth(Self[T]) -> Int32
 
-pub(all) struct SortId(Int) derive(Compare, Eq, Hash)
-pub fn SortId::new(Int) -> Self
-pub fn SortId::to_int(Self) -> Int
+pub(all) struct SortId(Int32) derive(Compare, Eq, Hash)
+pub fn SortId::new(Int32) -> Self
+pub fn SortId::to_int(Self) -> Int32
 pub impl Show for SortId
 
 // Type aliases

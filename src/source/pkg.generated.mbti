@@ -6,27 +6,27 @@ package "moonbit-community/z0/src/source"
 // Errors
 
 // Types and methods
-pub(all) struct ByteOffset(Int) derive(Compare, Eq, Hash)
-pub fn ByteOffset::new(Int) -> Self
-pub fn ByteOffset::to_int(Self) -> Int
+pub(all) struct ByteOffset(Int32) derive(Compare, Eq, Hash)
+pub fn ByteOffset::new(Int32) -> Self
+pub fn ByteOffset::to_int(Self) -> Int32
 
-pub(all) struct Column(Int) derive(Compare, Eq, Hash)
-pub fn Column::new(Int) -> Self
-pub fn Column::to_int(Self) -> Int
+pub(all) struct Column(Int32) derive(Compare, Eq, Hash)
+pub fn Column::new(Int32) -> Self
+pub fn Column::to_int(Self) -> Int32
 
-pub(all) struct Line(Int) derive(Compare, Eq, Hash)
-pub fn Line::new(Int) -> Self
-pub fn Line::to_int(Self) -> Int
+pub(all) struct Line(Int32) derive(Compare, Eq, Hash)
+pub fn Line::new(Int32) -> Self
+pub fn Line::to_int(Self) -> Int32
 
 pub(all) struct SourcePos {
   line : Line
   column : Column
   offset : ByteOffset
 } derive(Eq)
-pub fn SourcePos::column(Self) -> Int
-pub fn SourcePos::line(Self) -> Int
-pub fn SourcePos::new(line~ : Int, column~ : Int, offset~ : Int) -> Self
-pub fn SourcePos::offset(Self) -> Int
+pub fn SourcePos::column(Self) -> Int32
+pub fn SourcePos::line(Self) -> Int32
+pub fn SourcePos::new(line~ : Int32, column~ : Int32, offset~ : Int32) -> Self
+pub fn SourcePos::offset(Self) -> Int32
 
 pub(all) struct SourceSpan {
   start : SourcePos
