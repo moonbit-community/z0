@@ -18,30 +18,30 @@ import {
 pub struct AntecedentId {
   // private fields
 } derive(Eq)
-pub fn AntecedentId::is_valid_at(Self, Int) -> Bool
-pub fn AntecedentId::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn AntecedentId::is_valid_at(Self, Int32) -> Bool
+pub fn AntecedentId::new(@ids.TheoryId, Int32, scope_generation~ : Int32) -> Self
 pub fn AntecedentId::owner(Self) -> @ids.TheoryId
-pub fn AntecedentId::to_int(Self) -> Int
+pub fn AntecedentId::to_int(Self) -> Int32
 pub impl Show for AntecedentId
 
 pub struct DiseqFact {
   // private fields
 } derive(Eq)
-pub fn DiseqFact::is_valid_at(Self, Int) -> Bool
-pub fn DiseqFact::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn DiseqFact::is_valid_at(Self, Int32) -> Bool
+pub fn DiseqFact::new(@ids.TheoryId, Int32, scope_generation~ : Int32) -> Self
 pub fn DiseqFact::owner(Self) -> @ids.TheoryId
-pub fn DiseqFact::scope_generation(Self) -> Int
-pub fn DiseqFact::to_int(Self) -> Int
+pub fn DiseqFact::scope_generation(Self) -> Int32
+pub fn DiseqFact::to_int(Self) -> Int32
 pub impl Show for DiseqFact
 
 pub struct EqFact {
   // private fields
 } derive(Eq)
-pub fn EqFact::is_valid_at(Self, Int) -> Bool
-pub fn EqFact::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn EqFact::is_valid_at(Self, Int32) -> Bool
+pub fn EqFact::new(@ids.TheoryId, Int32, scope_generation~ : Int32) -> Self
 pub fn EqFact::owner(Self) -> @ids.TheoryId
-pub fn EqFact::scope_generation(Self) -> Int
-pub fn EqFact::to_int(Self) -> Int
+pub fn EqFact::scope_generation(Self) -> Int32
+pub fn EqFact::to_int(Self) -> Int32
 pub impl Show for EqFact
 
 pub struct ModelValidationView {
@@ -54,10 +54,10 @@ pub fn ModelValidationView::new(eval_text~ : (@util.ExprId, Bool) -> String?) ->
 pub struct ProofHintId {
   // private fields
 } derive(Eq)
-pub fn ProofHintId::is_valid_at(Self, Int) -> Bool
-pub fn ProofHintId::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn ProofHintId::is_valid_at(Self, Int32) -> Bool
+pub fn ProofHintId::new(@ids.TheoryId, Int32, scope_generation~ : Int32) -> Self
 pub fn ProofHintId::owner(Self) -> @ids.TheoryId
-pub fn ProofHintId::to_int(Self) -> Int
+pub fn ProofHintId::to_int(Self) -> Int32
 pub impl Show for ProofHintId
 
 pub struct TheoryActions {
@@ -76,14 +76,14 @@ pub fn TheoryActions::internalize_bool(Self, @util.ExprId) -> @sat.Literal?
 pub fn TheoryActions::internalize_term_ref(Self, @util.ExprId) -> TheoryTermRef?
 pub fn TheoryActions::mark_unknown(Self, @util.ReasonUnknown) -> Unit
 pub fn TheoryActions::materialize_antecedent(Self, AntecedentId) -> Array[@sat.Literal]
-pub fn TheoryActions::new(scope_depth~ : () -> Int, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit) -> Self
-pub fn TheoryActions::new_with_context(scope_depth~ : () -> Int, internalize_bool~ : (@util.ExprId) -> @sat.Literal?, add_clause~ : (Array[@sat.Literal]) -> Unit, add_lemma~ : (Array[@sat.Literal]) -> Unit, add_lemma_with_hint~ : (Array[@sat.Literal], ProofHintId) -> Unit, add_extension_assumption~ : (@sat.Literal, @util.ExprId, String?) -> Unit, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, conflict~ : (AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit, materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal], create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId) -> Self
-pub fn TheoryActions::new_with_justification(scope_depth~ : () -> Int, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit, materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal], create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId) -> Self
+pub fn TheoryActions::new(scope_depth~ : () -> Int32, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit) -> Self
+pub fn TheoryActions::new_with_context(scope_depth~ : () -> Int32, internalize_bool~ : (@util.ExprId) -> @sat.Literal?, add_clause~ : (Array[@sat.Literal]) -> Unit, add_lemma~ : (Array[@sat.Literal]) -> Unit, add_lemma_with_hint~ : (Array[@sat.Literal], ProofHintId) -> Unit, add_extension_assumption~ : (@sat.Literal, @util.ExprId, String?) -> Unit, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, conflict~ : (AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit, materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal], create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId) -> Self
+pub fn TheoryActions::new_with_justification(scope_depth~ : () -> Int32, enqueue~ : (@sat.Literal, AntecedentId) -> Unit, mark_unknown~ : (@util.ReasonUnknown) -> Unit, materialize_antecedent~ : (AntecedentId) -> Array[@sat.Literal], create_proof_hint~ : (@ids.TheoryId, String) -> ProofHintId) -> Self
 pub fn TheoryActions::noop() -> Self
 pub fn TheoryActions::params(Self) -> @params.Params?
 pub fn TheoryActions::params_available(Self) -> Bool
 pub fn TheoryActions::sat_value(Self, @sat.Literal) -> Bool?
-pub fn TheoryActions::scope_depth(Self) -> Int
+pub fn TheoryActions::scope_depth(Self) -> Int32
 
 pub struct TheoryAssertedLiteral {
   // private fields
@@ -100,8 +100,8 @@ pub(all) enum TheoryCheckResult {
 pub struct TheoryContextView {
   // private fields
 }
-pub fn TheoryContextView::new(scope_depth~ : Int) -> Self
-pub fn TheoryContextView::scope_depth(Self) -> Int
+pub fn TheoryContextView::new(scope_depth~ : Int32) -> Self
+pub fn TheoryContextView::scope_depth(Self) -> Int32
 
 pub struct TheoryFactory {
   // private fields
@@ -157,7 +157,7 @@ pub fn TheoryPlugin::new_diseq(Self, TheoryContextView, TheoryActions, DiseqFact
 pub fn TheoryPlugin::new_eq(Self, TheoryContextView, TheoryActions, EqFact) -> Unit
 pub fn TheoryPlugin::on_check_done(Self, TheoryContextView, TheoryActions) -> Unit
 pub fn TheoryPlugin::owns_family(Self, @ast.FamilyId) -> Bool
-pub fn TheoryPlugin::pop(Self, TheoryContextView, Int) -> Unit
+pub fn TheoryPlugin::pop(Self, TheoryContextView, Int32) -> Unit
 pub fn TheoryPlugin::proof_hint(Self, ProofHintId) -> String
 pub fn TheoryPlugin::propagate(Self, TheoryContextView, TheoryActions) -> TheoryPropagateResult
 pub fn TheoryPlugin::push(Self, TheoryContextView) -> Unit
@@ -185,7 +185,7 @@ pub fn TheoryPlugin::set_model_incomplete_reason(Self, () -> @util.ReasonUnknown
 pub fn TheoryPlugin::set_new_diseq(Self, (TheoryContextView, TheoryActions, DiseqFact) -> Unit) -> Unit
 pub fn TheoryPlugin::set_new_eq(Self, (TheoryContextView, TheoryActions, EqFact) -> Unit) -> Unit
 pub fn TheoryPlugin::set_on_check_done(Self, (TheoryContextView, TheoryActions) -> Unit) -> Unit
-pub fn TheoryPlugin::set_pop(Self, (TheoryContextView, Int) -> Unit) -> Unit
+pub fn TheoryPlugin::set_pop(Self, (TheoryContextView, Int32) -> Unit) -> Unit
 pub fn TheoryPlugin::set_proof_hint(Self, (ProofHintId) -> String) -> Unit
 pub fn TheoryPlugin::set_propagate(Self, (TheoryContextView, TheoryActions) -> TheoryPropagateResult) -> Unit
 pub fn TheoryPlugin::set_push(Self, (TheoryContextView) -> Unit) -> Unit
@@ -208,11 +208,11 @@ pub(all) enum TheoryPropagateResult {
 pub struct TheoryTermRef {
   // private fields
 } derive(Eq)
-pub fn TheoryTermRef::is_valid_at(Self, Int) -> Bool
-pub fn TheoryTermRef::new(@ids.TheoryId, Int, scope_generation~ : Int) -> Self
+pub fn TheoryTermRef::is_valid_at(Self, Int32) -> Bool
+pub fn TheoryTermRef::new(@ids.TheoryId, Int32, scope_generation~ : Int32) -> Self
 pub fn TheoryTermRef::owner(Self) -> @ids.TheoryId
-pub fn TheoryTermRef::scope_generation(Self) -> Int
-pub fn TheoryTermRef::to_int(Self) -> Int
+pub fn TheoryTermRef::scope_generation(Self) -> Int32
+pub fn TheoryTermRef::to_int(Self) -> Int32
 pub impl Show for TheoryTermRef
 
 // Type aliases

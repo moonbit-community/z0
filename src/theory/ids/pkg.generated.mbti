@@ -9,17 +9,17 @@ package "moonbit-community/z0/src/theory/ids"
 pub struct TheoryId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn TheoryId::new(Int) -> Self
+pub fn TheoryId::new(Int32) -> Self
 pub fn TheoryId::null() -> Self
-pub fn TheoryId::to_int(Self) -> Int
+pub fn TheoryId::to_int(Self) -> Int32
 pub impl Show for TheoryId
 
 pub struct TheoryVar {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn TheoryVar::new(Int) -> Self
+pub fn TheoryVar::new(Int32) -> Self
 pub fn TheoryVar::null() -> Self
-pub fn TheoryVar::to_int(Self) -> Int
+pub fn TheoryVar::to_int(Self) -> Int32
 pub impl Show for TheoryVar
 
 // Type aliases

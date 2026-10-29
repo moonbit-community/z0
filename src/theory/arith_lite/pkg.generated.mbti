@@ -22,9 +22,9 @@ pub fn arith_lite_theory_plugin(@ids.TheoryId, @ast.FamilyId) -> @core.TheoryPlu
 pub struct ArithLiteProblem {
   // private fields
 }
-pub fn ArithLiteProblem::assert_eq_const(Self, String, Int) -> Unit
-pub fn ArithLiteProblem::assert_ge_const(Self, String, Int) -> Unit
-pub fn ArithLiteProblem::assert_le_const(Self, String, Int) -> Unit
+pub fn ArithLiteProblem::assert_eq_const(Self, String, Int32) -> Unit
+pub fn ArithLiteProblem::assert_ge_const(Self, String, Int32) -> Unit
+pub fn ArithLiteProblem::assert_le_const(Self, String, Int32) -> Unit
 pub fn ArithLiteProblem::check(Self) -> ArithLiteResult
 pub fn ArithLiteProblem::new() -> Self
 pub fn ArithLiteProblem::reject_fragment(Self, String) -> Unit

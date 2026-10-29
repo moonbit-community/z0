@@ -24,9 +24,9 @@ pub struct ProofHandle {
   // private fields
 }
 pub fn ProofHandle::disabled(String) -> Self
-pub fn ProofHandle::from_object(Int, ProofKind, ProofObject) -> Self
+pub fn ProofHandle::from_object(Int32, ProofKind, ProofObject) -> Self
 pub fn ProofHandle::mark_stale(Self) -> Unit
-pub fn ProofHandle::new(Int, ProofKind) -> Self
+pub fn ProofHandle::new(Int32, ProofKind) -> Self
 pub fn ProofHandle::no_current_result() -> Self
 pub fn ProofHandle::view(Self) -> @util.Availability[ProofRef]
 

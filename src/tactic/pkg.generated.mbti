@@ -26,8 +26,8 @@ pub struct Goal {
 }
 pub fn Goal::add(Self, @util.ExprId) -> Unit
 pub fn Goal::dependency_converter(Self) -> DependencyConverter
-pub fn Goal::depth(Self) -> Int
-pub fn Goal::formula(Self, Int) -> @util.ExprId?
+pub fn Goal::depth(Self) -> Int32
+pub fn Goal::formula(Self, Int32) -> @util.ExprId?
 pub fn Goal::is_decided_sat(Self) -> Bool
 pub fn Goal::is_decided_unsat(Self) -> Bool
 pub fn Goal::manager(Self) -> @ast.AstManager
@@ -40,13 +40,13 @@ pub fn Goal::requires_model(Self) -> Bool
 pub fn Goal::requires_proof(Self) -> Bool
 pub fn Goal::requires_unsat_core(Self) -> Bool
 pub fn Goal::sat_preserved(Self) -> Bool
-pub fn Goal::set_depth(Self, Int) -> Unit
+pub fn Goal::set_depth(Self, Int32) -> Unit
 pub fn Goal::set_precision(Self, GoalPrecision) -> Unit
 pub fn Goal::set_reason_unknown(Self, @util.ReasonUnknown) -> Unit
 pub fn Goal::set_requires_model(Self, Bool) -> Unit
 pub fn Goal::set_requires_proof(Self, Bool) -> Unit
 pub fn Goal::set_requires_unsat_core(Self, Bool) -> Unit
-pub fn Goal::size(Self) -> Int
+pub fn Goal::size(Self) -> Int32
 pub fn Goal::unsat_preserved(Self) -> Bool
 
 pub(all) enum GoalPrecision {
@@ -86,8 +86,8 @@ pub struct TacticResult {
   // private fields
 }
 pub fn TacticResult::from_goals(Array[Goal]) -> Self
-pub fn TacticResult::goal(Self, Int) -> Goal?
-pub fn TacticResult::goal_count(Self) -> Int
+pub fn TacticResult::goal(Self, Int32) -> Goal?
+pub fn TacticResult::goal_count(Self) -> Int32
 
 // Type aliases
 

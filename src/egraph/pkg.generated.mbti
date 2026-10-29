@@ -22,25 +22,25 @@ pub fn EGraph::enqueue_new_diseq(Self, EnodeId) -> Unit
 pub fn EGraph::enqueue_new_eq(Self, EnodeId, EnodeId) -> Unit
 pub fn EGraph::expr_handle(Self, EnodeId) -> EnodeExpr?
 pub fn EGraph::find(Self, @util.ExprId) -> EnodeId?
-pub fn EGraph::generation(Self, EnodeId) -> Int
+pub fn EGraph::generation(Self, EnodeId) -> Int32
 pub fn EGraph::is_relevant(Self, EnodeId) -> Bool
 pub fn EGraph::justification_text(Self, JustificationId) -> String
 pub fn EGraph::justification_valid(Self, JustificationId) -> Bool
-pub fn EGraph::mk_enode(Self, @util.ExprId, Array[EnodeId], Int) -> EnodeId
-pub fn EGraph::mk_enode_with_key(Self, @util.ExprId, Array[EnodeId], Int, Int) -> EnodeId
+pub fn EGraph::mk_enode(Self, @util.ExprId, Array[EnodeId], Int32) -> EnodeId
+pub fn EGraph::mk_enode_with_key(Self, @util.ExprId, Array[EnodeId], Int32, Int32) -> EnodeId
 pub fn EGraph::new() -> Self
-pub fn EGraph::new_diseq(Self, Int) -> EnodeId?
-pub fn EGraph::new_diseq_count(Self) -> Int
-pub fn EGraph::new_diseq_text(Self, Int) -> String
-pub fn EGraph::new_eq(Self, Int) -> EnodeParentLink?
-pub fn EGraph::new_eq_count(Self) -> Int
-pub fn EGraph::new_eq_text(Self, Int) -> String
-pub fn EGraph::node_count(Self) -> Int
-pub fn EGraph::operator_key(Self, EnodeId) -> Int
+pub fn EGraph::new_diseq(Self, Int32) -> EnodeId?
+pub fn EGraph::new_diseq_count(Self) -> Int32
+pub fn EGraph::new_diseq_text(Self, Int32) -> String
+pub fn EGraph::new_eq(Self, Int32) -> EnodeParentLink?
+pub fn EGraph::new_eq_count(Self) -> Int32
+pub fn EGraph::new_eq_text(Self, Int32) -> String
+pub fn EGraph::node_count(Self) -> Int32
+pub fn EGraph::operator_key(Self, EnodeId) -> Int32
 pub fn EGraph::parents(Self, EnodeId) -> Array[EnodeId]
-pub fn EGraph::pop(Self, Int) -> Unit
+pub fn EGraph::pop(Self, Int32) -> Unit
 pub fn EGraph::push(Self) -> Unit
-pub fn EGraph::scope_depth(Self) -> Int
+pub fn EGraph::scope_depth(Self) -> Int32
 pub fn EGraph::set_relevant(Self, EnodeId) -> Unit
 pub fn EGraph::theory_attachments(Self, EnodeId) -> Array[EnodeTheoryVarAttachment]
 pub fn EGraph::theory_var_text(Self, EnodeId, @ids.TheoryId) -> String
@@ -55,7 +55,7 @@ pub fn EGraphCongruence::find(Self, EnodeId) -> EnodeId
 pub fn EGraphCongruence::has_conflict(Self) -> Bool
 pub fn EGraphCongruence::merge(Self, EnodeId, EnodeId) -> Bool
 pub fn EGraphCongruence::new() -> Self
-pub fn EGraphCongruence::pop(Self, Int) -> Unit
+pub fn EGraphCongruence::pop(Self, Int32) -> Unit
 pub fn EGraphCongruence::push(Self) -> Unit
 pub fn EGraphCongruence::same_class(Self, EnodeId, EnodeId) -> Bool
 
@@ -69,8 +69,8 @@ pub fn EnodeExpr::new(EnodeId, @util.ExprId) -> Self
 pub struct EnodeId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn EnodeId::new(Int) -> Self
-pub fn EnodeId::to_int(Self) -> Int
+pub fn EnodeId::new(Int32) -> Self
+pub fn EnodeId::to_int(Self) -> Int32
 pub impl Show for EnodeId
 
 pub struct EnodeParentLink {
@@ -90,8 +90,8 @@ pub fn EnodeTheoryVarAttachment::theory_var(Self) -> @ids.TheoryVar
 pub struct JustificationId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn JustificationId::new(Int) -> Self
-pub fn JustificationId::to_int(Self) -> Int
+pub fn JustificationId::new(Int32) -> Self
+pub fn JustificationId::to_int(Self) -> Int32
 pub impl Show for JustificationId
 
 // Type aliases

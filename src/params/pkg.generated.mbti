@@ -14,14 +14,14 @@ pub struct ParamDescrs {
   // private fields
 }
 pub fn ParamDescrs::add_bool(Self, String, Bool, String, String) -> Unit
-pub fn ParamDescrs::add_bool_with_policy(Self, String, Bool, String, String, ParamLifecycle, Int, Bool) -> Unit
-pub fn ParamDescrs::add_int(Self, String, Int, String, String) -> Unit
-pub fn ParamDescrs::add_int_with_policy(Self, String, Int, String, String, ParamLifecycle, Int, Bool) -> Unit
+pub fn ParamDescrs::add_bool_with_policy(Self, String, Bool, String, String, ParamLifecycle, Int32, Bool) -> Unit
+pub fn ParamDescrs::add_int(Self, String, Int32, String, String) -> Unit
+pub fn ParamDescrs::add_int_with_policy(Self, String, Int32, String, String, ParamLifecycle, Int32, Bool) -> Unit
 pub fn ParamDescrs::add_smt_setup_defaults(Self) -> Unit
 pub fn ParamDescrs::add_solver_model_proof_defaults(Self) -> Unit
 pub fn ParamDescrs::add_string(Self, String, String, String, String) -> Unit
-pub fn ParamDescrs::add_string_with_policy(Self, String, String, String, String, ParamLifecycle, Int, Bool) -> Unit
-pub fn ParamDescrs::apply_order(Self, String) -> Int
+pub fn ParamDescrs::add_string_with_policy(Self, String, String, String, String, ParamLifecycle, Int32, Bool) -> Unit
+pub fn ParamDescrs::apply_order(Self, String) -> Int32
 pub fn ParamDescrs::description(Self, String) -> String
 pub fn ParamDescrs::keys_text(Self) -> String
 pub fn ParamDescrs::kind_text(Self, String) -> String
@@ -61,7 +61,7 @@ pub fn ParamSetStage::setup() -> Self
 
 pub(all) enum ParamValue {
   BoolValue(Bool)
-  IntValue(Int)
+  IntValue(Int32)
   StringValue(String)
 } derive(Eq)
 
@@ -69,13 +69,13 @@ pub struct Params {
   // private fields
 }
 pub fn Params::get_bool(Self, String) -> @util.Availability[Bool]
-pub fn Params::get_int(Self, String) -> @util.Availability[Int]
+pub fn Params::get_int(Self, String) -> @util.Availability[Int32]
 pub fn Params::get_string(Self, String) -> @util.Availability[String]
 pub fn Params::new(ParamDescrs) -> Self
 pub fn Params::set_bool(Self, String, Bool) -> @util.Availability[Bool]
 pub fn Params::set_bool_at(Self, String, Bool, ParamSetStage) -> @util.Availability[Bool]
-pub fn Params::set_int(Self, String, Int) -> @util.Availability[Int]
-pub fn Params::set_int_at(Self, String, Int, ParamSetStage) -> @util.Availability[Int]
+pub fn Params::set_int(Self, String, Int32) -> @util.Availability[Int32]
+pub fn Params::set_int_at(Self, String, Int32, ParamSetStage) -> @util.Availability[Int32]
 pub fn Params::set_string(Self, String, String) -> @util.Availability[String]
 pub fn Params::set_string_at(Self, String, String, ParamSetStage) -> @util.Availability[String]
 

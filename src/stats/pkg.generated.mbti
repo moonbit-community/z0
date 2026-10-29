@@ -30,7 +30,7 @@ pub fn StatMergePolicy::latest() -> Self
 pub fn StatMergePolicy::sum() -> Self
 
 pub(all) enum StatValue {
-  Counter(Int)
+  Counter(Int32)
   TimerMs(Double)
 } derive(Eq)
 
@@ -38,7 +38,7 @@ pub struct Statistics {
   // private fields
 }
 pub fn Statistics::add_timer_ms(Self, String, Double) -> Unit
-pub fn Statistics::inc_counter(Self, String, Int) -> Unit
+pub fn Statistics::inc_counter(Self, String, Int32) -> Unit
 pub fn Statistics::incomplete_reasons(Self, StatManifest) -> Array[@util.ReasonUnknown]
 pub fn Statistics::keys_text(Self) -> String
 pub fn Statistics::mark_incomplete(Self, @util.ReasonUnknown) -> Unit

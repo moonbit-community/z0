@@ -20,7 +20,7 @@ pub struct AssumptionSet {
 }
 pub fn AssumptionSet::add(Self, @util.ExprId) -> Unit
 pub fn AssumptionSet::items(Self) -> Array[@util.ExprId]
-pub fn AssumptionSet::length(Self) -> Int
+pub fn AssumptionSet::length(Self) -> Int32
 pub fn AssumptionSet::new() -> Self
 
 pub struct CheckSatAssumingResult {
@@ -56,19 +56,19 @@ pub fn Solver::check_sat_assuming(Self, AssumptionSet) -> CheckSatResult
 pub fn Solver::collect_statistics(Self) -> StatisticsSnapshot
 pub fn Solver::describe_params(Self) -> @params.ParamDescrs
 pub fn Solver::eval(Self, @util.ExprId, completion~ : Bool) -> @util.Availability[@model.ModelValue]
-pub fn Solver::get_assertion(Self, Int) -> @util.ExprId?
+pub fn Solver::get_assertion(Self, Int32) -> @util.ExprId?
 pub fn Solver::get_model(Self) -> @util.Availability[@model.Model]
 pub fn Solver::get_model_text(Self) -> @util.Availability[String]
-pub fn Solver::get_num_assertions(Self) -> Int
+pub fn Solver::get_num_assertions(Self) -> Int32
 pub fn Solver::get_proof(Self) -> @util.Availability[@proof.ProofRef]
-pub fn Solver::get_scope_level(Self) -> Int
+pub fn Solver::get_scope_level(Self) -> Int32
 pub fn Solver::get_unsat_assumptions(Self) -> @util.Availability[UnsatAssumptionSet]
 pub fn Solver::get_unsat_core(Self) -> @util.Availability[UnsatCore]
 pub fn Solver::get_value(Self, @util.ExprId) -> @util.Availability[@model.ModelValue]
 pub fn Solver::model_available(Self) -> @util.Availability[Unit]
 pub fn Solver::new(@ast.AstManager, SolverFactoryConfig, SolverBackend) -> Self
-pub fn Solver::pop(Self, Int) -> @util.Availability[Unit]
-pub fn Solver::push(Self, Int) -> @util.Availability[Unit]
+pub fn Solver::pop(Self, Int32) -> @util.Availability[Unit]
+pub fn Solver::push(Self, Int32) -> @util.Availability[Unit]
 pub fn Solver::reason_unknown(Self) -> @util.Availability[@util.ReasonUnknown]
 pub fn Solver::set_produce_models(Self, Bool) -> @util.Availability[Bool]
 pub fn Solver::set_produce_proofs(Self, Bool) -> @util.Availability[Bool]
@@ -80,7 +80,7 @@ pub fn Solver::updt_params(Self, @params.Params) -> @util.Availability[Unit]
 pub struct SolverBackend {
   // private fields
 }
-pub fn SolverBackend::new(assert_expr~ : (@util.ExprId) -> @util.Availability[Unit], assert_expr_tracked~ : (@util.ExprId, TrackedExpr) -> @util.Availability[Unit], push~ : (Int) -> @util.Availability[Unit], pop~ : (Int) -> @util.Availability[Unit], check_sat_assuming~ : (AssumptionSet) -> CheckSatAssumingResult, model~ : () -> @util.Availability[@model.Model], proof~ : () -> @util.Availability[@proof.ProofRef], collect_statistics~ : () -> @stats.Statistics, translate? : (@ast.AstManager, SolverFactoryConfig) -> @util.Availability[Self]) -> Self
+pub fn SolverBackend::new(assert_expr~ : (@util.ExprId) -> @util.Availability[Unit], assert_expr_tracked~ : (@util.ExprId, TrackedExpr) -> @util.Availability[Unit], push~ : (Int32) -> @util.Availability[Unit], pop~ : (Int32) -> @util.Availability[Unit], check_sat_assuming~ : (AssumptionSet) -> CheckSatAssumingResult, model~ : () -> @util.Availability[@model.Model], proof~ : () -> @util.Availability[@proof.ProofRef], collect_statistics~ : () -> @stats.Statistics, translate? : (@ast.AstManager, SolverFactoryConfig) -> @util.Availability[Self]) -> Self
 
 pub struct SolverFactory {
   // private fields
@@ -115,8 +115,8 @@ pub fn StatisticsSnapshot::new(@stats.Statistics, Array[@util.ReasonUnknown]) ->
 pub struct TrackedAssertionId {
   // private fields
 } derive(Compare, Eq, Hash)
-pub fn TrackedAssertionId::new(Int) -> Self
-pub fn TrackedAssertionId::to_int(Self) -> Int
+pub fn TrackedAssertionId::new(Int32) -> Self
+pub fn TrackedAssertionId::to_int(Self) -> Int32
 
 pub struct TrackedExpr {
   // private fields
@@ -131,14 +131,14 @@ pub struct UnsatAssumptionSet {
 pub fn UnsatAssumptionSet::empty() -> Self
 pub fn UnsatAssumptionSet::from_exprs(Array[@util.ExprId]) -> Self
 pub fn UnsatAssumptionSet::items(Self) -> Array[@util.ExprId]
-pub fn UnsatAssumptionSet::length(Self) -> Int
+pub fn UnsatAssumptionSet::length(Self) -> Int32
 pub fn UnsatAssumptionSet::to_text(Self) -> String
 
 pub struct UnsatCore {
   // private fields
 }
 pub fn UnsatCore::empty() -> Self
-pub fn UnsatCore::length(Self) -> Int
+pub fn UnsatCore::length(Self) -> Int32
 pub fn UnsatCore::single(UnsatCoreEntry) -> Self
 pub fn UnsatCore::to_text(Self) -> String
 pub fn UnsatCore::to_text_with_expr(Self, (@util.ExprId) -> String) -> String
